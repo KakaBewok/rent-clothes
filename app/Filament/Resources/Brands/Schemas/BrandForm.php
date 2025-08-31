@@ -15,7 +15,7 @@ class BrandForm
                 TextInput::make('name')
                     ->required(),
                 Textarea::make('desc')
-                    ->columnSpanFull(),
+                    ->nullable(),
             ]);
     }
 }

@@ -14,10 +14,8 @@ class TypeForm
             ->components([
                 TextInput::make('name')
                     ->required(),
-                TextInput::make('slug')
-                    ->required(),
                 Textarea::make('desc')
-                    ->columnSpanFull(),
+                    ->nullable(),
             ]);
     }
 }

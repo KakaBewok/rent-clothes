@@ -17,7 +17,7 @@ class BranchForm
                 TextInput::make('location')
                     ->required(),
                 Textarea::make('desc')
-                    ->columnSpanFull(),
+                    ->columnSpanFull()->nullable(),
             ]);
     }
 }

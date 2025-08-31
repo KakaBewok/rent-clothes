@@ -13,7 +13,7 @@ class ColorForm
             ->components([
                 TextInput::make('name')
                     ->required(),
-                TextInput::make('hex_code'),
+                TextInput::make('hex_code')->nullable(),
             ]);
     }
 }
