@@ -17,10 +17,7 @@ class BannerFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence,
-            'image_path' => 'banners/' . $this->faker->uuid . '.jpg',
-            'image_url' => $this->faker->imageUrl(800, 300, 'fashion', true),
-            'is_active' => true,
+            'is_active' => $this->faker->boolean(100),
         ];
     }
 }

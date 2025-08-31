@@ -7,21 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Banner extends Model
 {
+    /** @use HasFactory<\Database\Factories\BannerFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'image_path', 'image_url', 'is_active'];
+    protected $fillable = ['is_active'];
 
-    // accessor for getting final image URL
-    public function getImageAttribute()
+    public function images()
     {
-        if ($this->image_url) {
-            return $this->image_url;
-        }
-
-        if ($this->image_path) {
-            return asset('storage/' . $this->image_path);
-        }
-
-        return null; // default if empty
+        return $this->hasMany(BannerImage::class);
     }
 }

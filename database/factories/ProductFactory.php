@@ -24,7 +24,7 @@ class ProductFactory extends Factory
             'name' => ucfirst($this->faker->words(2, true)),
             'cover_image' => 'products/' . $this->faker->uuid . '.jpg',
             'brand_id' => Brand::factory(),
-            'code' => strtoupper($this->faker->bothify('PRD-###')),
+            'code' => strtoupper($this->faker->bothify('PRD-###')) . '-' . strtoupper($this->faker->bothify('???')),
             'color_id' => Color::factory(),
             'branch_id' => Branch::factory(),
             'ownership' => $this->faker->name,

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Banner;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\BannerImage;
 use App\Models\Branch;
 use App\Models\Brand;
 use App\Models\Color;
@@ -28,9 +29,15 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'password' => bcrypt('rahasiabanget'),
         ]);
-
+        Banner::factory()
+            ->count(5)
+            ->create()
+            ->each(function ($banner) {
+                BannerImage::factory()->count(3)->create([
+                    'banner_id' => $banner->id,
+                ]);
+            });
         Brand::factory(5)->create();
-        Banner::factory(3)->create();
         Color::factory(10)->create();
         Type::factory(5)->create();
         Branch::factory(3)->create();
