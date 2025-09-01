@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Products\Tables;
 
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\ImageColumn;
@@ -15,45 +16,53 @@ class ProductsTable
     {
         return $table
             ->columns([
+
+                // Nama Produk
                 TextColumn::make('name')
-                    ->searchable(),
-                ImageColumn::make('cover_image'),
-                TextColumn::make('brand_id')
-                    ->numeric()
+                    ->label('Dress Name')
+                    ->searchable()
                     ->sortable(),
+
+                // Brand Name (relasi)
+                TextColumn::make('brand.name')
+                    ->label('Brand')
+                    ->sortable()
+                    ->searchable(),
+
+                // Kode Produk
                 TextColumn::make('code')
+                    ->label('Code')
                     ->searchable(),
-                TextColumn::make('color_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('branch_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('ownership')
-                    ->searchable(),
-                TextColumn::make('rent_periode')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('upload_at')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('price_detail_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-            ])->defaultSort('created_at', 'desc')
+
+                // Rent Price (ambil dari PriceDetail)
+                TextColumn::make('priceDetail.rent_price')
+                    ->label('Rent Price')
+                    ->money('idr', true),
+
+                // Final Price (misal ada diskon)
+                TextColumn::make('priceDetail.discount')
+                    ->label('Discount (%)')
+                    ->formatStateUsing(fn($state) => $state ? $state . '%' : '-'),
+
+                // Final Price (misal ada diskon)
+                TextColumn::make('priceDetail.price_after_discount')
+                    ->label('Final Price')
+                    ->money('idr', true),
+
+                // Cover image
+                ImageColumn::make('cover_image')
+                    ->label('Cover')
+                    ->disk('public')
+                    ->square()
+                    ->imageSize(200),
+            ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 //
             ])
             ->recordActions([
                 EditAction::make(),
+                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

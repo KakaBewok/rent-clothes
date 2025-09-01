@@ -40,7 +40,7 @@ class ProductForm
                             ->searchable()
                             ->preload()
                             ->required()->createOptionForm([
-                                TextInput::make('name')->required(),
+                                TextInput::make('name')->label('Color Name')->required(),
                                 TextInput::make('hex_code')->nullable(),
                             ]),
                         Select::make('branch_id')
@@ -48,7 +48,7 @@ class ProductForm
                             ->searchable()
                             ->preload()
                             ->required()->createOptionForm([
-                                TextInput::make('name')
+                                TextInput::make('name')->label('Branch Name')
                                     ->required(),
                                 TextInput::make('location')
                                     ->required(),
@@ -95,7 +95,6 @@ class ProductForm
                         //     ->numeric()
                         //     ->disabled()
                         //     ->dehydrated(false), 
-
                         TextInput::make('additional_time_price')
                             ->prefix('Rp')
                             ->numeric()
@@ -109,7 +108,7 @@ class ProductForm
                             ->searchable()
                             ->preload()
                             ->createOptionForm([
-                                TextInput::make('name')
+                                TextInput::make('name')->label('Type Name')
                                     ->required(),
                                 Textarea::make('desc')
                                     ->nullable(),
