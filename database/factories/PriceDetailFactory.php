@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Product;
 use App\Models\Type;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -29,6 +30,7 @@ class PriceDetailFactory extends Factory
             'additional_time_price' => $this->faker->numberBetween(10000, 30000),
             'additional_ribbon' => $this->faker->randomElement(["1", "2", "3"]),
             'type_id' => Type::factory(),
+            'product_id' => Product::factory(),
         ];
     }
 }

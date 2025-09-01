@@ -23,7 +23,6 @@ return new class extends Migration
             $table->integer('rent_periode');
             $table->timestamp('upload_at')->useCurrent();
             $table->text('description');
-            $table->foreignId('price_detail_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

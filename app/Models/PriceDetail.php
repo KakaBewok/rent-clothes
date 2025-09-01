@@ -36,6 +36,6 @@ class PriceDetail extends Model
 
     public function product()
     {
-        return $this->hasOne(Product::class, 'price_detail_id');
+        return $this->belongsTo(Product::class);
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Products\Schemas;
 
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -13,7 +12,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Tables\Grouping\Group;
 
 class ProductForm
 {
@@ -21,10 +19,10 @@ class ProductForm
     {
         return $schema
             ->components([
-                Section::make('Dress Details')
+                Section::make('Dress Detail')
                     ->schema([
                         TextInput::make('name')->label("Dress Name")->required(),
-                        TextInput::make('code')->required(),
+                        TextInput::make('code')->placeholder('ABAYA-01')->required(),
                         Select::make('brand_id')
                             ->relationship('brand', 'name')
                             ->searchable()
@@ -58,12 +56,13 @@ class ProductForm
                                     ->columnSpanFull()->nullable(),
                             ]),
                         TextInput::make('ownership')->nullable(),
-                        TextInput::make('rental_periode')
-                            ->label('Rent Periode (Day)')
+                        TextInput::make('rent_periode')
+                            ->label('Rent Periode')
+                            ->prefix('Day')
                             ->numeric()
                             ->default(1)
                             ->required(),
-                        DatePicker::make('upload_at')->required()->default(now()),
+                        DatePicker::make('upload_at')->helperText('Latest catalogue will be placed on the first page.')->required()->default(now()),
                         RichEditor::make('description')
                             ->toolbarButtons([
                                 'bold',
@@ -75,75 +74,108 @@ class ProductForm
                                 'bulletList'
                             ])->columnSpanFull()
                     ])->columns(2),
+                Section::make('Price Detail')
+                    ->schema([
+                        TextInput::make('rent_price')
+                            ->prefix('Rp')
+                            ->numeric()
+                            ->required(),
+
+                        TextInput::make('deposit')
+                            ->prefix('Rp')
+                            ->numeric()
+                            ->required(),
+
+                        TextInput::make('discount')
+                            ->suffix('%')
+                            ->numeric(),
+
+                        // TextInput::make('price_after_discount')
+                        //     ->prefix('Rp')
+                        //     ->numeric()
+                        //     ->disabled()
+                        //     ->dehydrated(false), 
+
+                        TextInput::make('additional_time_price')
+                            ->prefix('Rp')
+                            ->numeric()
+                            ->required(),
+
+                        TextInput::make('additional_ribbon')
+                            ->numeric(),
+
+                        Select::make('type_id')
+                            ->relationship('type', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->required(),
+                                Textarea::make('desc')
+                                    ->nullable(),
+                            ])
+                            ->required(),
+                    ])->relationship('priceDetail')
+                    ->columns(2),
+
+                Section::make('Size & Quantity')
+                    ->schema([
+                        Repeater::make('sizes')
+                            ->relationship()
+                            ->schema([
+                                Select::make('size')
+                                    ->options([
+                                        'XS' => 'Extra Small',
+                                        'S'  => 'Small',
+                                        'M'  => 'Medium',
+                                        'L'  => 'Large',
+                                        'XL' => 'Extra Large',
+                                        'XXL' => 'Double Extra Large',
+                                    ])
+                                    ->required()
+                                    ->searchable(),
+                                TextInput::make('quantity')
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        if ($state >= 1) {
+                                            $set('availability', true);
+                                        } else {
+                                            $set('availability', false);
+                                        }
+                                    })->numeric()->required(),
+                                Toggle::make('availability')->label('Available'),
+                            ])
+                            ->minItems(1)->reorderable()->collapsible(),
+                    ]),
+
+
 
                 Section::make('Media')
                     ->schema([
                         FileUpload::make('cover_image')
                             ->image()
+                            ->maxSize(3072)
+                            ->disk('public')
                             ->directory('products/covers')
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                            ->imageEditor()
+                            ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
+                            ->helperText('Upload an image file. Max file size: 3MB.')
                             ->required(),
 
                         Repeater::make('galleries')
                             ->relationship()
                             ->schema([
-                                FileUpload::make('image')
+                                FileUpload::make('image_path')
                                     ->image()
-                                    ->directory('products/galleries'),
-                            ])
-                            ->minItems(1)->reorderable()->collapsible(),
-                    ]),
-
-                Section::make('Detail Harga')
-                    ->relationship('priceDetail')
-                    ->schema([
-                        TextInput::make('rent_price')
-                            ->label('Harga Sewa')
-                            ->numeric()
-                            ->required(),
-
-                        TextInput::make('deposit')
-                            ->label('Deposit')
-                            ->numeric()
-                            ->default(0),
-
-                        TextInput::make('discount')
-                            ->label('Diskon (%)')
-                            ->numeric()
-                            ->default(0),
-
-                        TextInput::make('price_after_discount')
-                            ->label('Harga Setelah Diskon')
-                            ->numeric()
-                            ->disabled()
-                            ->dehydrated(false), // biar tidak disimpan manual, karena sudah dihitung di model
-
-                        TextInput::make('additional_time_price')
-                            ->label('Biaya Tambahan Waktu')
-                            ->numeric()
-                            ->default(0),
-
-                        TextInput::make('additional_ribbon')
-                            ->label('Tambahan Pita')
-                            ->numeric()
-                            ->default(0),
-
-                        Select::make('type_id')
-                            ->label('Tipe')
-                            ->relationship('type', 'name')
-                            ->searchable()
-                            ->required(),
-
-                    ])
-                    ->columns(2),
-
-                Section::make('Ukuran')
-                    ->schema([
-                        Repeater::make('sizes')
-                            ->relationship()
-                            ->schema([
-                                TextInput::make('size')->required(), // XS, S, M, L
-                                TextInput::make('quantity')->numeric()->required(),
-                                Toggle::make('availability')->label('Available'),
+                                    ->maxSize(3072)
+                                    ->disk('public')
+                                    ->directory('products/galleries')
+                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
+                                    ->helperText('Upload an image file. Max file size: 3MB.')
+                                    ->imageEditor()
+                                    ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
+                                    ->required(),
                             ])
                             ->minItems(1)->reorderable()->collapsible(),
                     ]),

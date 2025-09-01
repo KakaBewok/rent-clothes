@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('price_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->decimal('rent_price', 12, 2);
             $table->decimal('deposit', 12, 2);
             $table->integer('discount')->default(0)->nullable();

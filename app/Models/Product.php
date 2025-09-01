@@ -43,7 +43,7 @@ class Product extends Model
 
     public function priceDetail()
     {
-        return $this->belongsTo(PriceDetail::class);
+        return $this->hasOne(PriceDetail::class);
     }
 
     public function sizes()

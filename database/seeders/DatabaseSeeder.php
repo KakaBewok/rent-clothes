@@ -10,6 +10,7 @@ use App\Models\Brand;
 use App\Models\Color;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\PriceDetail;
 use App\Models\Product;
 use App\Models\ProductGallery;
 use App\Models\Size;
@@ -29,30 +30,42 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'password' => bcrypt('rahasiabanget'),
         ]);
-        Banner::factory()
-            ->count(5)
+
+        // Banner + BannerImage
+        Banner::factory(5)
             ->create()
             ->each(function ($banner) {
-                BannerImage::factory()->count(3)->create([
-                    'banner_id' => $banner->id,
-                ]);
+                BannerImage::factory(3)
+                    ->recycle([$banner]) // ⬅️ pakai recycle banner yang sudah ada
+                    ->create();
             });
+
+        // Master data
         Brand::factory(5)->create();
         Color::factory(10)->create();
         Type::factory(5)->create();
         Branch::factory(3)->create();
 
+        // Product
         $products = Product::factory(10)->create();
 
-        foreach ($products as $product) {
-            Size::factory(3)->create(['product_id' => $product->id]);
-            ProductGallery::factory(4)->create(['product_id' => $product->id]);
-        }
+        Size::factory(3)
+            ->recycle($products)
+            ->create();
+
+        ProductGallery::factory(20)
+            ->recycle($products)
+            ->create();
+
+        PriceDetail::factory(10)
+            ->recycle($products)
+            ->create();
 
         $orders = Order::factory(5)->create();
 
-        foreach ($orders as $order) {
-            OrderItem::factory(2)->create(['order_id' => $order->id]);
-        }
+        OrderItem::factory(2)
+            ->recycle($orders)
+            ->recycle($products)
+            ->create();
     }
 }
