@@ -23,6 +23,7 @@ class ProductForm
         return $schema
             ->components([
                 Section::make('Dress Detail')
+                    ->icon('heroicon-m-shopping-bag')
                     ->schema([
                         TextInput::make('name')->label("Dress Name")->required(),
                         TextInput::make('code')->placeholder('ABAYA-01')->required(),
@@ -91,6 +92,7 @@ class ProductForm
                             ])->columnSpanFull()
                     ])->columns(2),
                 Section::make('Price Detail')
+                    ->icon('heroicon-m-banknotes')
                     ->schema([
                         TextInput::make('rent_price')
                             ->prefix('Rp')
@@ -142,6 +144,7 @@ class ProductForm
                     ->columns(1),
 
                 Section::make('Size & Quantity')
+                    ->icon('heroicon-m-tag')
                     ->schema([
                         Repeater::make('sizes')
                             ->relationship()
@@ -174,6 +177,7 @@ class ProductForm
 
 
                 Section::make('Media')
+                    ->icon('heroicon-m-photo')
                     ->schema([
                         FileUpload::make('cover_image')
                             ->image()
