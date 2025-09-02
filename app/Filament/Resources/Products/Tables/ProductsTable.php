@@ -16,42 +16,39 @@ class ProductsTable
     {
         return $table
             ->columns([
-
-                // Nama Produk
                 TextColumn::make('name')
                     ->label('Dress Name')
                     ->searchable()
                     ->sortable(),
 
-                // Brand Name (relasi)
                 TextColumn::make('brand.name')
-                    ->label('Brand')
                     ->sortable()
                     ->searchable(),
 
-                // Kode Produk
                 TextColumn::make('code')
                     ->label('Code')
+                    ->sortable()
                     ->searchable(),
 
-                // Rent Price (ambil dari PriceDetail)
                 TextColumn::make('priceDetail.rent_price')
                     ->label('Rent Price')
-                    ->money('idr', true),
+                    ->money('idr', false)
+                    ->sortable()
+                    ->searchable(),
 
-                // Final Price (misal ada diskon)
                 TextColumn::make('priceDetail.discount')
                     ->label('Discount (%)')
+                    ->sortable()
+                    ->searchable()
                     ->formatStateUsing(fn($state) => $state ? $state . '%' : '-'),
 
-                // Final Price (misal ada diskon)
                 TextColumn::make('priceDetail.price_after_discount')
                     ->label('Final Price')
-                    ->money('idr', true),
+                    ->money('idr', true)
+                    ->sortable()
+                    ->searchable(),
 
-                // Cover image
                 ImageColumn::make('cover_image')
-                    ->label('Cover')
                     ->disk('public')
                     ->square()
                     ->imageSize(200),
@@ -62,7 +59,6 @@ class ProductsTable
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

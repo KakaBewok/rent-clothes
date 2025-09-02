@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -10,8 +11,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\RawJs;
 
 class ProductForm
 {
@@ -86,7 +89,7 @@ class ProductForm
                                 'blockquote',
                                 'bulletList'
                             ])->columnSpanFull()
-                    ])->columns(1),
+                    ])->columns(2),
                 Section::make('Price Detail')
                     ->schema([
                         TextInput::make('rent_price')
@@ -94,6 +97,34 @@ class ProductForm
                             ->numeric()
                             ->required(),
 
+                        TextInput::make('discount')
+                            ->suffix('%')
+                            ->numeric(),
+
+                        TextInput::make('price_after_discount')
+                            ->label('Final price')
+                            ->prefix('Rp')
+                            ->numeric()
+                            ->disabled()->helperText('Click "Calculate Final Price" button to confirm the final price')
+                            ->columnSpanFull()
+                            ->dehydrated(false)->numeric(),
+
+                        Actions::make([
+                            Action::make('calculate_final_price')
+                                ->icon('heroicon-m-calculator')
+                                ->color('success')
+                                ->action(function (callable $set, callable $get) {
+                                    $rentPrice = (float) $get('rent_price');
+                                    $discount = (float) $get('discount');
+
+                                    if ($discount > 0) {
+                                        $priceAfter = $rentPrice - ($rentPrice * $discount / 100);
+                                        $set('price_after_discount', $priceAfter);
+                                    } else {
+                                        $set('price_after_discount', $rentPrice);
+                                    }
+                                })
+                        ]),
                         TextInput::make('deposit')
                             ->prefix('Rp')
                             ->numeric()
@@ -104,28 +135,7 @@ class ProductForm
                             ->numeric()
                             ->required(),
 
-                        TextInput::make('discount')
-                            ->suffix('%')
-                            ->numeric()
-                            ->reactive()
-                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                if ($state !== null) {
-                                    $rentPrice = $get('rent_price');
-                                    $discount = (float) $state;
-                                    $priceAfter = $rentPrice - ($rentPrice * $discount / 100);
 
-                                    $set('price_after_discount', $priceAfter);
-                                } else {
-                                    $set('price_after_discount', $get('rent_price'));
-                                }
-                            }),
-
-                        TextInput::make('price_after_discount')
-                            ->prefix('Rp')
-                            ->numeric()
-                            ->disabled()->helperText('This value is calculated automatically based on the discount you enter.')
-                            ->columnSpanFull()
-                            ->dehydrated(false),
 
 
                     ])->relationship('priceDetail')
