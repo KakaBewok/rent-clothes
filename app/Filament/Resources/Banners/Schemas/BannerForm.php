@@ -15,7 +15,8 @@ class BannerForm
     {
         return $schema
             ->components([
-                Toggle::make('is_active')->label('Status')->hiddenOn(Operation::Create)->visibleOn(Operation::Edit)->default(true),
+                TextInput::make('title')->nullable(),
+
                 Repeater::make('images')
                     ->relationship('images')
                     ->schema([
@@ -48,8 +49,10 @@ class BannerForm
                                 if ($state) {
                                     $set('image_path', null);
                                 }
-                            })
+                            }),
                     ])->columnSpan('full')->collapsible()->label('Carousel Banner')->reorderable(),
+
+                Toggle::make('is_active')->label('Status')->hiddenOn(Operation::Create)->visibleOn(Operation::Edit)->default(true),
             ]);
     }
 }

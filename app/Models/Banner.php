@@ -10,7 +10,7 @@ class Banner extends Model
     /** @use HasFactory<\Database\Factories\BannerFactory> */
     use HasFactory;
 
-    protected $fillable = ['is_active'];
+    protected $fillable = ['title', 'is_active'];
 
     public function images()
     {

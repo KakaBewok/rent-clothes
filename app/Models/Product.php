@@ -16,12 +16,13 @@ class Product extends Model
         'brand_id',
         'code',
         'color_id',
+        'type_id',
+        'additional_ribbon',
         'branch_id',
         'ownership',
         'rent_periode',
         'upload_at',
         'description',
-        'price_detail_id',
     ];
 
     protected $dates = ['upload_at'];
@@ -29,6 +30,11 @@ class Product extends Model
     public function brand()
     {
         return $this->belongsTo(Brand::class);
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(Type::class);
     }
 
     public function color()

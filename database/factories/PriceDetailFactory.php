@@ -28,8 +28,6 @@ class PriceDetailFactory extends Factory
             'discount' => $discount,
             'price_after_discount' => $rentPrice - ($rentPrice * $discount / 100),
             'additional_time_price' => $this->faker->numberBetween(10000, 30000),
-            'additional_ribbon' => $this->faker->randomElement(["1", "2", "3"]),
-            'type_id' => Type::factory(),
             'product_id' => Product::factory(),
         ];
     }

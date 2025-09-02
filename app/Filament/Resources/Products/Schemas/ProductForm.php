@@ -62,6 +62,19 @@ class ProductForm
                             ->numeric()
                             ->default(1)
                             ->required(),
+                        TextInput::make('additional_ribbon')
+                            ->numeric(),
+                        Select::make('type_id')
+                            ->relationship('type', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->createOptionForm([
+                                TextInput::make('name')->label('Type Name')
+                                    ->required(),
+                                Textarea::make('desc')
+                                    ->nullable(),
+                            ])
+                            ->required(),
                         DatePicker::make('upload_at')->helperText('Latest catalogue will be placed on the first page.')->required()->default(now()),
                         RichEditor::make('description')
                             ->toolbarButtons([
@@ -73,7 +86,7 @@ class ProductForm
                                 'blockquote',
                                 'bulletList'
                             ])->columnSpanFull()
-                    ])->columns(2),
+                    ])->columns(1),
                 Section::make('Price Detail')
                     ->schema([
                         TextInput::make('rent_price')
@@ -86,36 +99,37 @@ class ProductForm
                             ->numeric()
                             ->required(),
 
-                        TextInput::make('discount')
-                            ->suffix('%')
-                            ->numeric(),
-
-                        // TextInput::make('price_after_discount')
-                        //     ->prefix('Rp')
-                        //     ->numeric()
-                        //     ->disabled()
-                        //     ->dehydrated(false), 
                         TextInput::make('additional_time_price')
                             ->prefix('Rp')
                             ->numeric()
                             ->required(),
 
-                        TextInput::make('additional_ribbon')
-                            ->numeric(),
+                        TextInput::make('discount')
+                            ->suffix('%')
+                            ->numeric()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                if ($state !== null) {
+                                    $rentPrice = $get('rent_price');
+                                    $discount = (float) $state;
+                                    $priceAfter = $rentPrice - ($rentPrice * $discount / 100);
 
-                        Select::make('type_id')
-                            ->relationship('type', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->createOptionForm([
-                                TextInput::make('name')->label('Type Name')
-                                    ->required(),
-                                Textarea::make('desc')
-                                    ->nullable(),
-                            ])
-                            ->required(),
+                                    $set('price_after_discount', $priceAfter);
+                                } else {
+                                    $set('price_after_discount', $get('rent_price'));
+                                }
+                            }),
+
+                        TextInput::make('price_after_discount')
+                            ->prefix('Rp')
+                            ->numeric()
+                            ->disabled()->helperText('This value is calculated automatically based on the discount you enter.')
+                            ->columnSpanFull()
+                            ->dehydrated(false),
+
+
                     ])->relationship('priceDetail')
-                    ->columns(2),
+                    ->columns(1),
 
                 Section::make('Size & Quantity')
                     ->schema([

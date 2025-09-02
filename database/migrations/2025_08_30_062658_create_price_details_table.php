@@ -19,8 +19,6 @@ return new class extends Migration
             $table->integer('discount')->default(0)->nullable();
             $table->decimal('price_after_discount', 12, 2)->nullable();
             $table->decimal('additional_time_price', 12, 2);
-            $table->string('additional_ribbon', 12, 2)->nullable();
-            $table->foreignId('type_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

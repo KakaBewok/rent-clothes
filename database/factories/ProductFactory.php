@@ -6,6 +6,7 @@ use App\Models\Branch;
 use App\Models\Brand;
 use App\Models\Color;
 use App\Models\PriceDetail;
+use App\Models\Type;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -30,6 +31,8 @@ class ProductFactory extends Factory
             'ownership' => $this->faker->name,
             'rent_periode' => $this->faker->numberBetween(1, 7),
             'upload_at' => now(),
+            'additional_ribbon' => $this->faker->randomElement(["1", "2", "3"]),
+            'type_id' => Type::factory(),
             'description' => $this->faker->sentence,
         ];
     }

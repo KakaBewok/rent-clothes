@@ -15,8 +15,7 @@ class PriceDetail extends Model
         'discount',
         'price_after_discount',
         'additional_time_price',
-        'additional_ribbon',
-        'type_id'
+        'product_id'
     ];
 
     public static function boot()
@@ -27,11 +26,6 @@ class PriceDetail extends Model
             $detail->price_after_discount =
                 $detail->rent_price - ($detail->rent_price * $detail->discount / 100);
         });
-    }
-
-    public function type()
-    {
-        return $this->belongsTo(Type::class);
     }
 
     public function product()

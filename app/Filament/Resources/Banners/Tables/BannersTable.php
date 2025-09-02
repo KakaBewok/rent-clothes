@@ -27,7 +27,7 @@ class BannersTable
                     ->imageSize(40)
                     ->stacked()
                     ->ring(2),
-
+                TextColumn::make('title'),
                 TextColumn::make('is_active')
                     ->label('Status')
                     ->badge()

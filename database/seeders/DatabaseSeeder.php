@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
             ->create()
             ->each(function ($banner) {
                 BannerImage::factory(3)
-                    ->recycle([$banner]) // ⬅️ pakai recycle banner yang sudah ada
+                    ->recycle([$banner])
                     ->create();
             });
 

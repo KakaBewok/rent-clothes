@@ -22,7 +22,7 @@ class Type extends Model
         });
     }
 
-    public function priceDetails()
+    public function products()
     {
         return $this->hasMany(PriceDetail::class);
     }
