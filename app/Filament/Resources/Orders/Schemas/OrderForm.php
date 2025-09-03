@@ -24,21 +24,19 @@ class OrderForm
                 Section::make('Customer Information')
                     ->icon('heroicon-m-identification')
                     ->schema([
-                        Grid::make(1)
-                            ->schema([
-                                TextInput::make('name')
-                                    ->label('Full Name')
-                                    ->required()
-                                    ->maxLength(255),
+                        TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
 
-                                TextInput::make('phone_number')
-                                    ->tel()
-                                    ->maxLength(20)
-                            ]),
+                        TextInput::make('phone_number')
+                            ->numeric()
+                            ->prefixIcon('heroicon-m-phone')
+                            ->maxLength(20),
 
                         FileUpload::make('identity_image')
                             ->label('Identity Document (KTP/SIM Card)')
                             ->image()
+                            ->disk('public')
                             ->directory('orders/identity')
                             ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
                             ->imageEditor()
@@ -47,66 +45,73 @@ class OrderForm
                             ->required()
                             ->helperText('Upload clear photo of ID card (max 3MB, JPG/PNG only)'),
 
-                        Grid::make(1)
-                            ->schema([
-                                Grid::make(1)
-                                    ->schema([
-                                        Select::make('expedition')
-                                            ->label('Shipping Service')
-                                            ->required()
-                                            ->options([
-                                                'JNE' => 'JNE',
-                                                'Shopee Express' => 'Shopee Express'
-                                            ])
-                                            ->searchable(),
+                        Select::make('expedition')
+                            ->label('Shipping Service')
+                            ->required()
+                            ->options([
+                                'JNE' => 'JNE',
+                                'J&T Express' => 'J&T Express',
+                                'TIKI' => 'TIKI',
+                                'POS Indonesia' => 'POS Indonesia',
+                                'SiCepat' => 'SiCepat',
+                                'Lion Parcel' => 'Lion Parcel',
+                                'AnterAja' => 'AnterAja',
+                                'Shopee Express' => 'Shopee Express',
+                                'Grab Express' => 'Grab Express',
+                                'Gojek (GoSend)' => 'Gojek (GoSend)',
+                            ])
+                            ->searchable(),
 
-                                        TextInput::make('account_number')
-                                            ->label('Account/Reference Number')
-                                            ->numeric()
-                                            ->required()
-                                            ->maxLength(50)
-                                            ->placeholder('Customer account or reference number'),
+                        TextInput::make('account_number')
+                            ->numeric()
+                            ->required()
+                            ->maxLength(50)
+                            ->placeholder('Customer account number'),
 
-                                        Select::make('provider_name')
-                                            ->label('Payment Provider')
-                                            ->required()
-                                            ->options([
-                                                'BCA' => 'BCA',
-                                                'Gopay' => 'Gopay'
-                                            ])
-                                            ->searchable(),
-                                    ]),
-                            ]),
+                        Select::make('provider_name')
+                            ->label('Payment Provider')
+                            ->required()
+                            ->options([
+                                'BCA' => 'BCA',
+                                'Mandiri' => 'Mandiri',
+                                'BNI' => 'BNI',
+                                'BRI' => 'BRI',
+                                'CIMB Niaga' => 'CIMB Niaga',
+                                'Permata' => 'Permata',
+                                'Danamon' => 'Danamon',
+                                'Gopay' => 'Gopay',
+                                'OVO' => 'OVO',
+                                'DANA' => 'DANA',
+                                'ShopeePay' => 'ShopeePay'
+                            ])
+                            ->searchable(),
 
-                        Grid::make(1)
-                            ->schema([
-                                Select::make('status')
-                                    ->label('Order Status')
-                                    ->options([
-                                        'pending'   => 'Pending',
-                                        'approved'  => 'Approved',
-                                        'shipped'   => 'Shipped',
-                                        'returned'  => 'Returned',
-                                        'cancelled' => 'Cancelled',
-                                    ])
-                                    ->default('pending')
-                                    ->required()
-                                    ->native(false),
-                                Textarea::make('address')
-                                    ->label('Delivery Address')
-                                    ->required()
-                                    ->rows(3)
-                                    ->maxLength(500)
-                                    ->placeholder('Enter complete delivery address'),
-                                Textarea::make('desc')
-                                    ->label('Additional Notes')
-                                    ->rows(3)
-                                    ->maxLength(1000)
-                                    ->placeholder('Any special instructions or notes...'),
+                        Select::make('status')
+                            ->label('Order Status')
+                            ->options([
+                                'pending'   => 'Pending',
+                                'approved'  => 'Approved',
+                                'shipped'   => 'Shipped',
+                                'returned'  => 'Returned',
+                                'cancelled' => 'Cancelled',
+                            ])
+                            ->default('pending')
+                            ->required()
+                            ->native(false),
+                        Textarea::make('address')
+                            ->label('Delivery Address')
+                            ->required()
+                            ->rows(3)
+                            ->maxLength(500)
+                            ->placeholder('Enter complete delivery address'),
+                        Textarea::make('desc')
+                            ->label('Additional Notes')
+                            ->rows(3)
+                            ->maxLength(1000)
+                            ->placeholder('Any special instructions or notes...'),
 
-                            ]),
                     ])
-                    ->columns(1),
+                    ->columns(2),
 
                 Section::make('Order Items')
                     ->icon('heroicon-m-shopping-cart')
@@ -114,114 +119,119 @@ class OrderForm
                         Repeater::make('items')
                             ->relationship()
                             ->schema([
-                                Grid::make(3)
-                                    ->schema([
-                                        Select::make('product_id')
-                                            ->label('Product')
-                                            ->relationship('product', 'name')
-                                            ->searchable()
-                                            ->preload()
-                                            ->required()
-                                            ->reactive()
-                                            ->afterStateUpdated(fn(callable $set) => $set('size_id', null))
-                                            ->placeholder('Select a product'),
+                                Select::make('product_id')
+                                    ->label('Catalogue')
+                                    ->relationship('product', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required()
+                                    ->reactive()
+                                    ->afterStateUpdated(fn(callable $set) => $set('size_id', null)),
 
-                                        Select::make('size_id')
-                                            ->label('Size')
-                                            ->relationship('size', 'size')
-                                            ->required()
-                                            ->reactive()
-                                            ->disabled(fn(callable $get) => !$get('product_id'))
-                                            ->helperText(function (callable $get) {
-                                                $sizeId = $get('size_id');
-                                                if ($sizeId) {
-                                                    $size = Size::find($sizeId);
-                                                    if ($size) {
-                                                        return "Available stock: {$size->quantity} units";
+                                Select::make('size_id')
+                                    ->label('Size')
+                                    ->relationship(
+                                        name: 'size',
+                                        titleAttribute: 'size',
+                                        modifyQueryUsing: fn($query, callable $get) => $query->where('product_id', $get('product_id'))
+                                    )
+                                    ->searchable()
+                                    ->preload()
+                                    ->required()
+                                    ->reactive()
+                                    ->disabled(fn(callable $get) => !$get('product_id'))
+                                    ->helperText(function (callable $get) {
+                                        $sizeId = $get('size_id');
+                                        if ($sizeId) {
+                                            $size = Size::find($sizeId);
+                                            if ($size) {
+                                                return "Available stock for size {$size->size}: {$size->quantity} units";
+                                            }
+                                        }
+                                        return 'Select size to see stock availability';
+                                    }),
+
+                                Select::make('shipping')
+                                    ->options([
+                                        "Same day" => "Same day",
+                                        "Next day" => "Next day",
+                                    ])
+                                    ->required(),
+
+                                TextInput::make('rent_periode')
+                                    ->label('Rental Period')
+                                    ->suffix('Day(s)')
+                                    ->numeric()
+                                    ->required()
+                                    ->minValue(1)
+                                    ->rules([
+                                        function ($get) {
+                                            return function (string $attribute, $value, $fail) use ($get) {
+                                                $productId = $get('product_id');
+                                                if ($productId && $value) {
+                                                    $product = Product::find($productId);
+
+                                                    if ($product && $value > $product->rent_periode) {
+                                                        $fail("Rental period cannot exceed {$product->rent_periode} day(s) for this catalogue.");
                                                     }
                                                 }
-                                                return 'Select size to see stock availability';
-                                            }),
+                                            };
+                                        }
+                                    ])
+                                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                        $productId = $get('product_id');
+                                        $rentPeriode = $state;
 
-                                        TextInput::make('shipping')
-                                            ->label('Shipping Cost')
-                                            ->numeric()
-                                            ->prefix('Rp')
-                                            ->required()
-                                            ->placeholder('0'),
-                                    ]),
+                                        if ($productId) {
+                                            $product = Product::with('priceDetail')->find($productId);
+                                            if ($product && $product->priceDetail) {
+                                                $pricePerItem = $product->priceDetail->price;
+                                                $set('rent_price', $pricePerItem * $rentPeriode);
+                                            }
+                                        }
+                                    })
+                                    ->reactive(),
 
-                                Grid::make(3)
-                                    ->schema([
-                                        TextInput::make('rent_periode')
-                                            ->label('Rental Period (Days)')
-                                            ->numeric()
-                                            ->required()
-                                            ->minValue(1)
-                                            ->placeholder('Enter number of days')
-                                            ->rules([
-                                                function ($get) {
-                                                    return function (string $attribute, $value, $fail) use ($get) {
-                                                        $sizeId = $get('size_id');
-                                                        if ($sizeId && $value) {
-                                                            $size = Size::find($sizeId);
-                                                            if ($size && $value > $size->quantity) {
-                                                                $fail("Cannot book more than available stock ({$size->quantity} units).");
-                                                            }
-                                                        }
-                                                    };
-                                                }
-                                            ]),
+                                TextInput::make('rent_price')
+                                    ->label('Rental Price')
+                                    ->numeric()
+                                    ->prefix('Rp')
+                                    ->required(),
 
-                                        TextInput::make('rent_price')
-                                            ->label('Rental Price')
-                                            ->numeric()
-                                            ->prefix('Rp')
-                                            ->required()
-                                            ->placeholder('0')
-                                            ->helperText('Price per rental period'),
+                                TextInput::make('deposit')
+                                    ->numeric()
+                                    ->prefix('Rp'),
 
-                                        TextInput::make('deposit')
-                                            ->label('Security Deposit')
-                                            ->numeric()
-                                            ->prefix('Rp')
-                                            ->placeholder('0')
-                                            ->helperText('Optional security deposit'),
-                                    ]),
+                                DatePicker::make('use_by_date')
+                                    ->label('Use By Date')
+                                    ->prefixIcon('heroicon-o-calendar')
+                                    ->required()
+                                    ->native(false)
+                                    ->displayFormat('d/m/Y')
+                                    ->minDate(today())
+                                    ->helperText('When the item will be used'),
 
-                                Grid::make(3)
-                                    ->schema([
-                                        DatePicker::make('use_by_date')
-                                            ->label('Use By Date')
-                                            ->required()
-                                            ->native(false)
-                                            ->displayFormat('d/m/Y')
-                                            ->minDate(today())
-                                            ->helperText('When the item will be used'),
+                                DatePicker::make('estimated_delivery_date')
+                                    ->label('Estimated Delivery')
+                                    ->prefixIcon('heroicon-o-calendar')
+                                    ->native(false)
+                                    ->displayFormat('d/m/Y')
+                                    ->minDate(today()),
 
-                                        DatePicker::make('estimated_delivery_date')
-                                            ->label('Estimated Delivery')
-                                            ->native(false)
-                                            ->displayFormat('d/m/Y')
-                                            ->minDate(today())
-                                            ->helperText('Expected delivery date'),
-
-                                        DatePicker::make('estimated_return_date')
-                                            ->label('Estimated Return')
-                                            ->native(false)
-                                            ->displayFormat('d/m/Y')
-                                            ->after('estimated_delivery_date')
-                                            ->helperText('Expected return date'),
-                                    ]),
+                                DatePicker::make('estimated_return_date')
+                                    ->label('Estimated Return')
+                                    ->prefixIcon('heroicon-o-calendar')
+                                    ->native(false)
+                                    ->displayFormat('d/m/Y')
+                                    ->after('estimated_delivery_date')
                             ])
-                            ->columns(1)
+                            ->columns(2)
                             ->collapsible()
                             ->collapsed(false)
-                            ->addActionLabel('Add New Item')
                             ->deleteAction(
                                 fn(Action $action) => $action->requiresConfirmation()
                             )
-                            ->reorderableWithButtons()
+                            ->reorderable()
                             ->itemLabel(function (array $state): ?string {
                                 if (!empty($state['product_id'])) {
                                     $product = Product::find($state['product_id']);
@@ -244,88 +254,28 @@ class OrderForm
                             ->minItems(1),
                     ])
                     ->columns(1),
-            ]);
+            ])->columns(1);
 
-        // return $schema
-        //     ->components([
-        //         Section::make('Customer Info')
-        //             ->schema([
-        //                 TextInput::make('name')->required(),
-        //                 TextInput::make('phone_number')->required(),
-        //                 FileUpload::make('identity_image')
-        //                     ->image()
-        //                     ->directory('orders/identity')
-        //                     ->required(),
-        //                 Textarea::make('address')->required(),
-        //                 TextInput::make('expedition')->required(),
-        //                 TextInput::make('account_number')->required(),
-        //                 TextInput::make('provider_name')->required(),
-        //                 Select::make('status')
-        //                     ->options([
-        //                         'pending'   => 'Pending',
-        //                         'approved'  => 'Approved',
-        //                         'shipped'   => 'Shipped',
-        //                         'returned'  => 'Returned',
-        //                         'cancelled' => 'Cancelled',
-        //                     ])
-        //                     ->default('pending'),
-        //                 Textarea::make('desc'),
-        //             ])->columns(2),
+        //     TextInput::make('quantity')
+        // ->label('Quantity')
+        // ->numeric()
+        // ->required()
+        // ->minValue(1)
+        // ->default(1)
+        // ->rules([
+        //     function ($get) {
+        //         return function (string $attribute, $value, $fail) use ($get) {
+        //             $sizeId = $get('size_id');
+        //             if ($sizeId && $value) {
+        //                 $size = Size::find($sizeId);
+        //                 if ($size && $value > $size->quantity) {
+        //                     $fail("Cannot book more than available stock ({$size->quantity} units).");
+        //                 }
+        //             }
+        //         };
+        //     }
+        // ])
+        // ->helperText(fn($get) => $get('size_id') ? 'Jumlah unit yang ingin disewa' : null),
 
-        //         Section::make('Order Items')
-        //             ->schema([
-        //                 Repeater::make('items')
-        //                     ->relationship()
-        //                     ->schema([
-        //                         Select::make('product_id')
-        //                             ->relationship('product', 'name')
-        //                             ->searchable()
-        //                             ->required(),
-
-        //                         Select::make('size_id')
-        //                             ->relationship('size', 'size')
-        //                             ->required()
-        //                             ->reactive(),
-
-        //                         TextInput::make('shipping')
-        //                             ->required(),
-
-        //                         TextInput::make('rent_periode')
-        //                             ->numeric()
-        //                             ->required()
-        //                             ->rules([
-        //                                 function (Forms\Get $get) {
-        //                                     return function (string $attribute, $value, $fail) use ($get) {
-        //                                         $sizeId = $get('size_id');
-        //                                         if ($sizeId) {
-        //                                             $size = Size::find($sizeId);
-        //                                             if ($size && $value > $size->quantity) {
-        //                                                 $fail("Cannot book more than available stock ({$size->quantity}).");
-        //                                             }
-        //                                         }
-        //                                     };
-        //                                 }
-        //                             ]),
-
-        //                         TextInput::make('rent_price')
-        //                             ->numeric()
-        //                             ->prefix('Rp')
-        //                             ->required(),
-
-        //                         TextInput::make('deposit')
-        //                             ->numeric()
-        //                             ->prefix('Rp'),
-
-        //                         DatePicker::make('use_by_date')
-        //                             ->required(),
-
-        //                         DatePicker::make('estimated_delivery_date'),
-        //                         DatePicker::make('estimated_return_date'),
-        //                     ])
-        //                     ->columns(3)
-        //                     ->collapsible()
-        //                     ->addActionLabel('Add Item'),
-        //             ])
-        //     ]);
     }
 }

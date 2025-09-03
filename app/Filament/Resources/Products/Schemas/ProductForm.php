@@ -62,7 +62,7 @@ class ProductForm
                         TextInput::make('ownership')->nullable(),
                         TextInput::make('rent_periode')
                             ->label('Rent Periode')
-                            ->prefix('Day')
+                            ->suffix('Day(s)')
                             ->numeric()
                             ->default(1)
                             ->required(),
@@ -79,7 +79,7 @@ class ProductForm
                                     ->nullable(),
                             ])
                             ->required(),
-                        DatePicker::make('upload_at')->helperText('Latest catalogue will be placed on the first page.')->required()->default(now()),
+                        DatePicker::make('upload_at')->prefixIcon('heroicon-o-calendar')->helperText('Latest catalogue will be placed on the first page.')->required()->default(now()),
                         RichEditor::make('description')
                             ->toolbarButtons([
                                 'bold',
