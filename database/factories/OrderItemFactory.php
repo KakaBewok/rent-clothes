@@ -25,6 +25,7 @@ class OrderItemFactory extends Factory
             'size_id' => Size::factory(),
             'shipping' => $this->faker->randomElement(['Next Day', 'Same Day', 'Regular']),
             'rent_periode' => $this->faker->numberBetween(1, 7),
+            'quantity' => $this->faker->numberBetween(1, 4),
             'rent_price' => $this->faker->numberBetween(50000, 300000),
             'deposit' => $this->faker->numberBetween(20000, 100000),
             'use_by_date' => $this->faker->dateTimeBetween('+1 days', '+10 days'),

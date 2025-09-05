@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('size_id')->constrained()->cascadeOnDelete();
             $table->string('shipping');
             $table->integer('rent_periode');
+            $table->integer('quantity');
             $table->decimal('rent_price', 12, 2)->nullable();
             $table->decimal('deposit', 12, 2)->nullable();
             $table->date('use_by_date');

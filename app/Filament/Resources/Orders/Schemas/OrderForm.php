@@ -11,7 +11,8 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Grid;
+use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
@@ -40,10 +41,10 @@ class OrderForm
                             ->directory('orders/identity')
                             ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
                             ->imageEditor()
-                            ->maxSize(3048)
-                            ->acceptedFileTypes(['image/jpeg', 'image/png'])
-                            ->required()
-                            ->helperText('Upload clear photo of ID card (max 3MB, JPG/PNG only)'),
+                            ->maxSize(config('uploads.images.max_size'))
+                            ->acceptedFileTypes(config('uploads.images.accepted_types'))
+                            ->helperText('Upload clear photo of ID card. Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
+                            ->required(),
 
                         Select::make('expedition')
                             ->label('Shipping Service')
@@ -65,11 +66,10 @@ class OrderForm
                         TextInput::make('account_number')
                             ->numeric()
                             ->required()
-                            ->maxLength(50)
-                            ->placeholder('Customer account number'),
+                            ->maxLength(50),
 
                         Select::make('provider_name')
-                            ->label('Payment Provider')
+                            ->label('Bank Name/Provider')
                             ->required()
                             ->options([
                                 'BCA' => 'BCA',
@@ -109,7 +109,6 @@ class OrderForm
                             ->rows(3)
                             ->maxLength(1000)
                             ->placeholder('Any special instructions or notes...'),
-
                     ])
                     ->columns(2),
 
@@ -126,7 +125,10 @@ class OrderForm
                                     ->preload()
                                     ->required()
                                     ->reactive()
-                                    ->afterStateUpdated(fn(callable $set) => $set('size_id', null)),
+                                    ->afterStateUpdated(function (callable $set) {
+                                        $set('size_id', null);
+                                        $set('quantity', null);
+                                    }),
 
                                 Select::make('size_id')
                                     ->label('Size')
@@ -139,18 +141,51 @@ class OrderForm
                                     ->preload()
                                     ->required()
                                     ->reactive()
+                                    ->disabled(fn(callable $get) => !$get('product_id')),
+                                TextInput::make('quantity')
+                                    ->numeric()
+                                    ->required()
+                                    ->minValue(1)
+                                    ->maxValue(function (callable $get) {
+                                        $sizeId = $get('size_id');
+                                        if ($sizeId) {
+                                            $size = Size::find($sizeId);
+                                            return $size?->quantity ?? null;
+                                        }
+                                        return null;
+                                    })
+                                    ->reactive()
                                     ->disabled(fn(callable $get) => !$get('product_id'))
                                     ->helperText(function (callable $get) {
                                         $sizeId = $get('size_id');
                                         if ($sizeId) {
                                             $size = Size::find($sizeId);
-                                            if ($size) {
-                                                return "Available stock for size {$size->size}: {$size->quantity} units";
+                                            if ($size && $size->availability) {
+                                                return "Available stock for size {$size->size}: {$size->quantity} items";
                                             }
                                         }
                                         return 'Select size to see stock availability';
                                     }),
+                                // ->rules([
+                                //     function ($get) {
+                                //         return function (string $attribute, $value, $fail) use ($get) {
+                                //             $productId = $get('product_id');
+                                //             $sizeId = $get('size_id');
 
+                                //             if ($productId && $sizeId && $value) {
+                                //                 $product = Product::with('sizes')->find($productId);
+
+                                //                 if ($product) {
+                                //                     $size = $product->sizes->firstWhere('id', $sizeId);
+
+                                //                     if ($size && $value > $size->quantity) {
+                                //                         $fail("Quantity cannot exceed {$size->quantity} for this size.");
+                                //                     }
+                                //                 }
+                                //             }
+                                //         };
+                                //     }
+                                // ]),
                                 Select::make('shipping')
                                     ->options([
                                         "Same day" => "Same day",
@@ -177,27 +212,35 @@ class OrderForm
                                                 }
                                             };
                                         }
-                                    ])
-                                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                                        $productId = $get('product_id');
-                                        $rentPeriode = $state;
-
-                                        if ($productId) {
-                                            $product = Product::with('priceDetail')->find($productId);
-                                            if ($product && $product->priceDetail) {
-                                                $pricePerItem = $product->priceDetail->price;
-                                                $set('rent_price', $pricePerItem * $rentPeriode);
-                                            }
-                                        }
-                                    })
-                                    ->reactive(),
-
+                                    ]),
                                 TextInput::make('rent_price')
-                                    ->label('Rental Price')
+                                    ->label('Rent Price')
                                     ->numeric()
                                     ->prefix('Rp')
-                                    ->required(),
+                                    ->required()
+                                    ->dehydrated(false)
+                                    ->helperText('Click "Calculate Rent Price" button to confirm the final price for this item'),
+                                Actions::make([
+                                    Action::make('calculate_rent_price')
+                                        ->icon('heroicon-m-calculator')
+                                        ->color('success')
+                                        ->action(function (callable $set, callable $get) {
+                                            $productId = $get('product_id');
+                                            $days = (int) $get('rent_periode');
+                                            $qty = (int) $get('quantity');
 
+                                            if ($productId && $days && $qty) {
+                                                $pricePerDay = Product::where('id', $productId)
+                                                    ->with('priceDetail')
+                                                    ->first()?->priceDetail?->rent_price;
+
+                                                if ($pricePerDay) {
+                                                    $total = $pricePerDay * $days * $qty;
+                                                    $set('rent_price', $total);
+                                                }
+                                            }
+                                        })
+                                ]),
                                 TextInput::make('deposit')
                                     ->numeric()
                                     ->prefix('Rp'),
@@ -255,27 +298,5 @@ class OrderForm
                     ])
                     ->columns(1),
             ])->columns(1);
-
-        //     TextInput::make('quantity')
-        // ->label('Quantity')
-        // ->numeric()
-        // ->required()
-        // ->minValue(1)
-        // ->default(1)
-        // ->rules([
-        //     function ($get) {
-        //         return function (string $attribute, $value, $fail) use ($get) {
-        //             $sizeId = $get('size_id');
-        //             if ($sizeId && $value) {
-        //                 $size = Size::find($sizeId);
-        //                 if ($size && $value > $size->quantity) {
-        //                     $fail("Cannot book more than available stock ({$size->quantity} units).");
-        //                 }
-        //             }
-        //         };
-        //     }
-        // ])
-        // ->helperText(fn($get) => $get('size_id') ? 'Jumlah unit yang ingin disewa' : null),
-
     }
 }

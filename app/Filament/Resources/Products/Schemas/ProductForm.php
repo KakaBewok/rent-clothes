@@ -181,13 +181,13 @@ class ProductForm
                     ->schema([
                         FileUpload::make('cover_image')
                             ->image()
-                            ->maxSize(3072)
+                            ->maxSize(config('uploads.images.max_size'))
+                            ->acceptedFileTypes(config('uploads.images.accepted_types'))
+                            ->helperText('Upload an image file. Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
                             ->disk('public')
                             ->directory('products/covers')
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
                             ->imageEditor()
                             ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
-                            ->helperText('Upload an image file. Max file size: 3MB.')
                             ->required(),
 
                         Repeater::make('galleries')
@@ -195,11 +195,11 @@ class ProductForm
                             ->schema([
                                 FileUpload::make('image_path')
                                     ->image()
-                                    ->maxSize(3072)
+                                    ->maxSize(config('uploads.images.max_size'))
+                                    ->acceptedFileTypes(config('uploads.images.accepted_types'))
+                                    ->helperText('Upload an image file. Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
                                     ->disk('public')
                                     ->directory('products/galleries')
-                                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
-                                    ->helperText('Upload an image file. Max file size: 3MB.')
                                     ->imageEditor()
                                     ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
                                     ->required(),

@@ -18,6 +18,7 @@ class OrderItem extends Model
         'size_id',
         'shipping',
         'rent_periode',
+        'quantity',
         'rent_price',
         'deposit',
         'use_by_date',
