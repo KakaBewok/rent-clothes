@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Products\Schemas;
 
+use App\Services\HelperService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -14,7 +15,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\RawJs;
 
 class ProductForm
 {
@@ -66,8 +66,18 @@ class ProductForm
                             ->numeric()
                             ->default(1)
                             ->required(),
-                        TextInput::make('additional_ribbon')
-                            ->numeric(),
+                        Select::make('additional_ribbon')
+                            ->options([
+                                "New arrival" => "New arrival",
+                                "Coming soon" => "Coming soon",
+                                "Hijab friendly" => "Hijab friendly",
+                                "Promo" => "Promo",
+                                "Most favorite" => "Most favorite"
+                            ])
+                            ->searchable()
+                            ->nullable(),
+
+
                         Select::make('type_id')
                             ->relationship('type', 'name')
                             ->searchable()
@@ -115,17 +125,7 @@ class ProductForm
                             Action::make('calculate_final_price')
                                 ->icon('heroicon-m-calculator')
                                 ->color('success')
-                                ->action(function (callable $set, callable $get) {
-                                    $rentPrice = (float) $get('rent_price');
-                                    $discount = (float) $get('discount');
-
-                                    if ($discount > 0) {
-                                        $priceAfter = $rentPrice - ($rentPrice * $discount / 100);
-                                        $set('price_after_discount', $priceAfter);
-                                    } else {
-                                        $set('price_after_discount', $rentPrice);
-                                    }
-                                })
+                                ->action(fn($set, $get) => HelperService::calculateFinalPrice($set, $get))
                         ]),
                         TextInput::make('deposit')
                             ->prefix('Rp')
@@ -136,10 +136,6 @@ class ProductForm
                             ->prefix('Rp')
                             ->numeric()
                             ->required(),
-
-
-
-
                     ])->relationship('priceDetail')
                     ->columns(1),
 
@@ -173,9 +169,6 @@ class ProductForm
                             ])
                             ->minItems(1)->reorderable()->collapsible(),
                     ]),
-
-
-
                 Section::make('Media')
                     ->icon('heroicon-m-photo')
                     ->schema([

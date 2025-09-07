@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->foreignId('color_id')->constrained()->cascadeOnDelete();
             $table->foreignId('branch_id')->constrained()->cascadeOnDelete();
-            $table->string('additional_ribbon', 12, 2)->nullable();
+            $table->string('additional_ribbon')->nullable();
             $table->foreignId('type_id')->constrained()->cascadeOnDelete();
             $table->string('ownership')->nullable();
             $table->integer('rent_periode');

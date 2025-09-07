@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Orders\Schemas;
 
 use App\Models\Product;
 use App\Models\Size;
+use App\Services\HelperService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -11,7 +12,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -128,6 +128,8 @@ class OrderForm
                                     ->afterStateUpdated(function (callable $set) {
                                         $set('size_id', null);
                                         $set('quantity', null);
+                                        $set('rent_periode', 1);
+                                        $set('rent_price', null);
                                     }),
 
                                 Select::make('size_id')
@@ -142,9 +144,20 @@ class OrderForm
                                     ->required()
                                     ->reactive()
                                     ->disabled(fn(callable $get) => !$get('product_id')),
+
+                                DatePicker::make('use_by_date')
+                                    ->label('Use By Date')
+                                    ->prefixIcon('heroicon-o-calendar')
+                                    ->required()
+                                    ->native(false)
+                                    ->displayFormat('d/m/Y')
+                                    ->default(today())
+                                    ->minDate(today()),
+
                                 TextInput::make('quantity')
                                     ->numeric()
                                     ->required()
+                                    ->default(1)
                                     ->minValue(1)
                                     ->maxValue(function (callable $get) {
                                         $sizeId = $get('size_id');
@@ -153,39 +166,8 @@ class OrderForm
                                             return $size?->quantity ?? null;
                                         }
                                         return null;
-                                    })
-                                    ->reactive()
-                                    ->disabled(fn(callable $get) => !$get('product_id'))
-                                    ->helperText(function (callable $get) {
-                                        $sizeId = $get('size_id');
-                                        if ($sizeId) {
-                                            $size = Size::find($sizeId);
-                                            if ($size && $size->availability) {
-                                                return "Available stock for size {$size->size}: {$size->quantity} items";
-                                            }
-                                        }
-                                        return 'Select size to see stock availability';
                                     }),
-                                // ->rules([
-                                //     function ($get) {
-                                //         return function (string $attribute, $value, $fail) use ($get) {
-                                //             $productId = $get('product_id');
-                                //             $sizeId = $get('size_id');
 
-                                //             if ($productId && $sizeId && $value) {
-                                //                 $product = Product::with('sizes')->find($productId);
-
-                                //                 if ($product) {
-                                //                     $size = $product->sizes->firstWhere('id', $sizeId);
-
-                                //                     if ($size && $value > $size->quantity) {
-                                //                         $fail("Quantity cannot exceed {$size->quantity} for this size.");
-                                //                     }
-                                //                 }
-                                //             }
-                                //         };
-                                //     }
-                                // ]),
                                 Select::make('shipping')
                                     ->options([
                                         "Same day" => "Same day",
@@ -199,20 +181,10 @@ class OrderForm
                                     ->numeric()
                                     ->required()
                                     ->minValue(1)
-                                    ->rules([
-                                        function ($get) {
-                                            return function (string $attribute, $value, $fail) use ($get) {
-                                                $productId = $get('product_id');
-                                                if ($productId && $value) {
-                                                    $product = Product::find($productId);
-
-                                                    if ($product && $value > $product->rent_periode) {
-                                                        $fail("Rental period cannot exceed {$product->rent_periode} day(s) for this catalogue.");
-                                                    }
-                                                }
-                                            };
-                                        }
-                                    ]),
+                                    ->default(1)
+                                    ->rules(
+                                        [HelperService::rentPeriodRule()]
+                                    ),
                                 TextInput::make('rent_price')
                                     ->label('Rent Price')
                                     ->numeric()
@@ -224,36 +196,12 @@ class OrderForm
                                     Action::make('calculate_rent_price')
                                         ->icon('heroicon-m-calculator')
                                         ->color('success')
-                                        ->action(function (callable $set, callable $get) {
-                                            $productId = $get('product_id');
-                                            $days = (int) $get('rent_periode');
-                                            $qty = (int) $get('quantity');
-
-                                            if ($productId && $days && $qty) {
-                                                $pricePerDay = Product::where('id', $productId)
-                                                    ->with('priceDetail')
-                                                    ->first()?->priceDetail?->rent_price;
-
-                                                if ($pricePerDay) {
-                                                    $total = $pricePerDay * $days * $qty;
-                                                    $set('rent_price', $total);
-                                                }
-                                            }
-                                        })
+                                        ->tooltip('Rent price = Price per day * Rental period * Quantity')
+                                        ->action(fn($set, $get) => HelperService::calculateOrderItemPrice($set, $get))
                                 ]),
                                 TextInput::make('deposit')
                                     ->numeric()
                                     ->prefix('Rp'),
-
-                                DatePicker::make('use_by_date')
-                                    ->label('Use By Date')
-                                    ->prefixIcon('heroicon-o-calendar')
-                                    ->required()
-                                    ->native(false)
-                                    ->displayFormat('d/m/Y')
-                                    ->minDate(today())
-                                    ->helperText('When the item will be used'),
-
                                 DatePicker::make('estimated_delivery_date')
                                     ->label('Estimated Delivery')
                                     ->prefixIcon('heroicon-o-calendar')
@@ -275,24 +223,7 @@ class OrderForm
                                 fn(Action $action) => $action->requiresConfirmation()
                             )
                             ->reorderable()
-                            ->itemLabel(function (array $state): ?string {
-                                if (!empty($state['product_id'])) {
-                                    $product = Product::find($state['product_id']);
-                                    $size = !empty($state['size_id']) ? Size::find($state['size_id']) : null;
-
-                                    $label = $product?->name ?? 'Unknown Product';
-                                    if ($size) {
-                                        $label .= " ({$size->size})";
-                                    }
-                                    if (!empty($state['rent_price'])) {
-                                        $label .= " - Rp " . number_format($state['rent_price'], 0, ',', '.');
-                                    }
-
-                                    return $label;
-                                }
-
-                                return 'New Item';
-                            })
+                            ->itemLabel(fn(array $state): ?string => HelperService::formatOrderItemLabel($state))
                             ->defaultItems(1)
                             ->minItems(1),
                     ])

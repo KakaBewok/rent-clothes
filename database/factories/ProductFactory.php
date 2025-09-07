@@ -31,7 +31,7 @@ class ProductFactory extends Factory
             'ownership' => $this->faker->name,
             'rent_periode' => $this->faker->numberBetween(1, 7),
             'upload_at' => now(),
-            'additional_ribbon' => $this->faker->randomElement(["1", "2", "3"]),
+            'additional_ribbon' => $this->faker->randomElement(["New arrival", "Coming soon", "Hijab friendly", "Promo", "Most favorite"]),
             'type_id' => Type::factory(),
             'description' => $this->faker->sentence,
         ];
