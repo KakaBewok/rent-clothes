@@ -27,7 +27,9 @@ class CreateOrder extends CreateRecord
         foreach ($items as $item) {
             $useByDate = date('Y-m-d', strtotime($item['use_by_date']));
             $rentPeriode = (int) $item['rent_periode'];
-            $endDate = date('Y-m-d', strtotime($item['estimated_return_date'])) ?? date('Y-m-d', strtotime("+{$rentPeriode} days", strtotime($useByDate)));
+            $endDate = !empty($item['estimated_return_date'])
+                ? date('Y-m-d', strtotime($item['estimated_return_date']))
+                : date('Y-m-d', strtotime("+{$rentPeriode} days", strtotime($useByDate)));
 
             $available = HelperService::getAvailableStock(
                 $item['product_id'],

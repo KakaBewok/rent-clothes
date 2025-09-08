@@ -25,7 +25,9 @@ class Product extends Model
         'description',
     ];
 
-    protected $dates = ['upload_at'];
+    protected $casts = [
+        'upload_at' => 'datetime',
+    ];
 
     public function brand()
     {

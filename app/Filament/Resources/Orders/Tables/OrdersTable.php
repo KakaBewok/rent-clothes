@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Orders\Tables;
 
+use App\Exports\OrdersExport;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -11,6 +13,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrdersTable
 {
@@ -89,6 +92,10 @@ class OrdersTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+                Action::make('exportExcel')
+                    ->label('Excel')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(fn() => Excel::download(new OrdersExport, 'orders-' . now()->format('Y-m-d') . '.xlsx')),
             ]);
     }
 }

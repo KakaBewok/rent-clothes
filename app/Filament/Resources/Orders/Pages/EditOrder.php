@@ -11,7 +11,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class EditOrder extends EditRecord
 {
@@ -34,8 +36,11 @@ class EditOrder extends EditRecord
         $items = $this->data['items'] ?? [];
 
         foreach ($items as $item) {
-            $useByDate = date('Y-m-d', strtotime($item['use_by_date']));
-            $endDate   = date('Y-m-d', strtotime($item['estimated_return_date']));
+            $useByDate   = date('Y-m-d', strtotime($item['use_by_date']));
+            $rentPeriode = (int) $item['rent_periode'];
+            $endDate     = !empty($item['estimated_return_date'])
+                ? date('Y-m-d', strtotime($item['estimated_return_date']))
+                : date('Y-m-d', strtotime("+{$rentPeriode} days", strtotime($useByDate)));
 
             $available = HelperService::getAvailableStock(
                 $item['product_id'],
@@ -44,8 +49,6 @@ class EditOrder extends EditRecord
                 $endDate,
                 $record->id
             );
-
-            Log::info("Available stock (update): {$available}");
 
             if ($available < $item['quantity']) {
                 $product = Product::find($item['product_id']);
@@ -59,6 +62,7 @@ class EditOrder extends EditRecord
                     ->send();
 
                 $this->halt();
+                return $record;
             }
         }
 
