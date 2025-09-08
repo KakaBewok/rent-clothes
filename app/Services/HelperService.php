@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Log;
 
 class HelperService
 {
-    public static function getAvailableStock($productId, $sizeId, $startDate, $endDate): int
+    public static function getAvailableStock($productId, $sizeId, $startDate, $endDate, $excludeOrderId = null): int
     {
         try {
-            return DB::transaction(function () use ($productId, $sizeId, $startDate, $endDate) {
+            return DB::transaction(function () use ($productId, $sizeId, $startDate, $endDate, $excludeOrderId) {
                 if (empty($productId) || empty($sizeId) || empty($startDate) || empty($endDate)) {
                     throw new \InvalidArgumentException('Missing required parameters for stock calculation');
                 }
@@ -27,6 +27,7 @@ class HelperService
                                 WHEN o.status IN ('pending', 'approved', 'shipped')
                                     AND oi.use_by_date <= :endDate
                                     AND oi.estimated_return_date >= :startDate
+                                    AND (:excludeOrderIdCheck IS NULL OR o.id != :excludeOrderId)
                                 THEN 
                                     oi.quantity
                                 ELSE 0
@@ -34,9 +35,9 @@ class HelperService
                         ), 0) AS available_stock
                     FROM 
                         sizes s
-                    JOIN 
+                    LEFT JOIN 
                         order_items oi ON oi.size_id = s.id
-                    JOIN 
+                    LEFT JOIN 
                         orders o ON o.id = oi.order_id
                     WHERE 
                         s.id = :sizeId
@@ -52,6 +53,8 @@ class HelperService
                     'sizeId'    => $sizeId,
                     'startDate' => $startDate,
                     'endDate'   => $endDate,
+                    'excludeOrderId'     => $excludeOrderId,
+                    'excludeOrderIdCheck' => $excludeOrderId,
                 ]);
 
                 if (!$result) {

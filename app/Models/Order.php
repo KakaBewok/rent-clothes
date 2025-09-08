@@ -26,4 +26,23 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    public function getTotalRentPriceAttribute()
+    {
+        return $this->items->sum('rent_price');
+    }
+
+    public function getTotalDepositAttribute()
+    {
+        return $this->items->sum('deposit');
+    }
+
+    public function getFirstProductNameAttribute(): ?string
+    {
+        return $this->items()
+            ->with('product')
+            ->first()
+            ?->product
+            ?->name;
+    }
 }

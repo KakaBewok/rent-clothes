@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
-use App\Models\Product;
 use App\Models\Size;
 use App\Services\HelperService;
 use Filament\Actions\Action;
@@ -190,13 +189,13 @@ class OrderForm
                                     ->numeric()
                                     ->prefix('Rp')
                                     ->required()
-                                    ->dehydrated(false)
+                                    ->dehydrated(true)
                                     ->helperText('Click "Calculate Rent Price" button to confirm the final price for this item'),
                                 Actions::make([
                                     Action::make('calculate_rent_price')
                                         ->icon('heroicon-m-calculator')
                                         ->color('success')
-                                        ->tooltip('Rent price = Price per day * Rental period * Quantity')
+                                        ->tooltip('Rent price = Price per day * Days * Quantity')
                                         ->action(fn($set, $get) => HelperService::calculateOrderItemPrice($set, $get))
                                 ]),
                                 TextInput::make('deposit')
