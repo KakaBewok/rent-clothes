@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Orders\Schemas;
 
 use App\Models\Size;
 use App\Services\HelperService;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -157,15 +158,41 @@ class OrderForm
                                     ->numeric()
                                     ->required()
                                     ->default(1)
-                                    ->minValue(1)
-                                    ->maxValue(function (callable $get) {
-                                        $sizeId = $get('size_id');
-                                        if ($sizeId) {
-                                            $size = Size::find($sizeId);
-                                            return $size?->quantity ?? null;
-                                        }
-                                        return null;
-                                    }),
+                                    ->minValue(1),
+                                // ->rules([
+                                //     function (callable $get, $record) {
+                                //         return
+                                //             function (string $attribute, $value, \Closure $fail) use ($get, $record) {
+                                //                 $productId   = $get('product_id');
+                                //                 $sizeId      = $get('size_id');
+                                //                 $useByDate   = $get('use_by_date');
+                                //                 $rentPeriode = (int) $get('rent_periode');
+                                //                 $endDate = $get('estimated_return_date')
+                                //                     ? Carbon::parse($get('estimated_return_date'))->format('Y-m-d')
+                                //                     : Carbon::parse($get('use_by_date'))
+                                //                     ->addDays($rentPeriode)
+                                //                     ->format('Y-m-d');
+
+                                //                 if (! $productId || ! $sizeId || ! $useByDate) {
+                                //                     return; // skip validasi
+                                //                 }
+
+                                //                 $excludeOrderId = $get('../../id');
+
+                                //                 $available = HelperService::getAvailableStock(
+                                //                     $productId,
+                                //                     $sizeId,
+                                //                     $useByDate,
+                                //                     $endDate,
+                                //                     $excludeOrderId
+                                //                 );
+
+                                //                 if ($available < $value) {
+                                //                     $fail("Only {$available} pcs available for this size in that period.");
+                                //                 }
+                                //             };
+                                //     }
+                                // ]),
 
                                 Select::make('shipping')
                                     ->options([

@@ -8,6 +8,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -40,9 +41,9 @@ class OrdersTable
                     ->badge()
                     ->colors([
                         'warning' => 'pending',
-                        'success' => 'approved',
+                        'primary' => 'approved',
                         'info'    => 'shipped',
-                        'primary' => 'returned',
+                        'success' => 'returned',
                         'danger'  => 'cancelled',
                     ])
                     ->formatStateUsing(fn($state) => ucfirst($state)),
@@ -85,6 +86,7 @@ class OrdersTable
                     }),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
