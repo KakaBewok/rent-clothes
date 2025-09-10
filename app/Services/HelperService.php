@@ -142,7 +142,7 @@ class HelperService
         }
 
         $product = Product::with('priceDetail')->find($productId);
-        $pricePerDay = $product?->priceDetail?->rent_price;
+        $pricePerDay = $product?->priceDetail?->price_after_discount;
 
         if ($pricePerDay) {
             $set('rent_price', $pricePerDay * $days * $qty);
