@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Banner;
+use App\Observers\BannerImageObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+#[ObservedBy([BannerImageObserver::class])]
 class BannerImage extends Model
 {
     /** @use HasFactory<\Database\Factories\BannerImagesFactory> */
