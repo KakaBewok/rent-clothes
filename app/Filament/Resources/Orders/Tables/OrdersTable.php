@@ -86,9 +86,9 @@ class OrdersTable
                     }),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
+                ViewAction::make()->iconButton('heroicon-o-eye'),
+                EditAction::make()->iconButton('heroicon-o-pencil'),
+                DeleteAction::make()->iconButton('heroicon-o-trash'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
