@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\ChangePasswordPage;
+use App\Filament\Pages\UpdateAccountPage;
 use App\Filament\Resources\AppSettings\AppSettingResource;
 use App\Models\AppSetting;
 use Filament\Actions\Action;
@@ -61,8 +63,12 @@ class AdminPanelProvider extends PanelProvider
             ->spa()
             ->userMenuItems([
                 Action::make('settings')
+                    ->label('General Settings')
                     ->url(fn(): string => AppSettingResource::getUrl())
-                    ->icon('heroicon-o-cog-6-tooth')
+                    ->icon('heroicon-o-cog-6-tooth'),
+                Action::make('update_account')
+                    ->url(fn(): string => UpdateAccountPage::getUrl())
+                    ->icon('heroicon-o-user'),
             ])
             ->brandName(fn() => AppSetting::first()?->app_name ?? 'Qatia Rent')
             ->brandLogo(

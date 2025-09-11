@@ -19,7 +19,7 @@ class AppSettingResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cog-6-tooth';
 
-    protected static ?string $pluralModelLabel = 'Settings';
+    protected static ?string $pluralModelLabel = 'General Settings';
 
     protected static bool $shouldRegisterNavigation = false;
 
