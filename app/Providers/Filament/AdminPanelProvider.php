@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Resources\AppSettings\AppSettingResource;
+use App\Models\AppSetting;
 use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -31,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Pink,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -62,6 +63,13 @@ class AdminPanelProvider extends PanelProvider
                 Action::make('settings')
                     ->url(fn(): string => AppSettingResource::getUrl())
                     ->icon('heroicon-o-cog-6-tooth')
-            ]);
+            ])
+            ->brandName(fn() => AppSetting::first()?->app_name ?? 'Qatia Rent')
+            ->brandLogo(
+                fn() =>
+                AppSetting::first()?->app_logo
+                    ? asset('storage/' . AppSetting::first()->app_logo)
+                    : null
+            );
     }
 }
