@@ -2,7 +2,6 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\ChangePasswordPage;
 use App\Filament\Pages\UpdateAccountPage;
 use App\Filament\Resources\AppSettings\AppSettingResource;
 use App\Models\AppSetting;

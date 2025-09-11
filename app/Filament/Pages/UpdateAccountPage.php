@@ -62,7 +62,6 @@ class UpdateAccountPage extends Page implements HasForms
                             ])->alignEnd(),
                         ]),
 
-                    // 🔹 TAB PASSWORD
                     Tab::make('Update Password')
                         ->schema([
                             TextInput::make('current_password')
@@ -140,75 +139,3 @@ class UpdateAccountPage extends Page implements HasForms
         $this->reset(['current_password', 'new_password', 'new_password_confirmation']);
     }
 }
-
-// class UpdateAccountPage extends Page implements HasForms
-// {
-//     use InteractsWithForms;
-
-//     protected string $view = 'filament.pages.update-account-page';
-
-//     protected static bool $shouldRegisterNavigation = false;
-
-//     public function mount(): void
-//     {
-//         $this->email = Filament::auth()->user()->email;
-//         $this->current_password = null;
-//     }
-
-//     public $email;
-//     public $current_password;
-//     public $new_password;
-//     public $new_password_confirmation;
-
-//     public function getFormSchema(): array
-//     {
-//         return [
-//             TextInput::make('email')
-//                 ->label('Update Email')
-//                 ->email()
-//                 ->default(fn() => Filament::auth()->user()->email),
-
-//             TextInput::make('current_password')
-//                 ->label('Current Password')
-//                 ->password()
-//                 ->rules(['current_password'])
-//                 ->revealable()
-//                 ->required(),
-
-//             TextInput::make('new_password')
-//                 ->label('New Password')
-//                 ->password()
-//                 ->required()
-//                 ->revealable()
-//                 ->confirmed(),
-
-//             TextInput::make('new_password_confirmation')
-//                 ->label('Confirm New Password')
-//                 ->password()
-//                 ->revealable()
-//                 ->required(),
-//         ];
-//     }
-
-//     public function save()
-//     {
-//         $this->validate();
-
-//         $user = Filament::auth()->user();
-
-//         $user->email = $this->email;
-
-//         if (!empty($this->new_password)) {
-//             $user->password = Hash::make($this->new_password);
-//         }
-
-//         $user->save();
-
-//         Notification::make()
-//             ->title('Account updated successfully!')
-//             ->success()
-//             ->send();
-
-//         $this->reset(['current_password', 'new_password', 'new_password_confirmation']);
-//     }
-// }
