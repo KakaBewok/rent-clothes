@@ -12,7 +12,6 @@ use BackedEnum;
 use UnitEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class ProductResource extends Resource
@@ -24,6 +23,11 @@ class ProductResource extends Resource
     protected static string | UnitEnum | null $navigationGroup = 'Catalogue & Order';
 
     protected static ?string $pluralModelLabel = 'Catalogue';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Schema $schema): Schema
     {

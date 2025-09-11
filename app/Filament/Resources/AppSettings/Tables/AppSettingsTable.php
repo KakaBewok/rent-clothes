@@ -6,7 +6,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -31,9 +30,7 @@ class AppSettingsTable
                 //
             ])
             ->recordActions([
-                ViewAction::make()->iconButton('heroicon-o-eye'),
                 EditAction::make()->iconButton('heroicon-o-pencil'),
-                DeleteAction::make()->iconButton('heroicon-o-trash'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

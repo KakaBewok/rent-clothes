@@ -41,6 +41,7 @@ class AppSettingForm
                     ->maxLength(1000)
                     ->helperText('This address will appear in the website footer to inform customers of your location.'),
                 TextInput::make('instagram')
+                    ->prefix('@')
                     ->helperText('Your Instagram account will be displayed in the website footer for customers to follow.'),
             ]);
     }
