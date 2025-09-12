@@ -7,14 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class OmzetChart extends ChartWidget
 {
-    protected ?string $heading = 'Omzet Chart';
+    protected ?string $heading = 'Monthly Omzet';
 
     protected bool $isCollapsible = true;
 
-    public static function sort(): int
-    {
-        return 2;
-    }
+    protected static ?int $sort = 3;
 
     protected function getData(): array
     {
@@ -36,6 +33,22 @@ class OmzetChart extends ChartWidget
                 ],
             ],
             'labels' => array_map(fn($m) => date("F", mktime(0, 0, 0, $m, 1)), array_keys($data)),
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'scales' => [
+                'y' => [
+                    'min' => 0,
+                    'suggestedMax' => 10_000_000,
+                    'beginAtZero' => true,
+                    'ticks' => [
+                        'stepSize' => 1_000_000,
+                    ]
+                ],
+            ],
         ];
     }
 

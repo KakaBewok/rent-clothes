@@ -7,12 +7,11 @@ use Illuminate\Support\Facades\DB;
 
 class CustomersChart extends ChartWidget
 {
-    protected ?string $heading = 'Customers Chart';
+    protected ?string $heading = 'Monthly Customers';
 
-    public static function sort(): int
-    {
-        return 5;
-    }
+    protected bool $isCollapsible = true;
+
+    protected static ?int $sort = 2;
 
     protected function getData(): array
     {
@@ -34,6 +33,23 @@ class CustomersChart extends ChartWidget
                 ],
             ],
             'labels' => array_map(fn($m) => date("F", mktime(0, 0, 0, $m, 1)), array_keys($data)),
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'scales' => [
+                'y' => [
+                    'min' => 0,
+                    'suggestedMax' => 250,
+                    'beginAtZero' => true,
+                    'ticks' => [
+                        'stepSize' => 50,
+                        'precision' => 0,
+                    ],
+                ],
+            ],
         ];
     }
 

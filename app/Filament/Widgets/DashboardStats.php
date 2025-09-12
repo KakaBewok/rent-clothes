@@ -8,17 +8,15 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class DashboardStats extends BaseWidget
 {
-    public static function sort(): int
-    {
-        return 0;
-    }
+    protected static ?int $sort = 1;
 
     protected function getStats(): array
     {
         return [
             Stat::make('Total Order', Order::count()),
-            Stat::make('Order Process', Order::where('status', 'approved')->count()),
+            Stat::make('Order Process', Order::whereIn('status', ['approved', 'pending', 'shipped'])->count()),
             Stat::make('Order Returned', Order::where('status', 'returned')->count()),
+            Stat::make('Order Cancelled', Order::where('status', 'cancelled')->count()),
         ];
     }
 }
