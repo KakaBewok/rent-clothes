@@ -31,7 +31,8 @@ class OrderForm
                         TextInput::make('phone_number')
                             ->numeric()
                             ->prefixIcon('heroicon-m-phone')
-                            ->maxLength(20),
+                            ->maxLength(20)
+                            ->required(),
 
                         FileUpload::make('identity_image')
                             ->label('Identity Document (KTP/SIM Card)')
