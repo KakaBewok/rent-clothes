@@ -43,6 +43,11 @@ class AppSettingForm
                 TextInput::make('instagram')
                     ->prefix('@')
                     ->helperText('Your Instagram account will be displayed in the website footer for customers to follow.'),
+                Textarea::make('description')
+                    ->rows(3)
+                    ->maxLength(1000)
+                    ->placeholder('Selamat datang di Qatia Rent, perusahaan rental baju terkemuka yang siap membantu Anda tampil sempurna di acara istimewa Anda.
+Kami memiliki koleksi baju berkualitas tinggi dari desainer terkenal untuk memenuhi kebutuhan Anda dalam acara pernikahan, lamaran, tunangan, pesta, dan acara formal lainnya. '),
             ]);
     }
 }

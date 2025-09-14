@@ -16,5 +16,6 @@ class AppSetting extends Model
         'email',
         'address',
         'instagram',
+        'description',
     ];
 }

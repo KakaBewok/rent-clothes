@@ -24,7 +24,8 @@ class AppSettingsTable
                 TextColumn::make('whatsapp_number')->label('WhatsApp'),
                 TextColumn::make('email'),
                 TextColumn::make('address'),
-                TextColumn::make('instagram')
+                TextColumn::make('instagram'),
+                TextColumn::make('description')->limit(50),
             ])
             ->filters([
                 //
