@@ -74,7 +74,6 @@ export interface Order {
     items?: OrderItem[];
     created_at?: string;
     updated_at?: string;
-
     // computed attributes
     total_rent_price?: number;
     total_deposit?: number;
@@ -97,6 +96,7 @@ export interface OrderItem {
     order?: Order;
     product?: Product;
     size?: Size;
+    type?: string;
     created_at?: string;
     updated_at?: string;
 }

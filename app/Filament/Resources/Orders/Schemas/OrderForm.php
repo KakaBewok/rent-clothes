@@ -265,6 +265,12 @@ class OrderForm
                                         ->tooltip('Rent price = Price per day * Days * Quantity')
                                         ->action(fn($set, $get) => HelperService::calculateOrderItemPrice($set, $get))
                                 ]),
+                                Select::make('type')
+                                    ->options([
+                                        'Hijab' => 'Hijab',
+                                        'Non Hijab'   => 'Non Hijab',
+                                    ])
+                                    ->default('Hijab'),
                                 TextInput::make('deposit')
                                     ->numeric()
                                     ->prefix('Rp')
