@@ -26,7 +26,7 @@ class ProductGalleryObserver
      */
     public function deleted(ProductGallery $gallery): void
     {
-         if ($gallery->image_path && Storage::disk('public')->exists($gallery->image_path)) {
+        if ($gallery->image_path && Storage::disk('public')->exists($gallery->image_path)) {
             Storage::disk('public')->delete($gallery->image_path);
         }
     }
