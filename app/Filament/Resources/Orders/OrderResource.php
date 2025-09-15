@@ -25,6 +25,8 @@ class OrderResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Order';
 
+    protected static ?int $navigationSort = 2;
+
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();

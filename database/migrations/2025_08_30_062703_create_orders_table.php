@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('phone_number');
-            $table->string('identity_image');
+            $table->string('identity_image')->nullable();
             $table->string('expedition');
             $table->string('account_number');
             $table->string('provider_name');

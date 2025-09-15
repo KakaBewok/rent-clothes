@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Product;
 use App\Models\Size;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +25,7 @@ class HelperService
                         s.quantity AS fix_stock,
                         s.quantity - COALESCE(SUM(
                             CASE 
-                                WHEN o.status IN ('pending', 'approved', 'shipped')
+                                WHEN o.status IN ('process', 'shipped')
                                     AND oi.use_by_date <= :endDate
                                     AND COALESCE(oi.estimated_return_date, DATE_ADD(oi.use_by_date, INTERVAL oi.rent_periode DAY)) >= :startDate
                                     AND (:excludeOrderIdCheck IS NULL OR o.id != :excludeOrderId)
@@ -169,5 +170,29 @@ class HelperService
         }
 
         return 'New Item';
+    }
+
+    public static function getEstimatedDeliveryDate(?string $useByDate, ?string $shippingType): ?Carbon
+    {
+        if (!$useByDate || !$shippingType) {
+            return null;
+        }
+
+        $date = Carbon::parse($useByDate);
+
+        return match ($shippingType) {
+            'Same day' => $date->copy()->subDay(1),
+            'Next day' => $date->copy()->subDays(2),
+            default   => null,
+        };
+    }
+
+    public static function getEstimatedReturnDate(?string $useByDate, ?int $rentPeriod): ?Carbon
+    {
+        if (!$useByDate || !$rentPeriod) {
+            return null;
+        }
+
+        return Carbon::parse($useByDate)->addDays($rentPeriod);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Orders\Schemas;
 
+use App\Models\Product;
+use App\Models\Size;
 use App\Services\HelperService;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -44,12 +46,14 @@ class OrderForm
                             ->maxSize(config('uploads.images.max_size'))
                             ->acceptedFileTypes(config('uploads.images.accepted_types'))
                             ->helperText('Upload clear photo of ID card. Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
-                            ->required(),
+                            ->nullable(),
 
                         Select::make('expedition')
                             ->label('Shipping Service')
                             ->required()
                             ->options([
+                                'Self Pickup' => 'Self Pickup',
+                                'Paxel' => 'Paxel',
                                 'JNE' => 'JNE',
                                 'J&T Express' => 'J&T Express',
                                 'TIKI' => 'TIKI',
@@ -89,13 +93,12 @@ class OrderForm
                         Select::make('status')
                             ->label('Order Status')
                             ->options([
-                                'pending'   => 'Pending',
-                                'approved'  => 'Approved',
+                                'process'  => 'Process',
                                 'shipped'   => 'Shipped',
                                 'returned'  => 'Returned',
-                                'cancelled' => 'Cancelled',
+                                'cancel' => 'Cancel',
                             ])
-                            ->default('pending')
+                            ->default('process')
                             ->required()
                             ->native(false),
                         Textarea::make('address')
@@ -125,11 +128,12 @@ class OrderForm
                                     ->preload()
                                     ->required()
                                     ->reactive()
-                                    ->afterStateUpdated(function (callable $set) {
+                                    ->afterStateUpdated(function ($state, callable $set) {
                                         $set('size_id', null);
                                         $set('quantity', null);
                                         $set('rent_periode', 1);
                                         $set('rent_price', null);
+                                        $set('deposit', Product::with('priceDetail')->find($state)?->priceDetail?->deposit);
                                     }),
 
                                 Select::make('size_id')
@@ -143,7 +147,10 @@ class OrderForm
                                     ->preload()
                                     ->required()
                                     ->reactive()
-                                    ->disabled(fn(callable $get) => !$get('product_id')),
+                                    ->disabled(fn(callable $get) => !$get('product_id'))
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        $set('quantity', Size::find($state)?->quantity);
+                                    }),
 
                                 DatePicker::make('use_by_date')
                                     ->label('Use By Date')
@@ -151,14 +158,28 @@ class OrderForm
                                     ->required()
                                     ->native(false)
                                     ->displayFormat('d/m/Y')
-                                    ->default(today())
-                                    ->minDate(today()),
+                                    ->minDate(today())
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                        $rentPeriod = (int) $get('rent_periode') ?: 1;
 
+                                        $set('estimated_delivery_date', HelperService::getEstimatedDeliveryDate(
+                                            $state,
+                                            $get('shipping')
+                                        ));
+
+                                        if ($state) {
+                                            $set(
+                                                'estimated_return_date',
+                                                HelperService::getEstimatedReturnDate($state, $rentPeriod)?->format('Y-m-d')
+                                            );
+                                        }
+                                    }),
                                 TextInput::make('quantity')
                                     ->numeric()
                                     ->required()
-                                    ->default(1)
                                     ->minValue(1)
+                                    ->disabled(fn(callable $get) => !$get('size_id'))
                                     ->rules([
                                         function (callable $get, $record) {
                                             return
@@ -199,7 +220,15 @@ class OrderForm
                                         "Same day" => "Same day",
                                         "Next day" => "Next day",
                                     ])
-                                    ->required(),
+                                    ->required()
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                        $set('estimated_delivery_date', HelperService::getEstimatedDeliveryDate(
+                                            $get('use_by_date'),
+                                            $state
+                                        ));
+                                    })
+                                    ->disabled(fn(callable $get) => !$get('use_by_date')),
 
                                 TextInput::make('rent_periode')
                                     ->label('Rental Period')
@@ -208,6 +237,17 @@ class OrderForm
                                     ->required()
                                     ->minValue(1)
                                     ->default(1)
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                        $useByDate = $get('use_by_date');
+
+                                        if ($useByDate) {
+                                            $set(
+                                                'estimated_return_date',
+                                                HelperService::getEstimatedReturnDate($useByDate, (int) $state)?->format('Y-m-d')
+                                            );
+                                        }
+                                    })
                                     ->rules(
                                         [HelperService::rentPeriodRule()]
                                     ),
@@ -227,13 +267,16 @@ class OrderForm
                                 ]),
                                 TextInput::make('deposit')
                                     ->numeric()
-                                    ->prefix('Rp'),
+                                    ->prefix('Rp')
+                                    ->disabled(fn(callable $get) => !$get('product_id')),
                                 DatePicker::make('estimated_delivery_date')
                                     ->label('Estimated Delivery')
                                     ->prefixIcon('heroicon-o-calendar')
                                     ->native(false)
                                     ->displayFormat('d/m/Y')
-                                    ->minDate(today()),
+                                    ->minDate(today())
+                                    ->disabled(fn(callable $get) => !$get('use_by_date'))
+                                    ->disabled(fn(callable $get) => !$get('shipping')),
 
                                 DatePicker::make('estimated_return_date')
                                     ->label('Estimated Return')
@@ -241,6 +284,7 @@ class OrderForm
                                     ->native(false)
                                     ->displayFormat('d/m/Y')
                                     ->after('estimated_delivery_date')
+                                    ->disabled(fn(callable $get) => !$get('use_by_date'))
                             ])
                             ->columns(2)
                             ->collapsible()

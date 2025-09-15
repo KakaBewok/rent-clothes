@@ -15,19 +15,18 @@ class OrdersExport implements FromCollection, WithHeadings
             ->flatMap(function ($order) {
                 return $order->items->map(function ($item) use ($order) {
                     return [
-                        'Order ID'           => $order->id,
-                        'Customer Name'      => $order->name,
-                        'Phone Number'       => $order->phone_number,
-                        'Address'            => $order->address,
-                        'Product'            => $item->product?->name,
-                        'Size'               => $item->size?->size,
-                        'Quantity'           => $item->quantity,
-                        'Use By Date'        => $item->use_by_date,
-                        'Estimated Return'   => $item->estimated_return_date,
-                        'Rent Price'         => $item->rent_price,
-                        'Deposit'            => $item->deposit,
+                        'Pelanggan'      => $order->name,
+                        'No. HP'       => $order->phone_number,
+                        'Alamat'            => $order->address,
+                        'Ekspedisi'         => $order->expedition,
                         'Status'             => ucfirst($order->status),
-                        'Created At'         => $order->created_at->format('Y-m-d H:i:s'),
+                        'Produk'            => $item->product?->name,
+                        'Pemilik'         => $item->product?->ownership,
+                        'Tipe' => $item->type,
+                        'Omset'         => $item->rent_price,
+                        'Tanggal kirim'        => $item->estimated_delivery_date,
+                        'Tanggal pakai'        => $item->use_by_date,
+                        'Tanggal pengembalian'   => $item->estimated_return_date,
                     ];
                 });
             });
@@ -36,19 +35,19 @@ class OrdersExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
-            'Order ID',
-            'Customer Name',
-            'Phone Number',
-            'Address',
-            'Product',
-            'Size',
-            'Quantity',
-            'Use By Date',
-            'Estimated Return',
-            'Rent Price',
-            'Deposit',
+            'Pelanggan',
+            'No. HP',
+            'Alamat',
+            'Ekspedisi',
             'Status',
-            'Created At',
+            'Produk',
+            'Pemilik',
+            'Tipe',
+            'Omset',
+            'Tanggal kirim',
+            'Tanggal pakai',
+            'Tanggal pengembalian',
+
         ];
     }
 }

@@ -14,9 +14,9 @@ class DashboardStats extends BaseWidget
     {
         return [
             Stat::make('Total Order', Order::count()),
-            Stat::make('Order Process', Order::whereIn('status', ['approved', 'pending', 'shipped'])->count()),
+            Stat::make('Order Process', Order::whereIn('status', ['process', 'shipped'])->count()),
             Stat::make('Order Returned', Order::where('status', 'returned')->count()),
-            Stat::make('Order Cancelled', Order::where('status', 'cancelled')->count()),
+            Stat::make('Order Cancel', Order::where('status', 'cancel')->count()),
         ];
     }
 }

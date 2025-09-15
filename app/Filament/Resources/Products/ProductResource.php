@@ -22,6 +22,8 @@ class ProductResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Catalogue & Order';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $pluralModelLabel = 'Catalogue';
 
     public static function getNavigationBadge(): ?string

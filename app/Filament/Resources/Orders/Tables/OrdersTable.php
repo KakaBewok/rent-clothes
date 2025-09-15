@@ -25,10 +25,11 @@ class OrdersTable
                 TextColumn::make('name')
                     ->label('Customer Name')
                     ->searchable(),
+                TextColumn::make('phone_number'),
                 TextColumn::make('first_product_name')
                     ->label('Catalogue Name')
                     ->limit(30),
-                TextColumn::make('phone_number'),
+                TextColumn::make('total_items'),
                 TextColumn::make('total_rent_price')
                     ->label('Omzet')
                     ->money('idr', true)
@@ -40,11 +41,10 @@ class OrdersTable
                     ->label('Status')
                     ->badge()
                     ->colors([
-                        'warning' => 'pending',
-                        'primary' => 'approved',
+                        'primary' => 'process',
                         'info'    => 'shipped',
                         'success' => 'returned',
-                        'danger'  => 'cancelled',
+                        'danger'  => 'cancel',
                     ])
                     ->formatStateUsing(fn($state) => ucfirst($state)),
             ])->defaultSort('created_at', 'desc')

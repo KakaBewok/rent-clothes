@@ -40,6 +40,11 @@ class Order extends Model
         return $this->items->sum('deposit');
     }
 
+    public function getTotalItemsAttribute()
+    {
+        return $this->items->count();
+    }
+
     public function getFirstProductNameAttribute(): ?string
     {
         return $this->items()
