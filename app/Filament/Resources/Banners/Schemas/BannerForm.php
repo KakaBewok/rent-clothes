@@ -16,42 +16,26 @@ class BannerForm
         return $schema
             ->components([
                 TextInput::make('title')->nullable(),
-
-                Repeater::make('images')
-                    ->relationship('images')
-                    ->schema([
-                        FileUpload::make('image_path')
-                            ->label('Banner Image')
-                            ->image()
-                            ->maxSize(config('uploads.images.max_size'))
-                            ->acceptedFileTypes(config('uploads.images.accepted_types'))
-                            ->helperText('Upload an image file or use image URL below (not both). Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
-                            ->disk('public')
-                            ->directory('banners')
-                            ->imageEditor()
-                            ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
-                            ->hintIcon('heroicon-m-exclamation-triangle')
-                            ->hintColor('warning')
-                            ->reactive()
-                            ->afterStateUpdated(function ($state, callable $set) {
-                                if ($state) {
-                                    $set('image_url', null);
-                                }
-                            }),
-
-                        TextInput::make('image_url')
-                            ->label('Banner URL')
-                            ->url()
-                            ->hintIcon('heroicon-m-exclamation-triangle')
-                            ->hintColor('warning')
-                            ->reactive()
-                            ->afterStateUpdated(function ($state, callable $set) {
-                                if ($state) {
-                                    $set('image_path', null);
-                                }
-                            }),
-                    ])->columnSpan('full')->collapsible()->label('Carousel Banner')->reorderable(),
-
+                FileUpload::make('images')
+                    ->label('Banners')
+                    ->image()
+                    ->multiple()
+                    ->maxFiles(10)
+                    ->maxSize(config('uploads.images.max_size'))
+                    ->acceptedFileTypes(config('uploads.images.accepted_types'))
+                    ->helperText('Upload an image file or use image URL below (not both). Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
+                    ->disk('public')
+                    ->directory('banners')
+                    ->imageEditor()
+                    ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
+                    ->hintIcon('heroicon-m-exclamation-triangle')
+                    ->hintColor('warning')
+                    ->reactive()
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        if ($state) {
+                            $set('image_url', null);
+                        }
+                    }),
                 Toggle::make('is_active')->label('Status')->hiddenOn(Operation::Create)->visibleOn(Operation::Edit)->default(true),
             ]);
     }

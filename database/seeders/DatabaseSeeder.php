@@ -33,12 +33,7 @@ class DatabaseSeeder extends Seeder
 
         // Banner + BannerImage
         Banner::factory(5)
-            ->create()
-            ->each(function ($banner) {
-                BannerImage::factory(3)
-                    ->recycle([$banner])
-                    ->create();
-            });
+            ->create();
 
         // Master data
         Brand::factory(5)->create();
@@ -50,10 +45,6 @@ class DatabaseSeeder extends Seeder
         $products = Product::factory(10)->create();
 
         Size::factory(3)
-            ->recycle($products)
-            ->create();
-
-        ProductGallery::factory(20)
             ->recycle($products)
             ->create();
 

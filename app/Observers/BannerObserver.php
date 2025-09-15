@@ -7,15 +7,28 @@ use Illuminate\Support\Facades\Storage;
 
 class BannerObserver
 {
-    /**
-     * Handle the Banner "deleted" event.
-     */
     public function deleted(Banner $banner): void
     {
-        if ($banner->images->isNotEmpty()) {
-            foreach ($banner->images as $image) {
-                if ($image->image_path && Storage::disk('public')->exists($image->image_path)) {
-                    Storage::disk('public')->delete($image->image_path);
+        if (!empty($banner->images)) {
+            foreach ($banner->images as $imagePath) {
+                if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+                    Storage::disk('public')->delete($imagePath);
+                }
+            }
+        }
+    }
+
+    public function updating(Banner $banner): void
+    {
+        if ($banner->isDirty('images')) {
+            $oldImages = $banner->getOriginal('images') ?? [];
+            $newImages = $banner->images ?? [];
+
+            $deletedImages = array_diff($oldImages, $newImages);
+
+            foreach ($deletedImages as $imagePath) {
+                if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+                    Storage::disk('public')->delete($imagePath);
                 }
             }
         }

@@ -183,21 +183,24 @@ class ProductForm
                             ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
                             ->required(),
 
-                        Repeater::make('galleries')
-                            ->relationship()
-                            ->schema([
-                                FileUpload::make('image_path')
-                                    ->image()
-                                    ->maxSize(config('uploads.images.max_size'))
-                                    ->acceptedFileTypes(config('uploads.images.accepted_types'))
-                                    ->helperText('Upload an image file. Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
-                                    ->disk('public')
-                                    ->directory('products/galleries')
-                                    ->imageEditor()
-                                    ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
-                                    ->required(),
+
+                        FileUpload::make('images')
+                            ->label('Galleries')
+                            ->image()
+                            ->multiple()
+                            ->maxFiles(10)
+                            ->maxSize(config('uploads.images.max_size'))
+                            ->acceptedFileTypes(config('uploads.images.accepted_types'))
+                            ->helperText('Upload an image file. Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
+                            ->disk('public')
+                            ->directory('products/galleries')
+                            ->imageEditor()
+                            ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
+                            ->reorderable()
+                            ->extraAttributes([
+                                'class' => 'space-y-3',
                             ])
-                            ->minItems(1)->reorderable()->collapsible(),
+                            ->required()
                     ]),
             ]);
     }

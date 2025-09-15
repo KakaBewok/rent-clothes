@@ -34,6 +34,10 @@ class ProductFactory extends Factory
             'additional_ribbon' => $this->faker->randomElement(["New arrival", "Coming soon", "Hijab friendly", "Promo", "Most favorite"]),
             'type_id' => Type::factory(),
             'description' => $this->faker->sentence,
+            'images'            => [
+                'products/' . $this->faker->uuid() . '.jpg',
+                'products/' . $this->faker->uuid() . '.jpg',
+            ],
         ];
     }
 }

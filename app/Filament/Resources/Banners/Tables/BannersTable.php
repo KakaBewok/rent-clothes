@@ -17,13 +17,9 @@ class BannersTable
     {
         return $table
             ->columns([
-                ImageColumn::make('images.image_path')
-                    ->label('Image')
-                    ->getStateUsing(function ($record) {
-                        return $record->images->take(3)->map(function ($image) {
-                            return $image->image;
-                        })->filter()->toArray();
-                    })
+                ImageColumn::make('images')
+                    ->label('Banners ')
+                    ->getStateUsing(fn($record) => collect($record->images)->take(5)->toArray())
                     ->circular()
                     ->imageSize(40)
                     ->stacked()

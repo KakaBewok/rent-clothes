@@ -26,10 +26,12 @@ class Product extends Model
         'rent_periode',
         'upload_at',
         'description',
+        'images',
     ];
 
     protected $casts = [
         'upload_at' => 'datetime',
+        'images' => 'array',
     ];
 
     public function brand()
@@ -60,11 +62,6 @@ class Product extends Model
     public function sizes()
     {
         return $this->hasMany(Size::class);
-    }
-
-    public function galleries()
-    {
-        return $this->hasMany(ProductGallery::class);
     }
 
     public function orderItems()

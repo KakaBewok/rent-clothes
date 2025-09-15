@@ -24,7 +24,7 @@ class OrderFactory extends Factory
             'account_number' => $this->faker->bankAccountNumber,
             'provider_name' => $this->faker->company,
             'address' => $this->faker->address,
-            'status' => $this->faker->randomElement(['pending', 'confirmed', 'shipped', 'returned']),
+            'status' => $this->faker->randomElement(['process', 'shipped', 'returned', 'cancel']),
             'desc' => $this->faker->sentence,
         ];
     }

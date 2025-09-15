@@ -14,10 +14,9 @@ class Banner extends Model
     /** @use HasFactory<\Database\Factories\BannerFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'is_active'];
+    protected $fillable = ['title', 'is_active', 'images'];
 
-    public function images()
-    {
-        return $this->hasMany(BannerImage::class);
-    }
+    protected $casts = [
+        'images' => 'array',
+    ];
 }

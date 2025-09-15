@@ -19,6 +19,10 @@ class BannerFactory extends Factory
         return [
             'title' => $this->faker->sentence(),
             'is_active' => $this->faker->boolean(100),
+            'images'            => [
+                'banners/' . $this->faker->uuid() . '.jpg',
+                'banners/' . $this->faker->uuid() . '.jpg',
+            ],
         ];
     }
 }

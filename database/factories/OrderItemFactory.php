@@ -31,6 +31,7 @@ class OrderItemFactory extends Factory
             'use_by_date' => $this->faker->dateTimeBetween('+1 days', '+10 days'),
             'estimated_delivery_date' => $this->faker->dateTimeBetween('+1 days', '+5 days'),
             'estimated_return_date' => $this->faker->dateTimeBetween('+6 days', '+12 days'),
+            'type' => $this->faker->randomElement(['Hijab', 'Non-hijab']),
         ];
     }
 }

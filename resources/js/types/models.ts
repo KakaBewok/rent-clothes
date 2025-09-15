@@ -15,21 +15,9 @@ export interface Banner {
     id: number;
     title: string;
     is_active: boolean;
-    images?: BannerImage[];
+    images?: string[];
     created_at?: string;
     updated_at?: string;
-}
-
-export interface BannerImage {
-    id: number;
-    banner_id: number;
-    image_path?: string | null;
-    image_url?: string | null;
-    banner?: Banner;
-    created_at?: string;
-    updated_at?: string;
-    // computed attribute
-    image?: string | null;
 }
 
 export interface Branch {
@@ -135,18 +123,8 @@ export interface Product {
     branch?: Branch;
     priceDetail?: PriceDetail;
     sizes?: Size[];
-    galleries?: ProductGallery[];
+    images?: string[];
     orderItems?: OrderItem[];
-
-    created_at?: string;
-    updated_at?: string;
-}
-
-export interface ProductGallery {
-    id: number;
-    product_id: number;
-    image_path: string;
-    product?: Product;
     created_at?: string;
     updated_at?: string;
 }

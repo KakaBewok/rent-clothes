@@ -7,33 +7,41 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductObserver
 {
-    /**
-     * Handle the Product "updated" event.
-     */
-    public function updated(Product $product): void
+    public function updating(Product $product): void
     {
+        // cover image
         if ($product->isDirty('cover_image')) {
             $oldImage = $product->getOriginal('cover_image');
-
             if ($oldImage && Storage::disk('public')->exists($oldImage)) {
                 Storage::disk('public')->delete($oldImage);
             }
         }
+
+        // multiple images
+        if ($product->isDirty('images')) {
+            $oldImages = $product->getOriginal('images') ?? [];
+            $newImages = $product->images ?? [];
+
+            $deletedImages = array_diff($oldImages, $newImages);
+
+            foreach ($deletedImages as $imagePath) {
+                if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+                    Storage::disk('public')->delete($imagePath);
+                }
+            }
+        }
     }
 
-    /**
-     * Handle the Product "deleted" event.
-     */
     public function deleting(Product $product): void
     {
         if ($product->cover_image && Storage::disk('public')->exists($product->cover_image)) {
             Storage::disk('public')->delete($product->cover_image);
         }
 
-        if ($product->galleries->isNotEmpty()) {
-            foreach ($product->galleries as $image) {
-                if ($image->image_path && Storage::disk('public')->exists($image->image_path)) {
-                    Storage::disk('public')->delete($image->image_path);
+        if (!empty($product->images)) {
+            foreach ($product->images as $imagePath) {
+                if ($imagePath && Storage::disk('public')->exists($imagePath)) {
+                    Storage::disk('public')->delete($imagePath);
                 }
             }
         }

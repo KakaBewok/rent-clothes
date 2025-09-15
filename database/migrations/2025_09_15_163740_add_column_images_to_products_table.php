@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('banner_images', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('banner_id')->constrained()->cascadeOnDelete();
-            $table->string('image_path')->nullable();
-            $table->string('image_url')->nullable();
-            $table->timestamps();
+        Schema::table('products', function (Blueprint $table) {
+            $table->json('images')->nullable()->after('description');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('banner_images');
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('images');
+        });
     }
 };
