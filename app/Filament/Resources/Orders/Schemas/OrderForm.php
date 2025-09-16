@@ -269,8 +269,7 @@ class OrderForm
                                     ->options([
                                         'Hijab' => 'Hijab',
                                         'Non Hijab'   => 'Non Hijab',
-                                    ])
-                                    ->default('Hijab'),
+                                    ])->nullable(),
                                 TextInput::make('deposit')
                                     ->numeric()
                                     ->prefix('Rp')

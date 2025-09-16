@@ -28,7 +28,12 @@ class OrdersTable
                 TextColumn::make('phone_number'),
                 TextColumn::make('first_product_name')
                     ->label('Catalogue Name')
-                    ->limit(30),
+                    ->limit(30)
+                    ->searchable(query: function ($query, $search) {
+                        $query->whereHas('items.product', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        });
+                    }),
                 TextColumn::make('total_items'),
                 TextColumn::make('total_rent_price')
                     ->label('Omzet')
