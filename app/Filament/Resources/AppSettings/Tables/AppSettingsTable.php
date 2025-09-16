@@ -32,6 +32,7 @@ class AppSettingsTable
             ])
             ->recordActions([
                 EditAction::make()->iconButton('heroicon-o-pencil'),
+                DeleteAction::make()->iconButton('heroicon-o-trash'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
