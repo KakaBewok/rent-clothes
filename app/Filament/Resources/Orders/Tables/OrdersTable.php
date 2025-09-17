@@ -67,6 +67,8 @@ class OrdersTable
                 SelectFilter::make('expedition')
                     ->label('Shipping Service')
                     ->options([
+                         'Self Pickup' => 'Self Pickup',
+                        'Paxel' => 'Paxel',
                         'JNE' => 'JNE',
                         'J&T Express' => 'J&T Express',
                         'TIKI' => 'TIKI',
