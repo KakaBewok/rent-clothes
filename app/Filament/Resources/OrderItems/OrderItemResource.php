@@ -21,7 +21,7 @@ class OrderItemResource extends Resource
 {
     protected static ?string $model = OrderItem::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-shopping-cart';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-eye';
 
     protected static string | UnitEnum | null $navigationGroup = 'Catalogue & Order';
 
