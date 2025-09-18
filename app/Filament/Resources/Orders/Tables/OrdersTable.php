@@ -43,7 +43,6 @@ class OrdersTable
                     ->label('Deposit')
                     ->money('idr', true),
                 TextColumn::make('status')
-                    ->label('Status')
                     ->badge()
                     ->colors([
                         'primary' => 'process',
@@ -57,17 +56,16 @@ class OrdersTable
                 SelectFilter::make('status')
                     ->label('Order Status')
                     ->options([
-                        'pending'   => 'Pending',
-                        'approved'  => 'Approved',
+                        'process'   => 'Process',
                         'shipped'   => 'Shipped',
                         'returned'  => 'Returned',
-                        'cancelled' => 'Cancelled',
+                        'cancel' => 'Cancel',
                     ]),
 
                 SelectFilter::make('expedition')
                     ->label('Shipping Service')
                     ->options([
-                         'Self Pickup' => 'Self Pickup',
+                        'Self Pickup' => 'Self Pickup',
                         'Paxel' => 'Paxel',
                         'JNE' => 'JNE',
                         'J&T Express' => 'J&T Express',

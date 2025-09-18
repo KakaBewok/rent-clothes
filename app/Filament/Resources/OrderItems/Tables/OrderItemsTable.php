@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\OrderItems\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
@@ -17,30 +15,30 @@ class OrderItemsTable
     {
         return $table
             ->columns([
+                TextColumn::make('product.name')
+                    ->label('Catalogue Name')
+                    ->limit(30)
+                    ->searchable(),       
                 TextColumn::make('order.name')
                     ->label('Customer Name')
                     ->searchable(),
                 TextColumn::make('order.phone_number')->label('Phone Number'),
-                TextColumn::make('order.address')
-                    ->label('Address')
-                    ->limit(40)
-                    ->tooltip(fn($record) => $record->order->address)
-                    ->searchable(),
-                TextColumn::make('order.expedition')->label('Expedition'),
-                TextColumn::make('product.name')
-                    ->label('Catalogue Name')
-                    ->limit(30)
-                    ->searchable(),
-                TextColumn::make('rent_price')
+                 TextColumn::make('rent_price')
                     ->label('Omzet')
                     ->money('idr', true)
                     ->sortable(),
                 TextColumn::make('deposit')
                     ->label('Deposit')
-                    ->money('idr', true),  
+                    ->money('idr', true), 
                 TextColumn::make('product.ownership')->label('Ownership')->searchable(),
                 TextColumn::make('shipping'),
+                TextColumn::make('order.expedition')->label('Expedition'),
                 TextColumn::make('type')->label('Notes'),
+                TextColumn::make('order.address')
+                    ->label('Address')
+                    ->limit(40)
+                    ->tooltip(fn($record) => $record->order->address)
+                    ->searchable(),
                 TextColumn::make('use_by_date')->label('Use By Date')->date()->sortable(),
                 TextColumn::make('estimated_delivery_date')->label('Estimated Delivery')->date()->sortable(),
                 TextColumn::make('estimated_return_date')->label('Estimated Return')->date()->sortable(),
