@@ -34,11 +34,15 @@ class OrderItem extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class)->withDefault([
+            'name' => '--- Product data has been deleted ---',
+        ]);
     }
 
     public function size()
     {
-        return $this->belongsTo(Size::class);
+        return $this->belongsTo(Size::class)->withDefault([
+            'size' => '--- Size data has been deleted ---',
+        ]);
     }
 }

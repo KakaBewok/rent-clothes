@@ -15,12 +15,24 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('cover_image');
-            $table->foreignId('brand_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('brand_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
             $table->string('code')->unique();
-            $table->foreignId('color_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('branch_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('color_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();;
+            $table->foreignId('branch_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
             $table->string('additional_ribbon')->nullable();
-            $table->foreignId('type_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('type_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
             $table->string('ownership')->nullable();
             $table->integer('rent_periode');
             $table->timestamp('upload_at')->useCurrent();

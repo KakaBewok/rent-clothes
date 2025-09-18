@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('sizes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
             $table->string('size');
             $table->integer('quantity');
             $table->string('availability')->nullable();

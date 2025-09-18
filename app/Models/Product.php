@@ -36,22 +36,30 @@ class Product extends Model
 
     public function brand()
     {
-        return $this->belongsTo(Brand::class);
+        return $this->belongsTo(Brand::class)->withDefault([
+            'name' => '--- Brand data has been deleted ---',
+        ]);
     }
 
     public function type()
     {
-        return $this->belongsTo(Type::class);
+        return $this->belongsTo(Type::class)->withDefault([
+            'name' => '--- Type data has been deleted ---',
+        ]);
     }
 
     public function color()
     {
-        return $this->belongsTo(Color::class);
+        return $this->belongsTo(Color::class)->withDefault([
+            'name' => '--- Color data has been deleted ---',
+        ]);
     }
 
     public function branch()
     {
-        return $this->belongsTo(Branch::class);
+        return $this->belongsTo(Branch::class)->withDefault([
+            'name' => '--- Branch data has been deleted ---',
+        ]);
     }
 
     public function priceDetail()
