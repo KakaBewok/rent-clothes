@@ -26,8 +26,8 @@ class HelperService
                         s.quantity - COALESCE(SUM(
                             CASE 
                                 WHEN o.status IN ('process', 'shipped')
-                                    AND oi.use_by_date <= :endDate
-                                    AND COALESCE(oi.estimated_return_date, DATE_ADD(oi.use_by_date, INTERVAL oi.rent_periode DAY)) >= :startDate
+                                    AND oi.estimated_delivery_date <= :endDate
+                                    AND oi.estimated_return_date >= :startDate
                                     AND (:excludeOrderIdCheck IS NULL OR o.id != :excludeOrderId)
                                 THEN
                                     oi.quantity

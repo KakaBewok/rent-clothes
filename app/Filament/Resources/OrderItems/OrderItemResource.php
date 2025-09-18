@@ -25,7 +25,7 @@ class OrderItemResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Catalogue & Order';
 
-    protected static ?string $pluralModelLabel = 'View Order Item';
+    protected static ?string $pluralModelLabel = 'Order Details';
 
     protected static ?int $navigationSort = 3;
 

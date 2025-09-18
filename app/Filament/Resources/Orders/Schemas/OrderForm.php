@@ -186,15 +186,10 @@ class OrderForm
                                                 function (string $attribute, $value, \Closure $fail) use ($get, $record) {
                                                     $productId   = $get('product_id');
                                                     $sizeId      = $get('size_id');
-                                                    $useByDate   = $get('use_by_date');
-                                                    $rentPeriode = (int) $get('rent_periode');
-                                                    $endDate = $get('estimated_return_date')
-                                                        ? Carbon::parse($get('estimated_return_date'))->format('Y-m-d')
-                                                        : Carbon::parse($get('use_by_date'))
-                                                        ->addDays($rentPeriode)
-                                                        ->format('Y-m-d');
+                                                    $startDate   = $get('estimated_delivery_date');
+                                                    $endDate = $get('estimated_return_date');
 
-                                                    if (! $productId || ! $sizeId || ! $useByDate) {
+                                                    if (! $productId || ! $sizeId || ! $startDate) {
                                                         return;
                                                     }
 
@@ -203,7 +198,7 @@ class OrderForm
                                                     $available = HelperService::getAvailableStock(
                                                         $productId,
                                                         $sizeId,
-                                                        $useByDate,
+                                                        $startDate,
                                                         $endDate,
                                                         $excludeOrderId
                                                     );
@@ -214,7 +209,6 @@ class OrderForm
                                                 };
                                         }
                                     ]),
-
                                 Select::make('shipping')
                                     ->options([
                                         "Same day" => "Same day",
