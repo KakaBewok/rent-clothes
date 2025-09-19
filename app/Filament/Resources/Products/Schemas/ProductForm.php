@@ -99,7 +99,7 @@ class ProductForm
                                 'link',
                                 'blockquote',
                                 'bulletList'
-                            ])->columnSpanFull()
+                            ])->extraAttributes(['style' => 'min-height: 250px;'])->columnSpanFull()
                     ])->columns(2),
                 Section::make('Price Detail')
                     ->icon('heroicon-m-banknotes')
@@ -159,12 +159,8 @@ class ProductForm
                                 TextInput::make('quantity')
                                     ->reactive()
                                     ->afterStateUpdated(function ($state, callable $set) {
-                                        if ($state >= 1) {
-                                            $set('availability', true);
-                                        } else {
-                                            $set('availability', false);
-                                        }
-                                    })->numeric()->required(),
+                                                $set('availability', $state >= 1);
+                                        })->numeric()->required(),
                                 Toggle::make('availability')->label('Available'),
                             ])
                             ->minItems(1)->reorderable()->collapsible(),
@@ -182,8 +178,6 @@ class ProductForm
                             ->imageEditor()
                             ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
                             ->required(),
-
-
                         FileUpload::make('images')
                             ->label('Galleries')
                             ->image()
@@ -204,4 +198,183 @@ class ProductForm
                     ]),
             ]);
     }
+
+// tabs
+//     public static function configure(Schema $schema): Schema
+// {
+//     return $schema->components([
+//         Tabs::make('Product Tabs')
+//             ->tabs([
+//                 Tab::make('Dress Detail')
+//                     ->icon('heroicon-m-shopping-bag')
+//                     ->schema([
+//                         Section::make()
+//                             ->schema([
+//                                 TextInput::make('name')->label("Dress Name")->required(),
+//                                 TextInput::make('code')->placeholder('ABAYA-01')->required(),
+//                                 Select::make('brand_id')
+//                                     ->relationship('brand', 'name')
+//                                     ->searchable()
+//                                     ->preload()
+//                                     ->required()
+//                                     ->createOptionForm([
+//                                         TextInput::make('name')
+//                                             ->label('Brand Name')
+//                                             ->required(),
+//                                         Textarea::make('desc')
+//                                             ->label('Description')->nullable(),
+//                                     ]),
+//                                 Select::make('color_id')
+//                                     ->relationship('color', 'name')
+//                                     ->searchable()
+//                                     ->preload()
+//                                     ->required()
+//                                     ->createOptionForm([
+//                                         TextInput::make('name')->label('Color Name')->required(),
+//                                         TextInput::make('hex_code')->nullable(),
+//                                     ]),
+//                                 Select::make('branch_id')
+//                                     ->relationship('branch', 'name')
+//                                     ->searchable()
+//                                     ->preload()
+//                                     ->required()
+//                                     ->createOptionForm([
+//                                         TextInput::make('name')->label('Branch Name')->required(),
+//                                         TextInput::make('location')->required(),
+//                                         Textarea::make('desc')->columnSpanFull()->nullable(),
+//                                     ]),
+//                                 TextInput::make('ownership')->nullable(),
+//                                 TextInput::make('rent_periode')
+//                                     ->label('Rent Periode')
+//                                     ->suffix('Day(s)')
+//                                     ->numeric()
+//                                     ->default(1)
+//                                     ->required(),
+//                                 Select::make('additional_ribbon')
+//                                     ->options([
+//                                         "New arrival" => "New arrival",
+//                                         "Coming soon" => "Coming soon",
+//                                         "Hijab friendly" => "Hijab friendly",
+//                                         "Promo" => "Promo",
+//                                         "Most favorite" => "Most favorite"
+//                                     ])
+//                                     ->searchable()
+//                                     ->nullable(),
+//                                 Select::make('type_id')
+//                                     ->relationship('type', 'name')
+//                                     ->searchable()
+//                                     ->preload()
+//                                     ->createOptionForm([
+//                                         TextInput::make('name')->label('Type Name')->required(),
+//                                         Textarea::make('desc')->nullable(),
+//                                     ])
+//                                     ->required(),
+//                                 DatePicker::make('upload_at')
+//                                     ->prefixIcon('heroicon-o-calendar')
+//                                     ->helperText('Latest catalogue will be placed on the first page.')
+//                                     ->required()
+//                                     ->default(now()),
+//                                 RichEditor::make('description')
+//                                     ->toolbarButtons(['bold','italic','underline','strike','link','blockquote','bulletList'])
+//                                     ->columnSpanFull()
+//                                     ->extraAttributes(['style' => 'min-height: 250px;']),
+//                             ])->columns(3),
+//                     ]),
+
+//                 Tab::make('Price Detail')
+//                     ->icon('heroicon-m-banknotes')
+//                     ->schema([
+//                         Section::make()
+//                             ->schema([
+//                                 TextInput::make('rent_price')->prefix('Rp')->numeric()->required(),
+//                                 TextInput::make('discount')->suffix('%')->numeric(),
+//                                 TextInput::make('price_after_discount')
+//                                     ->label('Final price')
+//                                     ->prefix('Rp')
+//                                     ->numeric()
+//                                     ->disabled()
+//                                     ->helperText('Click "Calculate Final Price" button to confirm the final price')
+//                                     ->dehydrated(false)
+//                                     ->numeric(),
+//                                 Actions::make([
+//                                     Action::make('calculate_final_price')
+//                                         ->icon('heroicon-m-calculator')
+//                                         ->color('success')
+//                                         ->action(fn($set, $get) => HelperService::calculateFinalPrice($set, $get)),
+//                                 ]),
+//                                 TextInput::make('deposit')->prefix('Rp')->numeric()->required(),
+//                                 TextInput::make('additional_time_price')->prefix('Rp')->numeric()->required(),
+//                             ])->relationship('priceDetail')->columns(2),
+//                     ]),
+
+//                 Tab::make('Size & Quantity')
+//                     ->icon('heroicon-m-tag')
+//                     ->schema([
+//                         Section::make()
+//                             ->schema([
+//                                 Repeater::make('sizes')
+//                                     ->relationship()
+//                                     ->schema([
+//                                         Select::make('size')
+//                                             ->options([
+//                                                 'XS' => 'Extra Small',
+//                                                 'S'  => 'Small',
+//                                                 'M'  => 'Medium',
+//                                                 'L'  => 'Large',
+//                                                 'XL' => 'Extra Large',
+//                                                 'XXL' => 'Double Extra Large',
+//                                             ])
+//                                             ->required()
+//                                             ->searchable(),
+//                                         TextInput::make('quantity')
+//                                             ->reactive()
+//                                             ->afterStateUpdated(function ($state, callable $set) {
+//                                                 $set('availability', $state >= 1);
+//                                             })
+//                                             ->numeric()
+//                                             ->required(),
+//                                         Toggle::make('availability')->label('Available'),
+//                                     ])
+//                                     ->minItems(1)
+//                                     ->reorderable()
+//                                     ->collapsible(),
+//                             ]),
+//                     ]),
+
+//                 Tab::make('Media')
+//                     ->icon('heroicon-m-photo')
+//                     ->schema([
+//                         Section::make()
+//                             ->schema([
+//                                 FileUpload::make('cover_image')
+//                                     ->image()
+//                                     ->maxSize(config('uploads.images.max_size'))
+//                                     ->acceptedFileTypes(config('uploads.images.accepted_types'))
+//                                     ->helperText('Upload an image file. Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
+//                                     ->disk('public')
+//                                     ->directory('products/covers')
+//                                     ->imageEditor()
+//                                     ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
+//                                     ->required(),
+//                                 FileUpload::make('images')
+//                                     ->label('Galleries')
+//                                     ->image()
+//                                     ->multiple()
+//                                     ->maxFiles(10)
+//                                     ->maxSize(config('uploads.images.max_size'))
+//                                     ->acceptedFileTypes(config('uploads.images.accepted_types'))
+//                                     ->helperText('Upload an image file. Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
+//                                     ->disk('public')
+//                                     ->directory('products/galleries')
+//                                     ->imageEditor()
+//                                     ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
+//                                     ->reorderable()
+//                                     ->extraAttributes(['class' => 'space-y-3'])
+//                                     ->required(),
+//                             ])->columns(2),
+//                     ]),
+//             ])->columnSpanFull(),
+//     ]);
+// }
 }
+
