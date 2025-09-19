@@ -114,7 +114,7 @@ class ProductForm
                             ->label('Final price')
                             ->prefix('Rp')
                             ->numeric()
-                            ->disabled()->helperText('Click "Calculate Final Price" button to confirm the final price')
+                            ->disabled()->helperText('Click "Calculate Final Price" button to confirm')
                             ->columnSpanFull()
                             ->dehydrated(false)->numeric(),
 
@@ -169,7 +169,7 @@ class ProductForm
                             ->image()
                             ->maxSize(config('uploads.images.max_size'))
                             ->acceptedFileTypes(config('uploads.images.accepted_types'))
-                            ->helperText('Upload an image file. Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
+                            ->helperText('Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
                             ->disk('public')
                             ->directory('products/covers')
                             ->imageEditor()
@@ -182,7 +182,7 @@ class ProductForm
                             ->maxFiles(10)
                             ->maxSize(config('uploads.images.max_size'))
                             ->acceptedFileTypes(config('uploads.images.accepted_types'))
-                            ->helperText('Upload an image file. Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
+                            ->helperText('Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
                             ->disk('public')
                             ->directory('products/galleries')
                             ->imageEditor()

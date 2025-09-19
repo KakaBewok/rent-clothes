@@ -232,7 +232,7 @@ class OrderForm
                                     ->prefix('Rp')
                                     ->required()
                                     ->dehydrated(true)
-                                    ->helperText('Click "Calculate Rent Price" button to confirm the final price for this item'),
+                                    ->helperText('Click "Calculate Rent Price" button to confirm'),
                                 Actions::make([
                                     Action::make('calculate_rent_price')
                                         ->icon('heroicon-m-calculator')

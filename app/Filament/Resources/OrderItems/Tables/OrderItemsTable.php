@@ -42,7 +42,8 @@ class OrderItemsTable
                 TextColumn::make('use_by_date')->label('Use By Date')->date()->sortable(),
                 TextColumn::make('estimated_delivery_date')->label('Estimated Delivery')->date()->sortable(),
                 TextColumn::make('estimated_return_date')->label('Estimated Return')->date()->sortable(),
-                TextColumn::make('created_at')->label('Transaction At')->dateTime('d M Y H:i')->sortable(),
+                TextColumn::make('created_at')->label('Transaction At')->dateTime('d M Y H:i')->sortable()
+    ->timezone('Asia/Jakarta'),
                 TextColumn::make('order.status')
                     ->label('Status')
                     ->badge()
