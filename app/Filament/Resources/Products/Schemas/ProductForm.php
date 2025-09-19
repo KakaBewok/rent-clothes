@@ -76,8 +76,6 @@ class ProductForm
                             ])
                             ->searchable()
                             ->nullable(),
-
-
                         Select::make('type_id')
                             ->relationship('type', 'name')
                             ->searchable()
@@ -87,8 +85,7 @@ class ProductForm
                                     ->required(),
                                 Textarea::make('desc')
                                     ->nullable(),
-                            ])
-                            ->required(),
+                            ])->nullable(),
                         DatePicker::make('upload_at')->prefixIcon('heroicon-o-calendar')->helperText('Latest catalogue will be placed on the first page.')->required()->default(now()),
                         RichEditor::make('description')
                             ->toolbarButtons([

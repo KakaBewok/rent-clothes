@@ -16,11 +16,11 @@ class OrdersExport implements FromCollection, WithHeadings
                 return $order->items->map(function ($item) use ($order) {
                     return [
                         'Pelanggan'      => $order->name,
+                        'Produk'            => $item->product?->name,
                         'No. HP'       => $order->phone_number,
                         'Alamat'            => $order->address,
                         'Ekspedisi'         => $order->expedition,
                         'Status'             => ucfirst($order->status),
-                        'Produk'            => $item->product?->name,
                         'Pemilik'         => $item->product?->ownership,
                         'Tipe' => $item->type,
                         'Omset'         => $item->rent_price,
@@ -36,11 +36,11 @@ class OrdersExport implements FromCollection, WithHeadings
     {
         return [
             'Pelanggan',
+            'Produk',
             'No. HP',
             'Alamat',
             'Ekspedisi',
             'Status',
-            'Produk',
             'Pemilik',
             'Tipe',
             'Omset',

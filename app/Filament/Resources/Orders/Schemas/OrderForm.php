@@ -156,8 +156,6 @@ class OrderForm
                                         'Hijab' => 'Hijab',
                                         'Non Hijab'   => 'Non Hijab',
                                     ])->nullable(),
-
-
                                 TextInput::make('quantity')
                                     ->numeric()
                                     ->required()
