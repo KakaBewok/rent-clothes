@@ -83,19 +83,19 @@ class OrderItemsTable
                         'Grab Express' => 'Grab Express',
                         'Gojek (GoSend)' => 'Gojek (GoSend)',
                     ]),
-                Filter::make('period')
+                Filter::make('date_range')
                     ->schema([
-                        DatePicker::make('use_from')->label('Use From'),
-                        DatePicker::make('use_until')->label('Use Until'),
-                        DatePicker::make('return_from')->label('Return From'),
-                        DatePicker::make('return_until')->label('Return Until'),
+                        DatePicker::make('start_shipping')->label('Start Shipping'),
+                        DatePicker::make('end_shipping')->label('End Shipping'),
+                        DatePicker::make('start_transaction')->label('Start Transaction'),
+                        DatePicker::make('end_transaction')->label('End Transaction'),
                     ])
                     ->query(function ($query, array $data) {
                         return $query
-                            ->when($data['use_from'], fn($q) => $q->whereDate('use_by_date', '>=', $data['use_from']))
-                            ->when($data['use_until'], fn($q) => $q->whereDate('use_by_date', '<=', $data['use_until']))
-                            ->when($data['return_from'], fn($q) => $q->whereDate('estimated_return_date', '>=', $data['return_from']))
-                            ->when($data['return_until'], fn($q) => $q->whereDate('estimated_return_date', '<=', $data['return_until']));
+                        ->when($data['start_shipping'], fn($q) => $q->whereDate('estimated_delivery_date', '>=', $data['start_shipping']))
+                        ->when($data['end_shipping'], fn($q) => $q->whereDate('estimated_delivery_date', '<=', $data['end_shipping']))
+                        ->when($data['start_transaction'], fn($q) => $q->whereDate('created_at', '>=', $data['start_transaction']))
+                        ->when($data['end_transaction'], fn($q) => $q->whereDate('created_at', '<=', $data['end_transaction']));
                     }),
             ])
             ->recordActions([
