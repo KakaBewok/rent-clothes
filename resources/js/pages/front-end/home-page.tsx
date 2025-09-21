@@ -1,3 +1,4 @@
+import Hero from '@/components/front-end/hero';
 import NavBar from '@/components/front-end/nav-bar';
 import { AppSetting, Banner, Product } from '@/types/models';
 
@@ -20,6 +21,7 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
         <div className="w-full bg-gray-50">
             <div className="mx-auto min-h-screen max-w-screen-xl bg-white">
                 <NavBar setting={safeSetting} />
+                <Hero banners={banners} />
 
                 {/* Halaman Home */}
                 {/* <h1 className="mb-4 text-2xl font-bold">Product Overview</h1>

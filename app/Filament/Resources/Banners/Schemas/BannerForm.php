@@ -28,15 +28,7 @@ class BannerForm
                     ->disk('public')
                     ->directory('banners')
                     ->imageEditor()
-                    ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
-                    ->hintIcon('heroicon-m-exclamation-triangle')
-                    ->hintColor('warning')
-                    ->reactive()
-                    ->afterStateUpdated(function ($state, callable $set) {
-                        if ($state) {
-                            $set('image_url', null);
-                        }
-                    }),
+                    ->imageEditorAspectRatios(['16:9', '4:3', '1:1']),
                 Toggle::make('is_active')->label('Status')->hiddenOn(Operation::Create)->visibleOn(Operation::Edit)->default(true),
             ]);
     }
