@@ -9,14 +9,14 @@ use App\Http\Controllers\HomeController;
 // Route::get('/schedule', [ScheduleController::class, 'form'])->name('schedule.form');
 // Route::post('/schedule', [ScheduleController::class, 'submit'])->name('schedule.submit');
 
-// Route::get('/', [HomeController::class, 'index'])->name('home.index');
+Route::get('/', [HomeController::class, 'index'])->name('home.index');
 
 
 // --- LARAVEL DEFAULT ROUTES --- //
 
-Route::get('/', function () {
-    return Inertia::render('welcome');
-})->name('home');
+// Route::get('/', function () {
+//     return Inertia::render('welcome');
+// })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
