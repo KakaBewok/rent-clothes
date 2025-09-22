@@ -1,5 +1,7 @@
 import Hero from '@/components/front-end/hero';
 import NavBar from '@/components/front-end/nav-bar';
+import NoteBox from '@/components/front-end/note-box';
+import ProductList from '@/components/front-end/product-list';
 import { AppSetting, Banner, Product } from '@/types/models';
 
 interface HomePageProps {
@@ -13,8 +15,6 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
         app_logo: null,
         app_name: 'Qatia Rent',
     };
-
-    console.log(banners);
     console.log(products);
 
     return (
@@ -22,6 +22,8 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
             <div className="mx-auto min-h-screen max-w-screen-xl bg-white">
                 <NavBar setting={safeSetting} />
                 <Hero banners={banners} />
+                <NoteBox />
+                <ProductList products={products} />
 
                 {/* Halaman Home */}
                 {/* <h1 className="mb-4 text-2xl font-bold">Product Overview</h1>

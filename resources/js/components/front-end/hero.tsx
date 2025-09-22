@@ -1,20 +1,19 @@
-import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 import { Banner } from '@/types/models';
 import Autoplay from 'embla-carousel-autoplay';
 import { useEffect, useState } from 'react';
 
 const Hero = ({ banners }: { banners: Banner[] }) => {
+    const [api, setApi] = useState<CarouselApi>();
+    const [current, setCurrent] = useState<number>(0);
     const slides =
         banners?.flatMap((banner) =>
             (banner.images ?? []).map((imagePath, idx) => ({
                 key: `${banner.id}-${idx}`,
                 image: imagePath,
-                title: banner.title,
+                title: banner.title ?? '',
             })),
         ) ?? [];
-
-    const [api, setApi] = useState<CarouselApi>();
-    const [current, setCurrent] = useState(0);
 
     useEffect(() => {
         if (!api) return;
@@ -27,37 +26,37 @@ const Hero = ({ banners }: { banners: Banner[] }) => {
     }, [api]);
 
     return (
-        <div className="relative w-full">
-            <Carousel className="w-full" setApi={setApi} opts={{ loop: true }} plugins={[Autoplay({ delay: 2000, stopOnInteraction: false })]}>
+        <div className="relative w-full md:px-4">
+            <Carousel className="w-full" setApi={setApi} opts={{ loop: true }} plugins={[Autoplay({ delay: 3000, stopOnInteraction: false })]}>
                 <CarouselContent>
                     {slides.map((slide) => (
                         <CarouselItem key={slide.key}>
-                            <div className="relative w-full flex-shrink-0">
-                                <img src={`/storage/${slide.image}`} loading="lazy" alt={slide.title} className="h-[500px] w-full object-cover" />
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                                    <div className="px-4 text-center text-white">
-                                        <h2 className="mb-4 text-3xl font-bold md:text-5xl">{slide.title}</h2>
-                                    </div>
-                                </div>
+                            <div className="w-full flex-shrink-0">
+                                <img
+                                    src={`/storage/${slide.image}`}
+                                    loading="lazy"
+                                    alt={slide.title}
+                                    className="h-[300px] w-full object-cover md:h-[400px]"
+                                />
                             </div>
                         </CarouselItem>
                     ))}
                 </CarouselContent>
 
-                {/* Pindahkan panah ke bawah */}
-                <div className="absolute -bottom-11 left-1/2 flex -translate-x-1/2 space-x-4">
-                    <CarouselPrevious className="static translate-x-0 translate-y-0" />
-                    <CarouselNext className="static translate-x-0 translate-y-0" />
-                </div>
+                {/* Arrows */}
+                {/* <div className="absolute -bottom-8 left-1/2 flex -translate-x-1/2 space-x-4">
+                    <CarouselPrevious className="static translate-x-0 translate-y-0 cursor-pointer" variant={'default'} />
+                    <CarouselNext className="static translate-x-0 translate-y-0 cursor-pointer" variant={'default'} />
+                </div> */}
             </Carousel>
 
             {/* Dot Indicators */}
-            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 space-x-2">
+            <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 space-x-2">
                 {slides.map((_, index) => (
                     <button
                         key={index}
                         onClick={() => api?.scrollTo(index)}
-                        className={`h-3 w-3 rounded-full transition-all duration-500 ${current === index ? 'bg-white' : 'bg-gray-400'}`}
+                        className={`h-1 w-1 rounded-full transition-all duration-500 md:h-2 md:w-2 ${current === index ? 'bg-white' : 'bg-gray-500'}`}
                     />
                 ))}
             </div>
