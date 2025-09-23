@@ -38,11 +38,16 @@ class DatabaseSeeder extends Seeder
         // Master data
         Brand::factory(5)->create();
         Color::factory(10)->create();
-        Type::factory(5)->create();
+        // Type::factory(5)->create();
+        $types = Type::factory(5)->create();
         Branch::factory(3)->create();
 
-        // Product
         $products = Product::factory(10)->create();
+
+        $products->each(function ($product) use ($types) {
+            $randomTypes = $types->random(rand(1, 3))->pluck('id');
+            $product->types()->attach($randomTypes);
+        });
 
         Size::factory(3)
             ->recycle($products)

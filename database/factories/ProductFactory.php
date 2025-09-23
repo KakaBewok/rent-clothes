@@ -32,7 +32,6 @@ class ProductFactory extends Factory
             'rent_periode' => $this->faker->numberBetween(1, 7),
             'upload_at' => now(),
             'additional_ribbon' => $this->faker->randomElement(["New arrival", "Coming soon", "Hijab friendly", "Promo", "Most favorite"]),
-            'type_id' => Type::factory(),
             'description' => $this->faker->sentence,
             'images'            => [
                 'products/' . $this->faker->uuid() . '.jpg',
