@@ -135,7 +135,7 @@ export interface Size {
     product_id: number;
     size: string;
     quantity: number;
-    availability: boolean;
+    availability: string;
     product?: Product;
     created_at?: string;
     updated_at?: string;
