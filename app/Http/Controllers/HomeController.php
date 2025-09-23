@@ -31,7 +31,7 @@ class HomeController extends Controller
 
         // return Inertia::render('front-end/home-page', compact('data', 'filters', 'isModalScheduleOpen'));
 
-        $products = Product::with(['brand', 'type', 'color', 'branch', 'priceDetail'])->get();
+        $products = Product::with(['brand', 'types', 'color', 'branch', 'priceDetail', 'sizes'])->get();
         $banners = Banner::where('is_active', true)->get();
         $appSetting = AppSetting::first();
 

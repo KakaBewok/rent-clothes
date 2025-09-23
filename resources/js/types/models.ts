@@ -122,7 +122,7 @@ export interface Product {
     types?: Type[];
     color?: Color;
     branch?: Branch;
-    priceDetail?: PriceDetail;
+    price_detail?: PriceDetail;
     sizes?: Size[];
     images?: string[];
     orderItems?: OrderItem[];
