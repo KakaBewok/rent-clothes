@@ -22,8 +22,13 @@ class Type extends Model
         });
     }
 
+    // public function products()
+    // {
+    //     return $this->hasMany(PriceDetail::class);
+    // }
+
     public function products()
     {
-        return $this->hasMany(PriceDetail::class);
+        return $this->belongsToMany(Product::class);
     }
 }

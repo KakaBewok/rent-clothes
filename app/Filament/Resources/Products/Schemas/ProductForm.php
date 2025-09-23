@@ -76,16 +76,32 @@ class ProductForm
                             ])
                             ->searchable()
                             ->nullable(),
-                        Select::make('type_id')
-                            ->relationship('type', 'name')
-                            ->searchable()
+                        
+                        Select::make('types')
+                            ->label('Types')
+                            ->multiple()
+                            ->relationship('types', 'name') 
                             ->preload()
+                            ->searchable()
+                            ->helperText('Select one or more types for this product.')
                             ->createOptionForm([
                                 TextInput::make('name')->label('Type Name')
                                     ->required(),
                                 Textarea::make('desc')
                                     ->nullable(),
                             ])->nullable(),
+
+                            // Select::make('type_id')
+                            // ->relationship('type', 'name')
+                            // ->searchable()
+                            // ->preload()
+                            // ->createOptionForm([
+                            //     TextInput::make('name')->label('Type Name')
+                            //         ->required(),
+                            //     Textarea::make('desc')
+                            //         ->nullable(),
+                            // ])->nullable(),
+
                         DatePicker::make('upload_at')->prefixIcon('heroicon-o-calendar')->helperText('Latest catalogue will be placed on the first page.')->required()->default(now()),
                         RichEditor::make('description')
                             ->toolbarButtons([

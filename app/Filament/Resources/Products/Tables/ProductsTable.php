@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Products\Tables;
 
-use App\Exports\OrdersExport;
 use App\Exports\ProductsExport;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
