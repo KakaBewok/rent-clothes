@@ -20,7 +20,7 @@ const NavBar = ({ setting }: { setting: AppSetting }) => {
                         Cara Pemesanan
                     </Link>
                     <Link href="#" className="text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first">
-                        Terms & Conditions
+                        Syarat & Ketentuan
                     </Link>
                     <Link href="#" className="text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first">
                         Kontak
@@ -58,7 +58,7 @@ const NavBar = ({ setting }: { setting: AppSetting }) => {
                         Cara Pemesanan
                     </Link>
                     <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-semibold text-slate-700 hover:text-first">
-                        Terms & Conditions
+                        Syarat & Ketentuan
                     </Link>
                     <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-semibold text-slate-700 hover:text-first">
                         Kontak
