@@ -15,7 +15,6 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
         app_logo: null,
         app_name: 'Qatia Rent',
     };
-    console.log(products);
 
     return (
         <div className="w-full bg-gray-50">

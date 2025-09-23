@@ -51,16 +51,16 @@ const NavBar = ({ setting }: { setting: AppSetting }) => {
                 } overflow-hidden`}
             >
                 <div className="space-y-1 bg-third px-2 py-3 sm:px-3">
-                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-semibold text-slate-700 hover:text-first">
+                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first">
                         Cek Jadwal
                     </Link>
-                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-semibold text-slate-700 hover:text-first">
+                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first">
                         Cara Pemesanan
                     </Link>
-                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-semibold text-slate-700 hover:text-first">
+                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first">
                         Syarat & Ketentuan
                     </Link>
-                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-semibold text-slate-700 hover:text-first">
+                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first">
                         Kontak
                     </Link>
                 </div>
