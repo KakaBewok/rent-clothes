@@ -16,8 +16,6 @@ interface HomePageProps {
 
 function HomePage({ products, banners, appSetting }: HomePageProps) {
     const [loading, setLoading] = useState<boolean>(true);
-    const metaDesc =
-        appSetting.description ?? 'Koleksi pakaian eksklusif untuk setiap acara. Nikmati pengalaman sewa yang nyaman, cepat, dan berkualitas tinggi.';
 
     const safeSetting: AppSetting = appSetting ?? {
         app_logo: null,
@@ -39,7 +37,6 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
 
     return (
         <div className="w-full bg-gray-50">
-            <meta name="description" content={`${metaDesc}`} />
             <div className="relative mx-auto min-h-screen max-w-screen-xl bg-white">
                 <NavBar setting={safeSetting} />
                 <Hero banners={banners} />

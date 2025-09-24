@@ -33,14 +33,11 @@
 
     <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
-    {{-- default --}}
-    {{-- <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png"> --}}
-
+    {{-- custom --}}
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    {{-- custom --}}
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
@@ -49,6 +46,22 @@
     @vite(['resources/js/app.tsx', "resources/js/pages/{$page['component']}.tsx"])
     @inertiaHead
 </head>
+
+{{-- custom --}}
+<title>Qatia Rent - Sewa Pakaian Mudah & Cepat</title>
+<meta name="description"
+    content='Koleksi pakaian eksklusif untuk setiap acara. Nikmati pengalaman sewa yang nyaman, cepat, dan berkualitas tinggi.'>
+<meta name="keywords"
+    content="qatia rent, qatiarent, sewa pakaian, rental baju, booking online, dress, sewa dress murah, rental dress murah">
+<meta name="author" content="Qatia Rent">
+
+<meta property="og:title" content="Qatia Rent - Sewa Pakaian Mudah & Cepat" />
+<meta property="og:description"
+    content="Koleksi pakaian eksklusif untuk setiap acara. Nikmati pengalaman sewa yang nyaman, cepat, dan berkualitas tinggi." />
+<meta property="og:image" content="https://qatiarent-development.site/storage/android-chrome-512x512.png" />
+<meta property="og:url" content="https://qatiarent-development.site" />
+<meta property="og:type" content="website" />
+{{-- custom --}}
 
 <body class="font-sans antialiased">
     @inertia
