@@ -1,3 +1,4 @@
+import Footer from '@/components/front-end/footer';
 import Hero from '@/components/front-end/hero';
 import NavBar from '@/components/front-end/nav-bar';
 import NoteBox from '@/components/front-end/note-box';
@@ -23,6 +24,7 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
                 <Hero banners={banners} />
                 <NoteBox />
                 <ProductList products={products} />
+                <Footer setting={appSetting} />
 
                 {/* Halaman Home */}
                 {/* <h1 className="mb-4 text-2xl font-bold">Product Overview</h1>
