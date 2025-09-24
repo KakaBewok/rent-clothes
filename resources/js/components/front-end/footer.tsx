@@ -1,4 +1,5 @@
 import { AppSetting } from '@/types/models';
+import { formatWhatsAppNumber } from '@/utils/format';
 import { Link } from '@inertiajs/react';
 import { Instagram, Mail, MapPin, MessageCircle } from 'lucide-react';
 import AppLogo from './app-logo';
@@ -70,12 +71,12 @@ const Footer = ({ setting }: { setting: AppSetting }) => {
                             <div className="flex items-center space-x-1">
                                 <MessageCircle className="h-4 w-4 text-first" />
                                 <a
-                                    href={`https://wa.me/${whatsapp_number ?? '08877935678'}?text=${encodeURIComponent(message)}`}
+                                    href={`https://wa.me/${formatWhatsAppNumber(whatsapp_number ?? '08877935678')}?text=${encodeURIComponent(message)}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
                                     <span className="text-xs text-slate-400 transition duration-300 hover:text-first md:text-sm">
-                                        {whatsapp_number ?? '08877935678'}
+                                        {whatsapp_number?.trim() ?? '08877935678'}
                                     </span>
                                 </a>
                             </div>
@@ -96,4 +97,5 @@ const Footer = ({ setting }: { setting: AppSetting }) => {
         </footer>
     );
 };
+
 export default Footer;

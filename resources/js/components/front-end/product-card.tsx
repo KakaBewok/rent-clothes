@@ -35,7 +35,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                         <h3 className="max-w-[127px] truncate text-xs text-slate-500 lg:max-w-[210px]">By {product.brand?.name}</h3>
 
                         <p className="text-xs text-slate-500">
-                            {formatRupiah(product.price_detail?.price_after_discount)}{' '}
+                            {formatRupiah(product.price_detail?.price_after_discount)}
                             {product.rent_periode === 1 ? '/1 day' : `/1-${product.rent_periode} days`}
                         </p>
 

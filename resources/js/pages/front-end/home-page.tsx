@@ -1,3 +1,4 @@
+import FloatingWhatsapp from '@/components/front-end/floating-whatsapp';
 import Footer from '@/components/front-end/footer';
 import Hero from '@/components/front-end/hero';
 import NavBar from '@/components/front-end/nav-bar';
@@ -19,35 +20,13 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
 
     return (
         <div className="w-full bg-gray-50">
-            <div className="mx-auto min-h-screen max-w-screen-xl bg-white">
+            <div className="relative mx-auto min-h-screen max-w-screen-xl bg-white">
                 <NavBar setting={safeSetting} />
                 <Hero banners={banners} />
                 <NoteBox />
                 <ProductList products={products} />
                 <Footer setting={appSetting} />
-
-                {/* Halaman Home */}
-                {/* <h1 className="mb-4 text-2xl font-bold">Product Overview</h1>
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                    {products.map((product) => (
-                        <div key={product.id} className="rounded border p-2">
-                            <div className="mb-2 grid grid-cols-2 gap-2">
-                                {product.images?.map((img, idx) => (
-                                    <img
-                                        key={idx}
-                                        src={`/storage/${img}`}
-                                        alt={`${product.name} - ${idx + 1}`}
-                                        className="h-40 w-full rounded object-cover"
-                                    />
-                                ))}
-                                {(!product.images || product.images.length === 0) && (
-                                    <img src="https://via.placeholder.com/150" alt="placeholder" className="h-40 w-full rounded object-cover" />
-                                )}
-                            </div>
-                            <h2 className="font-semibold">{product.name}</h2>
-                        </div>
-                    ))}
-                </div> */}
+                <FloatingWhatsapp whatsapp_number={appSetting.whatsapp_number} />
             </div>
         </div>
     );

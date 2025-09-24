@@ -29,6 +29,7 @@ class AppSettingForm
 
                 TextInput::make('whatsapp_number')
                     ->tel()
+                    ->placeholder('62812345678')
                     ->prefixIcon('heroicon-m-phone')
                     ->helperText('Customers will use this WhatsApp number to reach you for bookings and inquiries.')
                     ->maxLength(20),
