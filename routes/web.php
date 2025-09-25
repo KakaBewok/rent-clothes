@@ -1,10 +1,16 @@
 <?php
 
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ScheduleController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\HomeController;
 use Spatie\Sitemap\SitemapGenerator;
+
+
+
+// Route::get('/schedule', [ScheduleController::class, 'form'])->name('schedule.form');
+// Route::post('/schedule', [ScheduleController::class, 'submit'])->name('schedule.submit');
 
 Route::get('/generate-sitemap', function () {
     SitemapGenerator::create('https://qatiarent-development.site')
@@ -12,11 +18,8 @@ Route::get('/generate-sitemap', function () {
 
     return 'Sitemap generated!';
 });
-
-// Route::get('/schedule', [ScheduleController::class, 'form'])->name('schedule.form');
-// Route::post('/schedule', [ScheduleController::class, 'submit'])->name('schedule.submit');
-
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
+Route::get('/api/products/{product}', [ProductController::class, 'show'])->name('api.products.show');
 
 
 // --- LARAVEL DEFAULT ROUTES --- //

@@ -1,7 +1,12 @@
 import { Product } from '@/types/models';
 import ProductCard from './product-card';
 
-const ProductList = ({ products }: { products: Product[] }) => {
+interface ProductListProps {
+    products: Product[];
+    onOpen: (id: number) => void;
+}
+
+const ProductList = ({ products, onOpen }: ProductListProps) => {
     return (
         <div className="w-full">
             <div className="mx-auto px-4 py-4 md:px-6 md:py-6">
@@ -15,7 +20,7 @@ const ProductList = ({ products }: { products: Product[] }) => {
                                 const dateB = new Date(b.upload_at ?? 0).getTime();
                                 return dateB - dateA;
                             })
-                            .map((product) => <ProductCard product={product} />)
+                            .map((product) => <ProductCard product={product} onOpen={onOpen} />)
                     ) : (
                         <div className="col-span-full grid h-100 place-items-center">
                             <p className="text-center text-sm text-slate-700">No products available at the moment.</p>

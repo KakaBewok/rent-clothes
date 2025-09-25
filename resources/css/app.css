@@ -7,6 +7,15 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
 @theme {
     --color-first: oklch(83.7% 0.128 66.29);
     --color-second: oklch(90.1% 0.076 70.697);
