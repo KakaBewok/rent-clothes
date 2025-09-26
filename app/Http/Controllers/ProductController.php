@@ -9,6 +9,15 @@ class ProductController extends Controller
 {
     public function show(Product $product)
     {
+        $product->load([
+            'brand',
+            'types',
+            'color',
+            'branch',
+            'priceDetail',
+            'sizes',
+        ]);
+        
         return response()->json($product);
     }
 }

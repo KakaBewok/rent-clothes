@@ -109,7 +109,6 @@ export interface Product {
     brand_id?: number | null;
     code?: string | null;
     color_id?: number | null;
-    // type_id?: number | null;
     additional_ribbon?: string | null;
     branch_id?: number | null;
     ownership?: string | null;
@@ -118,7 +117,6 @@ export interface Product {
     description?: string | null;
 
     brand?: Brand;
-    // type?: Type;
     types?: Type[];
     color?: Color;
     branch?: Branch;

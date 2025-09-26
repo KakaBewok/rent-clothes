@@ -41,13 +41,6 @@ class Product extends Model
         ]);
     }
 
-    // public function type()
-    // {
-    //     return $this->belongsTo(Type::class)->withDefault([
-    //         'name' => '--- Type data has been deleted ---',
-    //     ]);
-    // }
-
     public function types()
     {
         return $this->belongsToMany(Type::class);
