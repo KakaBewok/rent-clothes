@@ -73,7 +73,9 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
                 <Footer setting={appSetting} />
                 <FloatingWhatsapp whatsapp_number={appSetting.whatsapp_number} />
 
-                {selectedProduct && <ProductModal product={selectedProduct} onClose={onCloseProductModal} />}
+                {selectedProduct && (
+                    <ProductModal product={selectedProduct} contact={appSetting.whatsapp_number ?? ''} onClose={onCloseProductModal} />
+                )}
             </div>
         </div>
     );

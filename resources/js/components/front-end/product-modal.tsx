@@ -4,10 +4,11 @@ import ProductModalContent from './product-modal-content';
 
 interface ProductModalProps {
     product: Product;
+    contact: string;
     onClose: () => void;
 }
 
-const ProductModal = ({ product, onClose }: ProductModalProps) => {
+const ProductModal = ({ product, contact, onClose }: ProductModalProps) => {
     const [selectedImage, setSelectedImage] = useState<string | null>(product.cover_image ?? null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
 
@@ -20,6 +21,7 @@ const ProductModal = ({ product, onClose }: ProductModalProps) => {
             <div className="w-full p-3 lg:p-0">
                 <ProductModalContent
                     product={product}
+                    contact={contact}
                     onClose={onClose}
                     selectedImage={selectedImage ?? ''}
                     setSelectedImage={setSelectedImage}
