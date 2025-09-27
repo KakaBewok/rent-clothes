@@ -120,11 +120,13 @@ const ProductModalContent = ({ product, contact, onClose, selectedImage, setSele
                                     <td className="px-1">:</td>
                                     <td>{getTypeList()}</td>
                                 </tr>
-                                <tr>
-                                    <td className="pr-2">Tags</td>
-                                    <td className="px-1">:</td>
-                                    <td>{additional_ribbon}</td>
-                                </tr>
+                                {additional_ribbon && (
+                                    <tr>
+                                        <td className="pr-2">Tags</td>
+                                        <td className="px-1">:</td>
+                                        <td>{additional_ribbon}</td>
+                                    </tr>
+                                )}
                                 <tr>
                                     <td className="pr-2">Sizes</td>
                                     <td className="px-1">:</td>
