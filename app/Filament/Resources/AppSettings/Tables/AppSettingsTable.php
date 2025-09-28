@@ -20,7 +20,21 @@ class AppSettingsTable
                 ImageColumn::make('app_logo')
                     ->disk('public')
                     ->square()
-                    ->imageSize(200),
+                    ->imageSize(110),
+                ImageColumn::make('instruction_image')
+                    ->disk('public')
+                   ->getStateUsing(fn($record) => collect($record->instruction_image)->take(3)->toArray())
+                    ->circular()
+                    ->stacked()
+                    ->ring(2)
+                    ->imageSize(80),
+                ImageColumn::make('tnc_image')
+                    ->disk('public')
+                    ->getStateUsing(fn($record) => collect($record->tnc_image)->take(3)->toArray())
+                    ->circular()
+                    ->stacked()
+                    ->ring(2)
+                    ->imageSize(80),
                 TextColumn::make('whatsapp_number')->label('WhatsApp'),
                 TextColumn::make('email'),
                 TextColumn::make('address'),

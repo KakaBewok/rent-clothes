@@ -4,8 +4,15 @@ import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import AppLogo from '../front-end/app-logo';
 
-const NavBar = ({ setting }: { setting: AppSetting }) => {
+interface navBarProps {
+    setting: AppSetting;
+    setModalInfo: (param: string[] | null) => void;
+}
+
+const NavBar = ({ setting, setModalInfo }: navBarProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+    const { tnc_image, instruction_image } = setting;
+
     return (
         <nav className="sticky top-0 z-40 bg-white">
             <div className="mx-auto flex h-20 w-full items-center px-4">
@@ -16,12 +23,18 @@ const NavBar = ({ setting }: { setting: AppSetting }) => {
                     <Link href="#" className="text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first">
                         Cek Jadwal
                     </Link>
-                    <Link href="#" className="text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first">
+                    <button
+                        onClick={() => setModalInfo(instruction_image ?? null)}
+                        className="cursor-pointer text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first"
+                    >
                         Cara Pemesanan
-                    </Link>
-                    <Link href="#" className="text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first">
+                    </button>
+                    <button
+                        onClick={() => setModalInfo(tnc_image ?? null)}
+                        className="cursor-pointer text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first"
+                    >
                         Syarat & Ketentuan
-                    </Link>
+                    </button>
                     <Link href="#" className="text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first">
                         Kontak
                     </Link>
@@ -54,12 +67,18 @@ const NavBar = ({ setting }: { setting: AppSetting }) => {
                     <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first">
                         Cek Jadwal
                     </Link>
-                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first">
+                    <button
+                        onClick={() => setModalInfo(instruction_image ?? null)}
+                        className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first"
+                    >
                         Cara Pemesanan
-                    </Link>
-                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first">
+                    </button>
+                    <button
+                        onClick={() => setModalInfo(tnc_image ?? null)}
+                        className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first"
+                    >
                         Syarat & Ketentuan
-                    </Link>
+                    </button>
                     <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first">
                         Kontak
                     </Link>

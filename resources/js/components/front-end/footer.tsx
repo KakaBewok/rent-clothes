@@ -4,8 +4,8 @@ import { Link } from '@inertiajs/react';
 import { Instagram, Mail, MapPin, MessageCircle } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const Footer = ({ setting }: { setting: AppSetting }) => {
-    const { address, description, instagram, app_name, whatsapp_number, email } = setting;
+const Footer = ({ setting, setModalInfo }: { setting: AppSetting; setModalInfo: (param: string[] | null) => void }) => {
+    const { address, description, instagram, app_name, whatsapp_number, email, instruction_image, tnc_image } = setting;
     const message = 'Hai Kak! Aku mau sewa dress nih. Boleh dibantu proses selanjutnya? Terima kasih.';
 
     return (
@@ -35,14 +35,20 @@ const Footer = ({ setting }: { setting: AppSetting }) => {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="#" className="text-slate-400 transition duration-300 hover:text-first">
+                                <button
+                                    onClick={() => setModalInfo(instruction_image ?? null)}
+                                    className="text-slate-400 transition duration-300 hover:text-first"
+                                >
                                     Cara Pemesanan
-                                </Link>
+                                </button>
                             </li>
                             <li>
-                                <Link href="#" className="text-slate-400 transition duration-300 hover:text-first">
+                                <button
+                                    onClick={() => setModalInfo(tnc_image ?? null)}
+                                    className="text-slate-400 transition duration-300 hover:text-first"
+                                >
                                     Syarat & Ketentuan
-                                </Link>
+                                </button>
                             </li>
                         </ul>
                     </div>

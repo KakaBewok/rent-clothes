@@ -20,8 +20,8 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                     <h2 className="mb-1 text-lg font-semibold text-slate-700 md:mb-2 md:text-xl">{productName}</h2>
                     <p className="mb-1 text-xs text-slate-500 md:text-sm">by {brand?.name}</p>
                     <p className="mb-1 text-xs text-slate-500 md:text-sm">code {code}</p>
-                    <hr className="my-1 border-t border-slate-200" />
-                    <div className="mt-0 flex items-center gap-2 md:mt-2">
+                    <hr className="my-2 border-t border-slate-200" />
+                    <div className="mt-0 flex items-center gap-2">
                         {price_detail?.discount ? (
                             <>
                                 <span className="text-xs text-slate-300 line-through">{formatRupiah(price_detail?.rent_price)}</span>
@@ -36,11 +36,11 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                             <span className="md:text-md text-sm font-semibold text-slate-700">{formatRupiah(price_detail?.rent_price)}</span>
                         )}
                     </div>
-                    <hr className="my-1 border-t border-slate-200" />
+                    <hr className="my-2 border-t border-slate-200" />
                 </div>
 
                 {/* desc */}
-                <h2 className="mt-2 text-sm font-semibold text-slate-700">Deskripsi</h2>
+                <h2 className="mt-3 text-sm font-semibold text-slate-700">Deskripsi</h2>
                 <div className="prose mt-2 max-w-none text-xs text-slate-500" dangerouslySetInnerHTML={{ __html: description ?? '' }} />
 
                 {/* additional desc */}

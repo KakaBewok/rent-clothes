@@ -22,7 +22,7 @@ class BannersTable
                     ->disk('public')
                     ->getStateUsing(fn($record) => collect($record->images)->take(5)->toArray())
                     ->circular()
-                    ->imageSize(40)
+                    ->imageSize(110)
                     ->stacked()
                     ->ring(2),
                 TextColumn::make('title'),

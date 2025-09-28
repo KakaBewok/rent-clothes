@@ -1,4 +1,5 @@
 import { Carousel, CarouselApi, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '../ui/carousel';
+import SwipeHandIcon from './swipe-hand-icon';
 
 interface FullPreviewImageProps {
     setPreviewImage: (image: string | null) => void;
@@ -47,8 +48,9 @@ const FullPreviewImage = ({ setPreviewImage, setApi, images, showHint }: FullPre
             </Carousel>
 
             {showHint && (
-                <div className="animate-fade-out absolute inset-0 z-[90] flex items-center justify-center bg-black/60">
-                    <span className="text-md font-semibold text-white md:text-lg">Swipe for next image</span>
+                <div className="animate-fade-out absolute inset-0 z-[90] flex items-center justify-end bg-black/60 text-white md:hidden">
+                    {/* <span className="text-md font-semibold text-white md:text-lg">Swipe for next image</span> */}
+                    <SwipeHandIcon />
                 </div>
             )}
         </div>

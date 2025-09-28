@@ -1,6 +1,7 @@
 import FloatingWhatsapp from '@/components/front-end/floating-whatsapp';
 import Footer from '@/components/front-end/footer';
 import Hero from '@/components/front-end/hero';
+import ModalInfo from '@/components/front-end/ModalInfo';
 import NavBar from '@/components/front-end/nav-bar';
 import NoteBox from '@/components/front-end/note-box';
 import ProductList from '@/components/front-end/product-list';
@@ -20,6 +21,8 @@ interface HomePageProps {
 function HomePage({ products, banners, appSetting }: HomePageProps) {
     const [loading, setLoading] = useState<boolean>(true);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [modalInfo, setModalInfo] = useState<string[] | null>(null);
+    const [showHint, setShowHint] = useState<boolean>(true);
 
     const openProduct = async (id: number) => {
         setLoading(true);
@@ -55,6 +58,14 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
         return () => clearTimeout(timer);
     }, []);
 
+    useEffect(() => {
+        if (modalInfo) {
+            setShowHint(true);
+            const timer = setTimeout(() => setShowHint(false), 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [modalInfo]);
+
     if (loading) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-gray-50">
@@ -66,16 +77,18 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
     return (
         <div className="w-full bg-gray-50">
             <div className="relative mx-auto min-h-screen max-w-screen-xl bg-white">
-                <NavBar setting={safeSetting} />
+                <NavBar setting={safeSetting} setModalInfo={setModalInfo} />
                 <Hero banners={banners} />
                 <NoteBox />
                 <ProductList products={products} onOpen={openProduct} />
-                <Footer setting={appSetting} />
+                <Footer setting={appSetting} setModalInfo={setModalInfo} />
                 <FloatingWhatsapp whatsapp_number={appSetting.whatsapp_number} />
 
                 {selectedProduct && (
                     <ProductModal product={selectedProduct} contact={appSetting.whatsapp_number ?? ''} onClose={onCloseProductModal} />
                 )}
+
+                {modalInfo && modalInfo.length > 0 && <ModalInfo setModalInfo={setModalInfo} modalInfo={modalInfo} showHint={showHint} />}
             </div>
         </div>
     );

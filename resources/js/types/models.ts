@@ -9,6 +9,8 @@ export interface AppSetting {
     description?: string | null;
     created_at?: string;
     updated_at?: string;
+    tnc_image?: string[];
+    instruction_image?: string[];
 }
 
 export interface Banner {

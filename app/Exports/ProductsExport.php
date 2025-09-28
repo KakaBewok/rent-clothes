@@ -11,7 +11,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
 {
     public function collection()
     {
-        return Product::with(['brand', 'type', 'color', 'branch', 'priceDetail', 'sizes'])->get();
+        return Product::with(['brand', 'types', 'color', 'branch', 'priceDetail', 'sizes'])->get();
     }
 
     public function headings(): array
@@ -22,7 +22,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
             'Code',
             'Ownership',
             'Brand',
-            'Type',
+            'Types',
             'Color',
             'Branch',
             'Rent Price',
@@ -35,8 +35,8 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
 
     public function map($product): array
     {
-        // Gabungkan sizes & quantity jadi string
         $sizes = $product->sizes->map(fn($size) => "{$size->size} ({$size->quantity})")->implode(', ');
+        $types = $product->types->map(fn($type) => "{$type->name}")->implode(', ');
 
         return [
             $product->id,
@@ -44,7 +44,7 @@ class ProductsExport implements FromCollection, WithHeadings, WithMapping
             $product->code,
             $product->ownership,
             $product->brand?->name,
-            $product->type?->name,
+            $types,
             $product->color?->name,
             $product->branch?->name,
             $product->priceDetail?->rent_price,

@@ -17,5 +17,12 @@ class AppSetting extends Model
         'address',
         'instagram',
         'description',
+        'tnc_image',
+        'instruction_image'
+    ];
+
+    protected $casts = [
+        'instruction_image' => 'array',
+        'tnc_image' => 'array',
     ];
 }
