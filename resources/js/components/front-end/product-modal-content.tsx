@@ -66,7 +66,7 @@ const ProductModalContent = ({ product, contact, onClose, selectedImage, setSele
                     />
 
                     {showHint && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/60">
+                        <div className="animate-fade-out absolute inset-0 flex items-center justify-center bg-black/60">
                             <span className="text-md font-semibold text-white md:text-lg">Click to View Larger</span>
                         </div>
                     )}

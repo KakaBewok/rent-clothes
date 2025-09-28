@@ -47,7 +47,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                 <div className="mt-3 border-b border-slate-200 pb-3">
                     <table className="text-xs text-slate-500">
                         <tbody>
-                            {types && types.length < 1 && (
+                            {types && types.length > 0 && (
                                 <tr>
                                     <td className="pr-2">Types</td>
                                     <td className="px-1">:</td>

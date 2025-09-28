@@ -17,6 +17,22 @@
     scrollbar-width: none; /* Firefox */
 }
 
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.animate-fade-out {
+    animation: fadeOut 3s forwards;
+}
+
 @theme {
     --color-first: oklch(83.7% 0.128 66.29);
     --color-second: oklch(90.1% 0.076 70.697);
