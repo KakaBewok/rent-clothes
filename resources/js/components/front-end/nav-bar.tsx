@@ -1,4 +1,5 @@
 import { AppSetting } from '@/types/models';
+import { formatWhatsAppNumber } from '@/utils/format';
 import { Link } from '@inertiajs/react';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
@@ -11,7 +12,9 @@ interface navBarProps {
 
 const NavBar = ({ setting, setModalInfo }: navBarProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-    const { tnc_image, instruction_image } = setting;
+    const { tnc_image, instruction_image, whatsapp_number } = setting;
+
+    const message = 'Hai Kak! Aku mau sewa dress nih. Boleh dibantu proses selanjutnya? Terima kasih.';
 
     return (
         <nav className="sticky top-0 z-40 bg-white">
@@ -35,9 +38,14 @@ const NavBar = ({ setting, setModalInfo }: navBarProps) => {
                     >
                         Syarat & Ketentuan
                     </button>
-                    <Link href="#" className="text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first">
+                    <a
+                        href={`https://wa.me/${formatWhatsAppNumber(whatsapp_number ?? '628877935678')}?text=${encodeURIComponent(message)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first"
+                    >
                         Kontak
-                    </Link>
+                    </a>
                 </div>
 
                 {/* mobile menu button */}
@@ -79,9 +87,14 @@ const NavBar = ({ setting, setModalInfo }: navBarProps) => {
                     >
                         Syarat & Ketentuan
                     </button>
-                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first">
+                    <a
+                        href={`https://wa.me/${formatWhatsAppNumber(whatsapp_number ?? '628877935678')}?text=${encodeURIComponent(message)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first"
+                    >
                         Kontak
-                    </Link>
+                    </a>
                 </div>
             </div>
         </nav>

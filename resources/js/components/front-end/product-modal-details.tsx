@@ -107,7 +107,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
             {/* Footer button */}
             <div className="pt-3">
                 <a
-                    href={`https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '08877935678')}?text=${encodeURIComponent(message)}`}
+                    href={`https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                 >
