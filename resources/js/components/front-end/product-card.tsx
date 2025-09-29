@@ -18,7 +18,7 @@ const ProductCard = ({ product, onOpen }: ProductProps) => {
             >
                 {/* Ribbon badge */}
                 {product.additional_ribbon && (
-                    <div className="absolute top-0 left-0 z-10 rounded-br-xs bg-first px-1.5 py-0.5">
+                    <div className="absolute top-0 left-0 z-10 rounded-br-xs bg-[#BAAE9E] px-1.5 py-0.5">
                         <p className="text-[10px] font-normal tracking-wide text-white md:text-[12px]">{product.additional_ribbon}</p>
                     </div>
                 )}

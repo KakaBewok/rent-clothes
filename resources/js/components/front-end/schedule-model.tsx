@@ -33,15 +33,12 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
 
     return (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50" onClick={() => !isUnclose && onClose()}>
-            <div
-                className="relative z-50 w-full max-w-md bg-white p-6 shadow-xl"
-                onClick={(e) => e.stopPropagation()} // biar klik konten tidak close
-            >
+            <div className="relative z-50 w-full max-w-md bg-white p-5 shadow-sm" onClick={(e) => e.stopPropagation()}>
                 {/* header */}
                 <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-800">Cek Jadwal</h2>
+                    <h2 className="text-center text-xl font-semibold text-gray-800">Cek Jadwal</h2>
                     {!isUnclose && (
-                        <button type="button" onClick={onClose} className="p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+                        <button type="button" onClick={onClose} className="cursor-pointer p-1.5 text-slate-700 hover:text-slate-800">
                             ✕
                         </button>
                     )}
@@ -57,14 +54,14 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                             value={form.useByDate}
                             onChange={handleChange}
                             min={getTodayDate()}
-                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-first focus:ring-first"
+                            className="mt-1 w-full cursor-pointer border border-gray-300 px-3 py-2 text-sm text-slate-700 shadow-sm"
                         />
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700">Durasi Pakai (Hari)</label>
                         <div className="mt-1 flex items-center justify-start rounded-md border border-gray-300 text-black shadow-sm">
-                            {/* Tombol minus */}
+                            {/* minus */}
                             <button
                                 type="button"
                                 onClick={() =>
@@ -73,7 +70,7 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                                         duration: Math.max(1, Number(form.duration) - 1),
                                     })
                                 }
-                                className="bg-gray-400 px-3 py-2 text-gray-100"
+                                className="bg-first px-3 py-2 text-gray-100"
                             >
                                 -
                             </button>
@@ -97,7 +94,7 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                                         duration: Number(form.duration) + 1,
                                     })
                                 }
-                                className="bg-gray-500 px-3 py-2 text-gray-100"
+                                className="bg-first px-3 py-2 text-gray-100"
                             >
                                 +
                             </button>
@@ -122,7 +119,7 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                             name="shippingType"
                             value={form.shippingType}
                             onChange={handleChange}
-                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-first focus:ring-first"
+                            className="mt-1 w-full rounded-none border border-gray-300 px-3 py-2 text-sm text-slate-700"
                         >
                             <option value="">-- Pilih --</option>
                             <option value="Next day">Next Day</option>
@@ -136,7 +133,7 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                             name="city"
                             value={form.city}
                             onChange={handleChange}
-                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-first focus:ring-first"
+                            className="mt-1 w-full border border-gray-300 px-3 py-2 text-sm text-slate-700 shadow-sm"
                         >
                             <option value="">-- Pilih --</option>
                             {branchs &&
@@ -149,7 +146,7 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                         </select>
                     </div>
 
-                    <button type="submit" className="w-full rounded-md bg-first py-2 font-medium text-white shadow hover:bg-first/90">
+                    <button type="submit" className="w-full cursor-pointer bg-first py-2 font-medium text-white shadow hover:bg-first/90">
                         Cari
                     </button>
                 </form>

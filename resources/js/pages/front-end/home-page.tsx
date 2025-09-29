@@ -8,7 +8,6 @@ import ProductList from '@/components/front-end/product-list';
 import ProductModal from '@/components/front-end/product-modal';
 import ScheduleModal from '@/components/front-end/schedule-model';
 import { AppSetting, Banner, Branch, Filter, Product } from '@/types/models';
-import { router } from '@inertiajs/react';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -43,14 +42,6 @@ function HomePage({ branchs, products, banners, appSetting, showModal, filter }:
 
     const onCloseProductModal = () => {
         setSelectedProduct(null);
-        router.get(
-            '/',
-            {},
-            {
-                preserveScroll: true,
-                preserveState: true,
-            },
-        );
     };
 
     const safeSetting: AppSetting = appSetting ?? {
