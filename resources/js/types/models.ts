@@ -13,6 +13,13 @@ export interface AppSetting {
     instruction_image?: string[];
 }
 
+export interface Filter {
+    useByDate: string;
+    duration: number;
+    city: string;
+    shippingType: string;
+}
+
 export interface Banner {
     id: number;
     title: string;

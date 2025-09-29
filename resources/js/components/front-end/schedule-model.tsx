@@ -1,89 +1,161 @@
-// import { useForm } from '@inertiajs/react';
+import { Branch, Filter } from '@/types/models';
+import { useState } from 'react';
 
-// interface ScheduleModalProps {
-//     isOpen: boolean;
-//     onClose: () => void;
-//     initialValues: {
-//         useByDate: string;
-//         duration: string | number;
-//         city: string;
-//         shippingType: string;
-//     };
-// }
+interface ScheduleModalProps {
+    isUnclose: boolean;
+    onClose: () => void;
+    filter: Filter;
+    branchs: Branch[];
+}
 
-// export default function ScheduleModal({ isOpen, onClose, initialValues }: ScheduleModalProps) {
-//     const { data, setData, post, processing } = useForm({
-//         useByDate: initialValues.useByDate,
-//         duration: initialValues.duration,
-//         city: initialValues.city,
-//         shippingType: initialValues.shippingType,
-//     });
+const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalProps) => {
+    const [form, setForm] = useState<Filter>(filter);
 
-//     if (!isOpen) return null;
+    function getTodayDate(): string {
+        const today = new Date();
+        return today.toISOString().split('T')[0]; // format YYYY-MM-DD
+    }
 
-//     const handleSubmit = (e) => {
-//         // e.preventDefault();
-//         // post(route('check.jadwal'), {
-//         //     onSuccess: () => onClose(),
-//         // });
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
-//         alert(`Form submitted`);
-//     };
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
 
-//     return (
-//         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black opacity-10">
-//             <div className="w-full max-w-md rounded bg-white p-6 shadow-lg">
-//                 <h2 className="mb-4 text-xl font-bold">Check Jadwal</h2>
+        // router.get('/', form, {
+        //     preserveScroll: true,
+        //     preserveState: true,
+        // });
 
-//                 <form onSubmit={handleSubmit} className="space-y-4">
-//                     <div>
-//                         <label className="block text-sm font-medium">Tanggal Pakai</label>
-//                         <input
-//                             type="date"
-//                             value={data.useByDate}
-//                             onChange={(e) => setData('useByDate', e.target.value)}
-//                             className="w-full rounded border px-2 py-1"
-//                         />
-//                     </div>
+        onClose();
+    };
 
-//                     <div>
-//                         <label className="block text-sm font-medium">Durasi Pakai (Hari)</label>
-//                         <input
-//                             type="number"
-//                             min="1"
-//                             value={data.duration}
-//                             onChange={(e) => setData('duration', e.target.value)}
-//                             className="w-full rounded border px-2 py-1"
-//                         />
-//                     </div>
+    return (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50" onClick={() => !isUnclose && onClose()}>
+            <div
+                className="relative z-50 w-full max-w-md bg-white p-6 shadow-xl"
+                onClick={(e) => e.stopPropagation()} // biar klik konten tidak close
+            >
+                {/* header */}
+                <div className="mb-6 flex items-center justify-between">
+                    <h2 className="text-xl font-semibold text-gray-800">Cek Jadwal</h2>
+                    {!isUnclose && (
+                        <button type="button" onClick={onClose} className="p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+                            ✕
+                        </button>
+                    )}
+                </div>
 
-//                     <div>
-//                         <label className="block text-sm font-medium">Pilih tipe pengiriman</label>
-//                         <select
-//                             value={data.shippingType}
-//                             onChange={(e) => setData('shippingType', e.target.value)}
-//                             className="w-full rounded border px-2 py-1"
-//                         >
-//                             <option value="">-- pilih --</option>
-//                             <option value="nd">Next Day</option>
-//                             <option value="reg">Reguler</option>
-//                         </select>
-//                     </div>
+                {/* form */}
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Tanggal Pakai</label>
+                        <input
+                            type="date"
+                            name="useByDate"
+                            value={form.useByDate}
+                            onChange={handleChange}
+                            min={getTodayDate()}
+                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-first focus:ring-first"
+                        />
+                    </div>
 
-//                     <div>
-//                         <label className="block text-sm font-medium">Pilih asal pengiriman</label>
-//                         <select value={data.city} onChange={(e) => setData('city', e.target.value)} className="w-full rounded border px-2 py-1">
-//                             <option value="">-- pilih --</option>
-//                             <option value="9a9a6938-1024-4714-bfbc-e8597a4488bb">Tangerang Selatan</option>
-//                             <option value="another-id">Jakarta</option>
-//                         </select>
-//                     </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Durasi Pakai (Hari)</label>
+                        <div className="mt-1 flex items-center justify-start rounded-md border border-gray-300 text-black shadow-sm">
+                            {/* Tombol minus */}
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setForm({
+                                        ...form,
+                                        duration: Math.max(1, Number(form.duration) - 1),
+                                    })
+                                }
+                                className="bg-gray-400 px-3 py-2 text-gray-100"
+                            >
+                                -
+                            </button>
 
-//                     <button type="submit" disabled={processing} className="bg-beige-600 w-full rounded py-2 text-white">
-//                         Cari
-//                     </button>
-//                 </form>
-//             </div>
-//         </div>
-//     );
-// }
+                            {/* Input number */}
+                            <input
+                                type="number"
+                                min="1"
+                                name="duration"
+                                value={form.duration}
+                                onChange={handleChange}
+                                className="w-full px-2 text-sm focus:border-gray-300 focus:ring-0 focus:outline-none"
+                            />
+
+                            {/* Tombol plus */}
+                            <button
+                                type="button"
+                                onClick={() =>
+                                    setForm({
+                                        ...form,
+                                        duration: Number(form.duration) + 1,
+                                    })
+                                }
+                                className="bg-gray-500 px-3 py-2 text-gray-100"
+                            >
+                                +
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* <div>
+                        <label className="block text-sm font-medium text-gray-700">Durasi Pakai (Hari)</label>
+                        <input
+                            type="number"
+                            min="1"
+                            name="duration"
+                            value={form.duration}
+                            onChange={handleChange}
+                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-first focus:ring-first"
+                        />
+                    </div> */}
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Pilih Tipe Pengiriman</label>
+                        <select
+                            name="shippingType"
+                            value={form.shippingType}
+                            onChange={handleChange}
+                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-first focus:ring-first"
+                        >
+                            <option value="">-- Pilih --</option>
+                            <option value="Next day">Next Day</option>
+                            <option value="Same day">Same Day</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700">Pilih Asal Pengiriman</label>
+                        <select
+                            name="city"
+                            value={form.city}
+                            onChange={handleChange}
+                            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-first focus:ring-first"
+                        >
+                            <option value="">-- Pilih --</option>
+                            {branchs &&
+                                branchs.length > 0 &&
+                                branchs.map((branch) => (
+                                    <option key={branch.id} value={`${branch.id}`}>
+                                        {branch.name}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+
+                    <button type="submit" className="w-full rounded-md bg-first py-2 font-medium text-white shadow hover:bg-first/90">
+                        Cari
+                    </button>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default ScheduleModal;

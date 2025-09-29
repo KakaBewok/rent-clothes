@@ -1,6 +1,5 @@
 import { AppSetting } from '@/types/models';
 import { formatWhatsAppNumber } from '@/utils/format';
-import { Link } from '@inertiajs/react';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import AppLogo from '../front-end/app-logo';
@@ -8,9 +7,10 @@ import AppLogo from '../front-end/app-logo';
 interface navBarProps {
     setting: AppSetting;
     setModalInfo: (param: string[] | null) => void;
+    setShowScheduleModal: (param: boolean) => void;
 }
 
-const NavBar = ({ setting, setModalInfo }: navBarProps) => {
+const NavBar = ({ setting, setModalInfo, setShowScheduleModal }: navBarProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
     const { tnc_image, instruction_image, whatsapp_number } = setting;
 
@@ -23,9 +23,15 @@ const NavBar = ({ setting, setModalInfo }: navBarProps) => {
 
                 {/* nav: tablet & desktop */}
                 <div className="mx-auto hidden space-x-8 md:flex">
-                    <Link href="#" className="text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first">
+                    <button
+                        onClick={() => {
+                            setShowScheduleModal(true);
+                        }}
+                        className="cursor-pointer text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first"
+                    >
                         Cek Jadwal
-                    </Link>
+                    </button>
+
                     <button
                         onClick={() => setModalInfo(instruction_image ?? null)}
                         className="cursor-pointer text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first"
@@ -72,9 +78,15 @@ const NavBar = ({ setting, setModalInfo }: navBarProps) => {
                 } overflow-hidden`}
             >
                 <div className="space-y-1 bg-third px-2 py-3 sm:px-3">
-                    <Link href="#" className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first">
+                    <button
+                        onClick={() => {
+                            setShowScheduleModal(true);
+                        }}
+                        className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first"
+                    >
                         Cek Jadwal
-                    </Link>
+                    </button>
+
                     <button
                         onClick={() => setModalInfo(instruction_image ?? null)}
                         className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first"

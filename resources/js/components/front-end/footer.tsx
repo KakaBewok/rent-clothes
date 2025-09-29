@@ -1,10 +1,15 @@
 import { AppSetting } from '@/types/models';
 import { formatWhatsAppNumber } from '@/utils/format';
-import { Link } from '@inertiajs/react';
 import { Instagram, Mail, MapPin, MessageCircle } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const Footer = ({ setting, setModalInfo }: { setting: AppSetting; setModalInfo: (param: string[] | null) => void }) => {
+interface FooterProps {
+    setting: AppSetting;
+    setModalInfo: (param: string[] | null) => void;
+    setShowScheduleModal: (param: boolean) => void;
+}
+
+const Footer = ({ setting, setModalInfo, setShowScheduleModal }: FooterProps) => {
     const { address, description, instagram, app_name, whatsapp_number, email, instruction_image, tnc_image } = setting;
     const message = 'Hai Kak! Aku mau sewa dress nih. Boleh dibantu proses selanjutnya? Terima kasih.';
 
@@ -30,9 +35,14 @@ const Footer = ({ setting, setModalInfo }: { setting: AppSetting; setModalInfo: 
                         <h4 className="md:text-md mb-2 text-sm font-semibold md:mb-3">Informasi</h4>
                         <ul className="space-y-1 text-xs md:text-sm">
                             <li>
-                                <Link href="#" className="text-slate-400 transition duration-300 hover:text-first">
+                                <button
+                                    onClick={() => {
+                                        setShowScheduleModal(true);
+                                    }}
+                                    className="cursor-pointer text-slate-400 transition duration-300 hover:text-first"
+                                >
                                     Cek Jadwal
-                                </Link>
+                                </button>
                             </li>
                             <li>
                                 <button

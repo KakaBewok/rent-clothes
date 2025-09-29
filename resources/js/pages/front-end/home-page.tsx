@@ -6,7 +6,8 @@ import NavBar from '@/components/front-end/nav-bar';
 import NoteBox from '@/components/front-end/note-box';
 import ProductList from '@/components/front-end/product-list';
 import ProductModal from '@/components/front-end/product-modal';
-import { AppSetting, Banner, Product } from '@/types/models';
+import ScheduleModal from '@/components/front-end/schedule-model';
+import { AppSetting, Banner, Branch, Filter, Product } from '@/types/models';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
@@ -15,14 +16,18 @@ import { useEffect, useState } from 'react';
 interface HomePageProps {
     products: Product[];
     banners: Banner[];
+    branchs: Branch[];
     appSetting: AppSetting;
+    showModal: boolean;
+    filter: Filter;
 }
 
-function HomePage({ products, banners, appSetting }: HomePageProps) {
+function HomePage({ branchs, products, banners, appSetting, showModal, filter }: HomePageProps) {
     const [loading, setLoading] = useState<boolean>(true);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [modalInfo, setModalInfo] = useState<string[] | null>(null);
     const [showHint, setShowHint] = useState<boolean>(true);
+    const [showScheduleModal, setShowScheduleModal] = useState<boolean>(false);
 
     const openProduct = async (id: number) => {
         setLoading(true);
@@ -54,6 +59,12 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
     };
 
     useEffect(() => {
+        if (showModal) {
+            setShowScheduleModal(true);
+        }
+    }, [showModal]);
+
+    useEffect(() => {
         const timer = setTimeout(() => setLoading(false), 300);
         return () => clearTimeout(timer);
     }, []);
@@ -76,19 +87,23 @@ function HomePage({ products, banners, appSetting }: HomePageProps) {
 
     return (
         <div className="w-full bg-gray-50">
+            {showScheduleModal ?? alert('Modal muncul')}
             <div className="relative mx-auto min-h-screen max-w-screen-xl bg-white">
-                <NavBar setting={safeSetting} setModalInfo={setModalInfo} />
+                <NavBar setting={safeSetting} setModalInfo={setModalInfo} setShowScheduleModal={setShowScheduleModal} />
                 <Hero banners={banners} />
                 <NoteBox />
                 <ProductList products={products} onOpen={openProduct} />
-                <Footer setting={appSetting} setModalInfo={setModalInfo} />
+                <Footer setting={appSetting} setModalInfo={setModalInfo} setShowScheduleModal={setShowScheduleModal} />
                 <FloatingWhatsapp whatsapp_number={appSetting.whatsapp_number} />
 
+                {/* Modals */}
                 {selectedProduct && (
                     <ProductModal product={selectedProduct} contact={appSetting.whatsapp_number ?? ''} onClose={onCloseProductModal} />
                 )}
-
                 {modalInfo && modalInfo.length > 0 && <ModalInfo setModalInfo={setModalInfo} modalInfo={modalInfo} showHint={showHint} />}
+                {showScheduleModal && (
+                    <ScheduleModal branchs={branchs} filter={filter} isUnclose={showModal} onClose={() => setShowScheduleModal(false)} />
+                )}
             </div>
         </div>
     );
