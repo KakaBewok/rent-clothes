@@ -50,7 +50,7 @@ const ModalInfo = ({ setModalInfo, modalInfo, showHint }: ModalInfoProps) => {
             </Carousel>
 
             {showHint && modalInfo && modalInfo.length > 1 && (
-                <div className="animate-fade-out absolute inset-0 z-[90] flex items-center justify-end bg-black/20 md:hidden">
+                <div className="animate-fade-out absolute inset-0 z-[90] flex items-center justify-end bg-black/5 md:hidden">
                     <SwipeHandIcon />
                 </div>
             )}

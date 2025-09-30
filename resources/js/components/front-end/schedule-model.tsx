@@ -1,5 +1,6 @@
 import { Branch, Filter } from '@/types/models';
 import { router } from '@inertiajs/react';
+import { format, parse } from 'date-fns';
 import { useState } from 'react';
 
 interface ScheduleModalProps {
@@ -21,21 +22,11 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
     }
 
     function normalizeDate(dateStr: string): string {
-        if (!dateStr) return '';
-
-        const parts = dateStr.split('-');
-        if (parts.length !== 3) return '';
-
-        const [day, month, year] = parts;
-        return `${year}-${month}-${day}`;
+        return format(parse(dateStr, 'dd-MM-yyyy', new Date()), 'yyyy-MM-dd');
     }
 
     function toDDMMYYYY(dateStr: string): string {
-        if (!dateStr) return '';
-        const parts = dateStr.split('-');
-        if (parts.length !== 3) return '';
-        const [year, month, day] = parts;
-        return `${day}-${month}-${year}`;
+        return format(new Date(dateStr), 'dd-MM-yyyy');
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -98,7 +89,7 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                                         duration: Math.max(1, Number(form.duration) - 1),
                                     })
                                 }
-                                className="cursor-pointer bg-slate-800 px-3 py-2 text-white"
+                                className="cursor-pointer bg-[#BAAE9E] px-3 py-2 text-white"
                             >
                                 -
                             </button>
@@ -122,7 +113,7 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                                         duration: Number(form.duration) + 1,
                                     })
                                 }
-                                className="cursor-pointer bg-slate-800 px-3 py-2 text-white"
+                                className="cursor-pointer bg-[#BAAE9E] px-3 py-2 text-white"
                             >
                                 +
                             </button>
@@ -162,7 +153,7 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                         </select>
                     </div>
 
-                    <button type="submit" className="w-full cursor-pointer bg-slate-700 py-2 font-medium text-white">
+                    <button type="submit" className="w-full cursor-pointer bg-[#BAAE9E] py-2 font-medium text-white">
                         Cari
                     </button>
                 </form>

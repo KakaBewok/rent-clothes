@@ -15,10 +15,11 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
+        $firstBranch = Branch::first();
         $defaultParams = [
                 'useByDate'     => Carbon::now()->addDays(2)->format('d-m-Y'),
                 'duration'      => 1,
-                'city'          => '14',
+                'city'          => $firstBranch ? $firstBranch->id : null,
                 'shippingType'  => 'Next day',
         ];
 

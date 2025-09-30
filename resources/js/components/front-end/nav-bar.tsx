@@ -19,7 +19,25 @@ const NavBar = ({ setting, setModalInfo, setShowScheduleModal }: navBarProps) =>
     return (
         <nav className="sticky top-0 z-40 bg-white">
             <div className="mx-auto flex h-20 w-full items-center px-4">
-                <AppLogo setting={setting} />
+                <div className="hidden md:flex">
+                    <AppLogo setting={setting} />
+                </div>
+
+                {/* mobile menu button */}
+                <div className="cursor-pointer md:hidden">
+                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="relative flex h-6 w-6 items-center justify-center text-gray-700">
+                        <Menu
+                            className={`absolute h-6 w-6 transform transition-all duration-300 ${
+                                isMenuOpen ? 'scale-0 rotate-90 opacity-0' : 'scale-100 rotate-0 opacity-100'
+                            }`}
+                        />
+                        <X
+                            className={`absolute h-6 w-6 transform transition-all duration-300 ${
+                                isMenuOpen ? 'scale-100 rotate-0 opacity-100' : 'scale-0 -rotate-90 opacity-0'
+                            }`}
+                        />
+                    </button>
+                </div>
 
                 {/* nav: tablet & desktop */}
                 <div className="mx-auto hidden space-x-8 md:flex">
@@ -54,20 +72,8 @@ const NavBar = ({ setting, setModalInfo, setShowScheduleModal }: navBarProps) =>
                     </a>
                 </div>
 
-                {/* mobile menu button */}
-                <div className="ml-auto cursor-pointer md:hidden">
-                    <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="relative flex h-6 w-6 items-center justify-center text-gray-700">
-                        <Menu
-                            className={`absolute h-6 w-6 transform transition-all duration-300 ${
-                                isMenuOpen ? 'scale-0 rotate-90 opacity-0' : 'scale-100 rotate-0 opacity-100'
-                            }`}
-                        />
-                        <X
-                            className={`absolute h-6 w-6 transform transition-all duration-300 ${
-                                isMenuOpen ? 'scale-100 rotate-0 opacity-100' : 'scale-0 -rotate-90 opacity-0'
-                            }`}
-                        />
-                    </button>
+                <div className="ml-auto block md:hidden">
+                    <AppLogo setting={setting} />
                 </div>
             </div>
 

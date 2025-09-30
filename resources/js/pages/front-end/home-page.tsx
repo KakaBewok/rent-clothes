@@ -82,7 +82,7 @@ function HomePage({ branchs, products, banners, appSetting, showModal, filter }:
             <div className="relative mx-auto min-h-screen max-w-screen-xl bg-white">
                 <NavBar setting={safeSetting} setModalInfo={setModalInfo} setShowScheduleModal={setShowScheduleModal} />
                 <Hero banners={banners} />
-                <NoteBox />
+                <NoteBox branchs={branchs} />
                 <ProductList products={products} onOpen={openProduct} />
                 <Footer setting={appSetting} setModalInfo={setModalInfo} setShowScheduleModal={setShowScheduleModal} />
                 <FloatingWhatsapp whatsapp_number={appSetting.whatsapp_number} />
