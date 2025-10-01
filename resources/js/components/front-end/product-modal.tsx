@@ -28,7 +28,7 @@ const ProductModal = ({ product, contact, onClose }: ProductModalProps) => {
     useEffect(() => {
         if (previewImage) {
             setShowHint(true);
-            const timer = setTimeout(() => setShowHint(false), 3000);
+            const timer = setTimeout(() => setShowHint(false), 1500);
             return () => clearTimeout(timer);
         }
     }, [previewImage]);
