@@ -27,7 +27,12 @@ const Hero = ({ banners }: { banners: Banner[] }) => {
 
     return (
         <div className="relative w-full md:px-4">
-            <Carousel className="w-full" setApi={setApi} opts={{ loop: true }} plugins={[Autoplay({ delay: 3000, stopOnInteraction: false })]}>
+            <Carousel
+                className="w-full bg-slate-50"
+                setApi={setApi}
+                opts={{ loop: true }}
+                plugins={[Autoplay({ delay: 3000, stopOnInteraction: false })]}
+            >
                 <CarouselContent>
                     {slides.map((slide) => (
                         <CarouselItem key={slide.key}>
@@ -36,18 +41,12 @@ const Hero = ({ banners }: { banners: Banner[] }) => {
                                     src={`/storage/${slide.image}`}
                                     loading="lazy"
                                     alt={slide.title}
-                                    className="h-[300px] w-full object-cover md:h-[400px]"
+                                    className="h-[300px] w-full object-contain object-center md:h-[400px]"
                                 />
                             </div>
                         </CarouselItem>
                     ))}
                 </CarouselContent>
-
-                {/* Arrows */}
-                {/* <div className="absolute -bottom-8 left-1/2 flex -translate-x-1/2 space-x-4">
-                    <CarouselPrevious className="static translate-x-0 translate-y-0 cursor-pointer" variant={'default'} />
-                    <CarouselNext className="static translate-x-0 translate-y-0 cursor-pointer" variant={'default'} />
-                </div> */}
             </Carousel>
 
             {/* Dot Indicators */}
