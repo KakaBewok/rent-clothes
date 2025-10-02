@@ -1,19 +1,19 @@
 import FloatingWhatsapp from '@/components/front-end/floating-whatsapp';
 import Footer from '@/components/front-end/footer';
 import Hero from '@/components/front-end/hero';
-import ModalInfo from '@/components/front-end/ModalInfo';
+import ModalInfo from '@/components/front-end/modal-info';
 import NavBar from '@/components/front-end/nav-bar';
 import NoteBox from '@/components/front-end/note-box';
 import ProductList from '@/components/front-end/product-list';
 import ProductModal from '@/components/front-end/product-modal';
 import ScheduleModal from '@/components/front-end/schedule-model';
-import { AppSetting, Banner, Branch, Filter, Product } from '@/types/models';
+import { AppSetting, Banner, Branch, Filter, PaginatedProducts, Product } from '@/types/models';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface HomePageProps {
-    products: Product[];
+    products: PaginatedProducts;
     banners: Banner[];
     branchs: Branch[];
     appSetting: AppSetting;

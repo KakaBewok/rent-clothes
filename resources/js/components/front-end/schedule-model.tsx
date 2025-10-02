@@ -89,7 +89,7 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                                         duration: Math.max(1, Number(form.duration) - 1),
                                     })
                                 }
-                                className="cursor-pointer bg-[#BAAE9E] px-3 py-2 text-white"
+                                className="cursor-pointer bg-[#565449] px-3 py-2 text-white"
                             >
                                 -
                             </button>
@@ -113,7 +113,7 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                                         duration: Number(form.duration) + 1,
                                     })
                                 }
-                                className="cursor-pointer bg-[#BAAE9E] px-3 py-2 text-white"
+                                className="cursor-pointer bg-[#565449] px-3 py-2 text-white"
                             >
                                 +
                             </button>
@@ -153,7 +153,7 @@ const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalPro
                         </select>
                     </div>
 
-                    <button type="submit" className="w-full cursor-pointer bg-[#BAAE9E] py-2 font-medium text-white">
+                    <button type="submit" className="w-full cursor-pointer bg-[#565449] py-2 font-medium text-white">
                         Cari
                     </button>
                 </form>

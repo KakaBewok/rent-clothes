@@ -13,6 +13,18 @@ export interface AppSetting {
     instruction_image?: string[];
 }
 
+export interface PaginationMeta {
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+}
+
+export interface PaginatedProducts {
+    data: Product[];
+    meta: PaginationMeta;
+}
+
 export interface Filter {
     useByDate: string;
     duration: number;

@@ -46,7 +46,7 @@ class HomeController extends Controller
         $startDate = $params['startDate'];
         $endDate = $params['endDate'];
 
-        return  Product::query()
+        $query =   Product::query()
             ->when($filters['city'], fn($q) => $q->where('branch_id', $filters['city']))
             ->whereRaw("
                 NOT EXISTS (
@@ -68,7 +68,19 @@ class HomeController extends Controller
                 'priceDetail',
                 'sizes',
             ])
-            ->get();
+            ->orderByDesc('upload_at');
+
+            $products = $query->paginate(4);
+
+            return [
+                'data' => $products->items(),
+                'meta' => [
+                    'current_page' => $products->currentPage(),
+                    'last_page'    => $products->lastPage(),
+                    'per_page'     => $products->perPage(),
+                    'total'        => $products->total(),
+                ],
+            ];
     }
 
     private function constructPrams(array $filters){
