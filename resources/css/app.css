@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&display=swap');
 
 @plugin 'tailwindcss-animate';
 @plugin "@tailwindcss/typography";
@@ -7,6 +8,10 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
 @custom-variant dark (&:is(.dark *));
+
+body {
+    font-family: 'Lora', serif;
+}
 
 .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Edge */
