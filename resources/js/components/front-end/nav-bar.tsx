@@ -83,7 +83,7 @@ const NavBar = ({ setting, setModalInfo, setShowScheduleModal }: navBarProps) =>
                     isMenuOpen ? 'max-h-96 scale-100 opacity-100' : 'max-h-0 scale-95 opacity-0'
                 } overflow-hidden`}
             >
-                <div className="space-y-1 bg-third px-2 py-3 sm:px-3">
+                <div className="space-y-1 bg-[#FFFBF4] px-2 py-3 sm:px-3">
                     <button
                         onClick={() => {
                             setShowScheduleModal(true);

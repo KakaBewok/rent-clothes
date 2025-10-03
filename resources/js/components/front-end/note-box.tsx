@@ -24,10 +24,9 @@ const NoteBox = ({ branchs }: { branchs: Branch[] }) => {
     return (
         <div className="my-9 flex w-full justify-center px-6">
             <div className="relative inline-block w-full md:max-w-lg lg:max-w-xl">
-                {/* Bayangan custom kanan & bawah */}
-                <div className="absolute top-2 left-2 h-full w-full rounded-2xl bg-[#D8CFBC]"></div>
+                {/* shadow effect */}
+                <div className="absolute top-1 left-1 h-full w-full rounded-2xl bg-[#D8CFBC] md:top-2 md:left-2"></div>
 
-                {/* Konten utama */}
                 <div className="font-lora relative rounded-2xl border border-[#D8CFBC] bg-white px-6 py-5 text-center text-sm leading-relaxed text-gray-700 md:text-base">
                     Menampilkan dress yang dapat dikirim pada <span className="font-semibold">{formatDate(shipDate)}</span> dipakai pada{' '}
                     <span className="font-semibold">{formatDate(useDate)}</span> dan perlu dikembalikan pada{' '}
@@ -36,30 +35,6 @@ const NoteBox = ({ branchs }: { branchs: Branch[] }) => {
                 </div>
             </div>
         </div>
-
-        // <div className="my-9 flex justify-center px-4">
-        //     <div className="w-full overflow-hidden rounded-3xl border-4 border-[#D8CFBC] md:max-w-lg lg:max-w-xl">
-        //         <div className="h-10 w-full bg-[#D8CFBC]"></div>
-
-        //         <div className="bg-white p-4 text-center text-xs text-black md:px-6 md:py-6 lg:text-sm">
-        //             Menampilkan dress yang dapat dikirim pada <strong>{formatDate(shipDate)}</strong> dipakai pada{' '}
-        //             <strong>{formatDate(useDate)}</strong> dan perlu dikembalikan pada <strong>{formatDate(returnDate)}</strong> dengan pengiriman
-        //             dari area <strong>{branchName}</strong>
-        //         </div>
-        //     </div>
-        // </div>
-
-        // old
-        // <div className="my-9 px-4">
-        //     <Alert className="rounded-sm border border-white bg-[#D8CFBC] text-slate-700">
-        //         <AlertTitle>Note:</AlertTitle>
-        //         <AlertDescription className="text-xs md:text-sm">
-        //             Menampilkan dress yang dapat dikirim pada <strong>{formatDate(shipDate)}</strong> dipakai pada{' '}
-        //             <strong>{formatDate(useDate)}</strong> dan perlu dikembalikan pada <strong>{formatDate(returnDate)}</strong> dengan pengiriman
-        //             dari area <strong>{branchName}</strong>
-        //         </AlertDescription>
-        //     </Alert>
-        // </div>
     );
 };
 

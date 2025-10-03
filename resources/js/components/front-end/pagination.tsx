@@ -22,7 +22,7 @@ const PaginationView = ({ meta }: { meta: PaginationMeta }) => {
                         <PaginationItem>
                             <PaginationPrevious
                                 href={buildUrl(meta.current_page - 1)}
-                                className="w-full rounded-none border-none px-3 py-2 text-xs"
+                                className="w-full rounded-none border-none bg-[#A27163] px-3 py-2 text-xs hover:bg-[#A27163]"
                                 size={undefined}
                             />
                         </PaginationItem>
@@ -40,9 +40,11 @@ const PaginationView = ({ meta }: { meta: PaginationMeta }) => {
                                     {isEllipsis && <span className="px-2 text-slate-700">...</span>}
                                     <PaginationItem>
                                         <PaginationLink
-                                            href={buildUrl(page)}
+                                            href={meta.current_page === page ? '#' : buildUrl(page)}
                                             isActive={meta.current_page === page}
-                                            className={`w-full rounded-none border-none px-3 py-2 text-xs`}
+                                            className={`w-full rounded-none border-none bg-[#A27163] px-3 py-2 text-xs hover:bg-[#A27163] md:text-sm ${
+                                                meta.current_page === page ? 'pointer-events-none opacity-70' : ''
+                                            }`}
                                             size={undefined}
                                         >
                                             {page}
@@ -57,7 +59,7 @@ const PaginationView = ({ meta }: { meta: PaginationMeta }) => {
                         <PaginationItem>
                             <PaginationNext
                                 href={buildUrl(meta.current_page + 1)}
-                                className="w-full rounded-none border-none px-3 py-2 text-xs"
+                                className="w-full rounded-none border-none bg-[#A27163] px-3 py-2 text-xs hover:bg-[#A27163]"
                                 size={undefined}
                             />
                         </PaginationItem>

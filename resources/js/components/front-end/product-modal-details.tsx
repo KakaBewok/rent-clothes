@@ -1,15 +1,29 @@
 import { Product } from '@/types/models';
 import { formatRupiah, formatWhatsAppNumber } from '@/utils/format';
+import { format, isValid, parse } from 'date-fns';
+import { id } from 'date-fns/locale';
 import { Button } from '../ui/button';
 
 const ProductModalDetails = ({ product, contact }: { product: Product; contact: string }) => {
     const { brand, price_detail, code, name: productName, description, sizes, types, additional_ribbon, color } = product;
-
     const getTypeList = () => types?.map((type) => type.name).join(', ');
     const getSizeList = () => sizes?.map((size) => size.size).join(', ');
 
+    const queryParams = new URLSearchParams(window.location.search);
+
+    const createMessage = () => {
+        const useByDate = queryParams.get('useByDate') || '';
+        const duration = Number(queryParams.get('duration') || 1);
+
+        const parsedUseByDate = parse(useByDate, 'dd-MM-yyyy', new Date());
+        const validUseByDate = isValid(parsedUseByDate) ? parsedUseByDate : new Date();
+        const completeUseByDate = format(validUseByDate, 'EEEE, d MMMM yyyy', { locale: id });
+
+        return `Hai! aku mau sewa *${productName} (${code})* mulai hari *${completeUseByDate}* selama *${duration} hari*. Mohon infonya`;
+    };
+
     const whatsappNumber = formatWhatsAppNumber(contact);
-    const message = `Hai, aku mau sewa *${productName} (${code}) di tanggal 27 September 2025* mohon infonya`;
+    const message = createMessage();
 
     return (
         <div className="mt-auto flex h-1/2 w-full flex-col pl-0 md:mt-0 md:h-full md:w-1/2 md:pl-8">
@@ -104,14 +118,13 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                 </div>
             </div>
 
-            {/* Footer button */}
             <div className="pt-3">
                 <a
                     href={`https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    <Button className="w-full cursor-pointer rounded-none bg-first text-white transition-all duration-300 hover:bg-second">
+                    <Button className="w-full cursor-pointer rounded-none bg-[#A27163] text-white transition-all duration-300 hover:bg-second">
                         Rent Now
                     </Button>
                 </a>
