@@ -26,6 +26,8 @@ class BannersTable
                     ->stacked()
                     ->ring(2),
                 TextColumn::make('title'),
+                TextColumn::make('type.name')
+                    ->label('Product Type'),
                 TextColumn::make('is_active')
                     ->label('Status')
                     ->badge()

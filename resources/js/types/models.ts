@@ -37,8 +37,10 @@ export interface Banner {
     title: string;
     is_active: boolean;
     images?: string[];
+    type_id: number;
     created_at?: string;
     updated_at?: string;
+    type?: Type;
 }
 
 export interface Branch {
@@ -168,6 +170,7 @@ export interface Type {
     products?: Product[];
     created_at?: string;
     updated_at?: string;
+    banners?: Banner[];
 }
 
 export interface User {
@@ -178,4 +181,18 @@ export interface User {
     remember_token?: string | null;
     created_at?: string;
     updated_at?: string;
+}
+
+export interface ExtraFilter {
+    search?: string;
+    brand?: number | null;
+    size?: number | null;
+    color?: number | null;
+    type?: number | null;
+
+    minPrice?: number | null;
+    maxPrice?: number | null;
+
+    sortBy?: string;
+    direction?: 'asc' | 'desc';
 }

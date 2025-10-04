@@ -27,12 +27,12 @@ const ProductCardContent = ({ product }: { product: Product }) => {
     return (
         <div className="mt-2 flex justify-between px-0 lg:px-1">
             {/* left */}
-            <div className="">
+            <div>
                 <h2 className="line-clamp-1 max-w-[117px] text-sm font-semibold text-slate-700 lg:line-clamp-2 lg:max-w-[200px] lg:text-lg">
                     {productName}
                 </h2>
 
-                <h3 className="mb-2.5 max-w-[110px] truncate text-xs text-slate-400 lg:mb-3 lg:max-w-[210px]">By {brand?.name}</h3>
+                <h3 className="mb-1 max-w-[110px] truncate text-xs text-slate-400 lg:mb-1.5 lg:max-w-[210px]">By {brand?.name}</h3>
 
                 <p className="text-xs font-semibold text-slate-700 lg:text-sm">
                     {formatRupiah(price_detail?.price_after_discount)}

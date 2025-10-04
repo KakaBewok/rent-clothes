@@ -1,16 +1,13 @@
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { PaginationMeta } from '@/types/models';
-import React, { useMemo } from 'react';
+import { Link } from '@inertiajs/react';
+import React from 'react';
 
 const PaginationView = ({ meta }: { meta: PaginationMeta }) => {
-    const currentParams = useMemo(() => {
-        return new URLSearchParams(window.location.search);
-    }, []);
-
     const buildUrl = (page: number) => {
-        const params = new URLSearchParams(currentParams);
+        const params = new URLSearchParams(window.location.search);
         params.set('page', String(page));
-        return `?${params.toString()}`;
+        return `${window.location.pathname}?${params.toString()}`;
     };
 
     return (
@@ -20,11 +17,12 @@ const PaginationView = ({ meta }: { meta: PaginationMeta }) => {
                     {/* Previous */}
                     {meta.current_page > 1 && (
                         <PaginationItem>
-                            <PaginationPrevious
-                                href={buildUrl(meta.current_page - 1)}
-                                className="w-full rounded-none border-none bg-[#A27163] px-3 py-2 text-xs hover:bg-[#A27163]"
-                                size={undefined}
-                            />
+                            <Link href={buildUrl(meta.current_page - 1)} preserveState>
+                                <PaginationPrevious
+                                    size={undefined}
+                                    className="w-full rounded-none border-none bg-[#A27163] px-3 py-2 text-xs text-white hover:bg-[#8d5f54]"
+                                />
+                            </Link>
                         </PaginationItem>
                     )}
 
@@ -39,16 +37,23 @@ const PaginationView = ({ meta }: { meta: PaginationMeta }) => {
                                 <React.Fragment key={page}>
                                     {isEllipsis && <span className="px-2 text-slate-700">...</span>}
                                     <PaginationItem>
-                                        <PaginationLink
-                                            href={meta.current_page === page ? '#' : buildUrl(page)}
-                                            isActive={meta.current_page === page}
-                                            className={`w-full rounded-none border-none bg-[#A27163] px-3 py-2 text-xs hover:bg-[#A27163] md:text-sm ${
-                                                meta.current_page === page ? 'pointer-events-none opacity-70' : ''
-                                            }`}
-                                            size={undefined}
+                                        <Link
+                                            href={buildUrl(page)}
+                                            preserveState
+                                            className={`${meta.current_page === page && 'pointer-events-none'}`}
                                         >
-                                            {page}
-                                        </PaginationLink>
+                                            <PaginationLink
+                                                isActive={meta.current_page === page}
+                                                size={undefined}
+                                                className={`w-full rounded-none border-none bg-[#A27163] px-3 py-2 text-xs text-white hover:bg-[#8d5f54] md:text-sm ${
+                                                    meta.current_page === page
+                                                        ? 'pointer-events-none bg-[#A27163] text-white opacity-70'
+                                                        : 'bg-[#A27163] text-white hover:bg-[#8d5f54]'
+                                                }`}
+                                            >
+                                                {page}
+                                            </PaginationLink>
+                                        </Link>
                                     </PaginationItem>
                                 </React.Fragment>
                             );
@@ -57,11 +62,12 @@ const PaginationView = ({ meta }: { meta: PaginationMeta }) => {
                     {/* Next */}
                     {meta.current_page < meta.last_page && (
                         <PaginationItem>
-                            <PaginationNext
-                                href={buildUrl(meta.current_page + 1)}
-                                className="w-full rounded-none border-none bg-[#A27163] px-3 py-2 text-xs hover:bg-[#A27163]"
-                                size={undefined}
-                            />
+                            <Link href={buildUrl(meta.current_page + 1)} preserveState>
+                                <PaginationNext
+                                    size={undefined}
+                                    className="w-full rounded-none border-none bg-[#A27163] px-3 py-2 text-xs text-white hover:bg-[#8d5f54]"
+                                />
+                            </Link>
                         </PaginationItem>
                     )}
                 </PaginationContent>

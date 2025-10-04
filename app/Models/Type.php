@@ -26,4 +26,9 @@ class Type extends Model
     {
         return $this->belongsToMany(Product::class);
     }
+
+    public function banners()
+    {
+        return $this->hasMany(Banner::class);
+    }
 }

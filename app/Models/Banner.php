@@ -14,9 +14,16 @@ class Banner extends Model
     /** @use HasFactory<\Database\Factories\BannerFactory> */
     use HasFactory;
 
-    protected $fillable = ['title', 'is_active', 'images'];
+    protected $fillable = ['title', 'is_active', 'images', 'type_id'];
 
     protected $casts = [
         'images' => 'array',
     ];
+
+    public function type()
+    {
+        return $this->belongsTo(Type::class)->withDefault([
+            'name' => '--- Type data has been deleted ---',
+        ]);
+    }
 }

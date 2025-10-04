@@ -4,10 +4,11 @@ import Hero from '@/components/front-end/hero';
 import ModalInfo from '@/components/front-end/modal-info';
 import NavBar from '@/components/front-end/nav-bar';
 import NoteBox from '@/components/front-end/note-box';
+import ProductFilter from '@/components/front-end/product-filter';
 import ProductList from '@/components/front-end/product-list';
 import ProductModal from '@/components/front-end/product-modal';
 import ScheduleModal from '@/components/front-end/schedule-model';
-import { AppSetting, Banner, Branch, Filter, PaginatedProducts, Product } from '@/types/models';
+import { AppSetting, Banner, Branch, Brand, Color, Filter, PaginatedProducts, Product, Type } from '@/types/models';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -16,12 +17,15 @@ interface HomePageProps {
     products: PaginatedProducts;
     banners: Banner[];
     branchs: Branch[];
+    brands: Brand[];
+    colors: Color[];
+    types: Type[];
     appSetting: AppSetting;
     showModal: boolean;
-    filter: Filter;
+    baseFilters: Filter;
 }
 
-function HomePage({ branchs, products, banners, appSetting, showModal, filter }: HomePageProps) {
+function HomePage({ branchs, products, banners, appSetting, showModal, baseFilters, brands, colors, types }: HomePageProps) {
     const [loading, setLoading] = useState<boolean>(true);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [modalInfo, setModalInfo] = useState<string[] | null>(null);
@@ -78,10 +82,10 @@ function HomePage({ branchs, products, banners, appSetting, showModal, filter }:
 
     return (
         <div className="w-full bg-gray-50">
-            {showScheduleModal ?? alert('Modal muncul')}
             <div className="relative mx-auto min-h-screen max-w-screen-xl bg-white">
                 <NavBar setting={safeSetting} setModalInfo={setModalInfo} setShowScheduleModal={setShowScheduleModal} />
                 <Hero banners={banners} />
+                <ProductFilter brands={brands} colors={colors} types={types} />
                 <NoteBox branchs={branchs} />
                 <ProductList products={products} onOpen={openProduct} />
                 <Footer setting={appSetting} setModalInfo={setModalInfo} setShowScheduleModal={setShowScheduleModal} />
@@ -93,7 +97,7 @@ function HomePage({ branchs, products, banners, appSetting, showModal, filter }:
                 )}
                 {modalInfo && modalInfo.length > 0 && <ModalInfo setModalInfo={setModalInfo} modalInfo={modalInfo} showHint={showHint} />}
                 {showScheduleModal && (
-                    <ScheduleModal branchs={branchs} filter={filter} isUnclose={showModal} onClose={() => setShowScheduleModal(false)} />
+                    <ScheduleModal branchs={branchs} baseFilters={baseFilters} isUnclose={showModal} onClose={() => setShowScheduleModal(false)} />
                 )}
             </div>
         </div>

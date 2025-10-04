@@ -6,14 +6,14 @@ import { useState } from 'react';
 interface ScheduleModalProps {
     isUnclose: boolean;
     onClose: () => void;
-    filter: Filter;
+    baseFilters: Filter;
     branchs: Branch[];
 }
 
-const ScheduleModal = ({ isUnclose, onClose, filter, branchs }: ScheduleModalProps) => {
+const ScheduleModal = ({ isUnclose, onClose, baseFilters, branchs }: ScheduleModalProps) => {
     const [form, setForm] = useState<Filter>({
-        ...filter,
-        useByDate: normalizeDate(filter.useByDate),
+        ...baseFilters,
+        useByDate: normalizeDate(baseFilters.useByDate),
     });
 
     function getTodayDate(): string {

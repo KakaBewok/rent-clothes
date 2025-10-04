@@ -2,15 +2,9 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ScheduleController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Spatie\Sitemap\SitemapGenerator;
-
-
-
-// Route::get('/schedule', [ScheduleController::class, 'form'])->name('schedule.form');
-// Route::post('/schedule', [ScheduleController::class, 'submit'])->name('schedule.submit');
 
 Route::get('/generate-sitemap', function () {
     SitemapGenerator::create('https://qatiarent-development.site')

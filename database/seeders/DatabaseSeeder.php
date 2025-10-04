@@ -3,8 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Banner;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\BannerImage;
 use App\Models\Branch;
 use App\Models\Brand;
 use App\Models\Color;
@@ -12,7 +10,6 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PriceDetail;
 use App\Models\Product;
-use App\Models\ProductGallery;
 use App\Models\Size;
 use App\Models\Type;
 use App\Models\User;
@@ -31,16 +28,14 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('rahasiabanget'),
         ]);
 
-        // Banner + BannerImage
-        Banner::factory(5)
-            ->create();
-
         // Master data
         Brand::factory(5)->create();
         Color::factory(10)->create();
-        // Type::factory(5)->create();
         $types = Type::factory(5)->create();
         Branch::factory(3)->create();
+
+        // Banner + BannerImage
+        Banner::factory(5)->create();
 
         $products = Product::factory(10)->create();
 

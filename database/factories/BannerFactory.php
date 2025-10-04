@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Type;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -23,6 +24,7 @@ class BannerFactory extends Factory
                 'banners/' . $this->faker->uuid() . '.jpg',
                 'banners/' . $this->faker->uuid() . '.jpg',
             ],
+            'type_id' => Type::factory(),
         ];
     }
 }
