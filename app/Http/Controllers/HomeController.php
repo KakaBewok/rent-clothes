@@ -164,12 +164,18 @@ class HomeController extends Controller
         if (!empty($extraFilters['brand'])) {
             $query->where('brand_id', $extraFilters['brand']);
         }
-        // todo: cek lebih lanjut
-        if (!empty($extraFilters['size'])) {
-            $query->whereHas('sizes', fn($q) => $q->where('sizes.id', $extraFilters['size']));
-        }
         if (!empty($extraFilters['color'])) {
             $query->where('color_id', $extraFilters['color']);
+        }
+        if (!empty($extraFilters['type'])) {
+            $query->whereHas('types', function ($q) use ($extraFilters) {
+                $q->where('types.id', $extraFilters['type']);
+            });
+        }
+        if (!empty($extraFilters['size'])) {
+            $query->whereHas('sizes', function ($q) use ($extraFilters) {
+                $q->where('sizes.size', $extraFilters['size']);
+            });
         }
         if (!empty($extraFilters['minPrice']) || !empty($extraFilters['maxPrice'])) {
             $query->whereHas('priceDetail', function ($q) use ($extraFilters) {

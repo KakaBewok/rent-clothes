@@ -186,7 +186,7 @@ export interface User {
 export interface ExtraFilter {
     search?: string;
     brand?: number | null;
-    size?: number | null;
+    size?: string | null;
     color?: number | null;
     type?: number | null;
 

@@ -69,6 +69,21 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
     const [showSearch, setShowSearch] = useState<boolean>(false);
     const [showFilter, setShowFilter] = useState<boolean>(false);
 
+    const sizes = {
+        'Fit XS': 'Fit XS',
+        'Fit S': 'Fit S',
+        'Fit M': 'Fit M',
+        'Fit L': 'Fit L',
+        'Fit XL': 'Fit XL',
+        'Fit XXL': 'Fit XXL',
+        'Fit XS-S': 'Fit XS-S',
+        'Fit S-M': 'Fit S-M',
+        'Fit M-L': 'Fit M-L',
+        'Fit L-XL': 'Fit L-XL',
+        'Fit XL-XXL': 'Fit XL-XXL',
+        'Fit XXL-XXXL': 'Fit XXL-XXXL',
+    };
+
     const applyFilter = () => {
         // router.visit(buildUrl(), {
         //     method: 'post',
@@ -213,6 +228,44 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                         ))}
                     </select>
 
+                    {/* Types */}
+                    <select
+                        value={extraFilters.type || ''}
+                        onChange={(e) =>
+                            setExtraFilters({
+                                ...extraFilters,
+                                type: parseInt(e.target.value) || null,
+                            })
+                        }
+                        className="w-full rounded-none border-1 border-white bg-white px-2 py-2 text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]"
+                    >
+                        <option value="">All Types</option>
+                        {types.map((t) => (
+                            <option key={t.id} value={t.id}>
+                                {t.name}
+                            </option>
+                        ))}
+                    </select>
+
+                    {/* Sizes */}
+                    <select
+                        value={extraFilters.size || ''}
+                        onChange={(e) =>
+                            setExtraFilters({
+                                ...extraFilters,
+                                size: e.target.value || null,
+                            })
+                        }
+                        className="w-full rounded-none border-1 border-white bg-white px-2 py-2 text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]"
+                    >
+                        <option value="">All Sizes</option>
+                        {Object.entries(sizes).map(([key, label]) => (
+                            <option key={key} value={key}>
+                                {label}
+                            </option>
+                        ))}
+                    </select>
+
                     {/* Sort - masalah di paging (sampe sini)*/}
                     <select
                         value={`${extraFilters.sortBy || ''}:${extraFilters.direction || ''}`}
@@ -222,11 +275,11 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                         }}
                         className="w-full rounded-none border-1 border-white bg-white px-2 py-2 text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]"
                     >
-                        <option value="">Sort By</option>
-                        <option value="price_after_discount:asc">Price: Low → High</option>
-                        <option value="price_after_discount:desc">Price: High → Low</option>
-                        <option value="name:asc">Name: A → Z</option>
-                        <option value="name:desc">Name: Z → A</option>
+                        <option value="upload_at:desc">Sort By</option>
+                        <option value="price_after_discount:asc">Price: Low-High</option>
+                        <option value="price_after_discount:desc">Price: High-Low</option>
+                        <option value="name:asc">Name: A-Z</option>
+                        <option value="name:desc">Name: Z-A</option>
                         <option value="upload_at:desc">Newest First</option>
                         <option value="upload_at:asc">Oldest First</option>
                     </select>
