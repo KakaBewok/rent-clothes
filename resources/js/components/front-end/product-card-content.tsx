@@ -8,7 +8,10 @@ const ProductCardContent = ({ product }: { product: Product }) => {
     function renderSizes(sizes: Size[]) {
         if (sizes.length <= 2) {
             return sizes.map((s) => (
-                <div key={s.id} className="bg-slate-100 px-1 py-0.5 text-[9.5px] font-medium text-slate-600 lg:text-[11px]">
+                <div
+                    key={s.id}
+                    className={`bg-slate-100 px-1 py-0.5 text-[9.5px] font-medium text-slate-600 lg:text-[11px] ${s.availability != '1' ? 'line-through decoration-black' : ''}`}
+                >
                     {s.size}
                 </div>
             ));
@@ -16,7 +19,10 @@ const ProductCardContent = ({ product }: { product: Product }) => {
 
         return (
             <>
-                <div key={sizes[0].id} className="rounded bg-slate-100 px-1 py-0.5 text-[9.5px] font-medium text-slate-600 lg:text-[11px]">
+                <div
+                    key={sizes[0].id}
+                    className={`${sizes[0].availability != '1' ? 'line-through' : ''} rounded bg-slate-100 px-1 py-0.5 text-[9.5px] font-medium text-slate-600 lg:text-[11px]`}
+                >
                     {sizes[0].size}
                 </div>
                 <div className="rounded bg-slate-100 px-1 py-0.5 text-[9.5px] font-medium text-slate-600 lg:text-[11px]">+ {sizes.length - 1}</div>
@@ -65,8 +71,8 @@ const ProductCardContent = ({ product }: { product: Product }) => {
             <div className="flex h-fit w-fit flex-col items-end">
                 <div className="flex flex-col flex-wrap items-end gap-1">
                     {(() => {
-                        const availableSizes = product.sizes?.filter((size) => size.availability === '1') || [];
-                        return renderSizes(availableSizes);
+                        // const availableSizes = product.sizes?.filter((size) => size.availability === '1') || [];
+                        return renderSizes(product.sizes || []);
                     })()}
                 </div>
             </div>

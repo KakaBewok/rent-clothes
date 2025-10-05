@@ -7,6 +7,7 @@ interface ProductProps {
 }
 
 const ProductCard = ({ product, onOpen }: ProductProps) => {
+    const isAvailable = product.sizes?.some((size) => size.availability === '1') || false;
     return (
         <div key={product.id} className="group relative">
             <div
@@ -24,7 +25,13 @@ const ProductCard = ({ product, onOpen }: ProductProps) => {
                 )}
 
                 {/* Product image */}
-                <div className="overflow-hidden">
+                <div className="relative overflow-hidden">
+                    {!isAvailable && (
+                        <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-black/50">
+                            <h1 className="text-md font-semibold uppercase md:text-xl">Out of Stock</h1>
+                        </div>
+                    )}
+
                     <img
                         alt={product.name}
                         src={
@@ -32,7 +39,7 @@ const ProductCard = ({ product, onOpen }: ProductProps) => {
                                 ? `/storage/${product.cover_image}`
                                 : 'https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-01.jpg'
                         }
-                        className="aspect-[2/3] w-full transform bg-gray-200 object-cover transition-all duration-300 group-hover:scale-105 group-hover:opacity-80"
+                        className={`${isAvailable ? 'group-hover:scale-105 group-hover:opacity-80' : ''} aspect-[2/3] w-full transform bg-gray-200 object-cover transition-all duration-300`}
                     />
                 </div>
 

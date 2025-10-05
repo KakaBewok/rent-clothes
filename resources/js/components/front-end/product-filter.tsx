@@ -108,39 +108,57 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
         });
     };
 
+    const toggleAvailableOnly = (checked: boolean) => {
+        const params = new URLSearchParams(window.location.search);
+
+        if (checked) {
+            params.set('available', 'true');
+        } else {
+            params.delete('available');
+        }
+        params.set('page', '1');
+
+        router.visit(`${window.location.pathname}?${params.toString()}`, {
+            method: 'get',
+            preserveState: true,
+            replace: true,
+        });
+    };
     return (
-        <div className="mt-10 flex items-center justify-center bg-pink-100 py-10">
+        <div className="mt-10 flex items-center justify-center bg-[#FFFBF4] py-10">
             <div className="w-full px-3 md:max-w-2xl">
                 {/* control button */}
                 <div className={`flex items-center justify-center gap-2`}>
-                    <div className="cursor-pointer bg-[#5a619f] px-3 py-1 text-white transition duration-300 hover:bg-[#484f8f]">
-                        <div className="flex items-center justify-center gap-2">
+                    <div className="cursor-pointer bg-[#A27163] px-3 py-1 text-white transition duration-300 hover:bg-[#8d5a4d]">
+                        <div className="flex items-center justify-center gap-2 text-sm">
                             <input
                                 type="checkbox"
-                                // checked={extraFilters.availableOnly || false}
-                                checked={true}
-                                onChange={(e) => setExtraFilters({ ...extraFilters })}
+                                checked={extraFilters.available || false}
+                                onChange={(e) => {
+                                    setExtraFilters({ ...extraFilters, available: e.target.checked });
+                                    toggleAvailableOnly(e.target.checked);
+                                }}
                             />
-                            Available Only
+                            <label>Available Only</label>
                         </div>
                     </div>
 
                     <button
                         onClick={() => setShowFilter((prev) => !prev)}
-                        className="cursor-pointer bg-[#5a619f] px-3 py-1 text-white transition duration-300 hover:bg-[#484f8f]"
+                        className="cursor-pointer bg-[#A27163] px-3 py-1 text-white transition duration-300 hover:bg-[#8d5a4d]"
                     >
-                        <span className="flex items-center justify-center gap-2">
-                            <Filter size={15} />
+                        <span className="flex items-center justify-center gap-1 text-sm">
+                            <Filter size={13} />
                             Filter
                         </span>
                     </button>
 
                     <button
                         onClick={() => setShowSearch((prev) => !prev)}
-                        className="cursor-pointer bg-[#5a619f] px-3 py-1 text-white transition duration-300 hover:bg-[#484f8f]"
+                        className="cursor-pointer bg-[#A27163] px-3 py-1 text-white transition duration-300 hover:bg-[#8d5a4d]"
                     >
-                        <span className="flex items-center justify-center gap-2">
-                            <Search size={15} />
+                        <span className="flex items-center justify-center gap-1 text-sm">
+                            <Search size={13} />
                             Search
                         </span>
                     </button>
@@ -154,11 +172,14 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                             placeholder="Cari produk"
                             value={extraFilters.search || ''}
                             onChange={(e) => setExtraFilters({ ...extraFilters, search: e.target.value })}
-                            className="w-full border-1 border-white bg-white px-3 py-2 text-slate-800 transition-all duration-400 focus:border-[#484f8f] focus:ring-2 focus:ring-[#484f8f]"
+                            className={`${extraFilters.search ? 'border-[#A27163]' : 'border-white'} w-full border-2 bg-white px-3 py-2 text-sm text-slate-800 transition-all duration-400 focus:border-[#484f8f] focus:ring-2 focus:ring-[#484f8f]`}
                         />
                         <button
-                            onClick={applyFilter}
-                            className="absolute top-1.5 right-1.5 flex h-7 w-10 cursor-pointer items-center justify-center bg-[#5a619f] text-white transition duration-300 hover:bg-[#4a5288]"
+                            onClick={() => {
+                                applyFilter();
+                                // setExtraFilters({ ...extraFilters, search: '' });
+                            }}
+                            className={`absolute top-1.5 right-1.5 flex h-[25px] w-10 cursor-pointer items-center justify-center bg-[#A27163] text-sm text-white transition duration-300 hover:bg-[#8d5a4d]`}
                         >
                             <Search size={15} />
                         </button>
@@ -178,7 +199,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                             placeholder="Min. Price"
                             value={extraFilters.minPrice ?? ''}
                             onChange={(e) => setExtraFilters({ ...extraFilters, minPrice: e.target.value ? parseInt(e.target.value) : null })}
-                            className="w-full rounded-none border-1 border-white bg-white px-2 py-2 text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]"
+                            className={`${extraFilters.minPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                         />
 
                         <Input
@@ -186,7 +207,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                             placeholder="Max. Price"
                             value={extraFilters.maxPrice ?? ''}
                             onChange={(e) => setExtraFilters({ ...extraFilters, maxPrice: e.target.value ? parseInt(e.target.value) : null })}
-                            className="w-full rounded-none border-1 border-white bg-white px-2 py-2 text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]"
+                            className={`${extraFilters.maxPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                         />
                     </div>
 
@@ -199,7 +220,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                                 brand: parseInt(e.target.value) || null,
                             })
                         }
-                        className="w-full rounded-none border-1 border-white bg-white px-2 py-2 text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]"
+                        className={`${extraFilters.brand ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                     >
                         <option value="">All Brands</option>
                         {brands.map((b) => (
@@ -218,7 +239,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                                 color: parseInt(e.target.value) || null,
                             })
                         }
-                        className="w-full rounded-none border-1 border-white bg-white px-2 py-2 text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]"
+                        className={`${extraFilters.color ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                     >
                         <option value="">All Colors</option>
                         {colors.map((c) => (
@@ -237,7 +258,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                                 type: parseInt(e.target.value) || null,
                             })
                         }
-                        className="w-full rounded-none border-1 border-white bg-white px-2 py-2 text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]"
+                        className={`${extraFilters.type ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                     >
                         <option value="">All Types</option>
                         {types.map((t) => (
@@ -256,7 +277,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                                 size: e.target.value || null,
                             })
                         }
-                        className="w-full rounded-none border-1 border-white bg-white px-2 py-2 text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]"
+                        className={`${extraFilters.size ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                     >
                         <option value="">All Sizes</option>
                         {Object.entries(sizes).map(([key, label]) => (
@@ -273,7 +294,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                             const [sortBy, direction] = e.target.value.split(':');
                             setExtraFilters({ ...extraFilters, sortBy, direction: direction as 'asc' | 'desc' });
                         }}
-                        className="w-full rounded-none border-1 border-white bg-white px-2 py-2 text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]"
+                        className={`${extraFilters.sortBy ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                     >
                         <option value="upload_at:desc">Sort By</option>
                         <option value="price_after_discount:asc">Price: Low-High</option>
@@ -289,13 +310,13 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                     <div className="flex w-full items-center justify-center gap-2">
                         <button
                             onClick={applyFilter}
-                            className="w-full cursor-pointer bg-[#5a619f] px-3 py-2 text-white transition duration-300 hover:bg-[#4a5288]"
+                            className="w-full cursor-pointer bg-[#A27163] px-3 py-2 text-white transition duration-300 hover:bg-[#905e51]"
                         >
                             Apply
                         </button>
                         <button
                             onClick={() => setExtraFilters({})}
-                            className="w-full cursor-pointer bg-[#949acf] px-3 py-2 text-white transition duration-300 hover:bg-[#7178a9]"
+                            className="w-full cursor-pointer bg-[#bc8f83] px-3 py-2 text-white transition duration-300 hover:bg-[#c19386]"
                         >
                             Clear
                         </button>

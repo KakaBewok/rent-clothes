@@ -189,6 +189,7 @@ export interface ExtraFilter {
     size?: string | null;
     color?: number | null;
     type?: number | null;
+    available: boolean | null;
 
     minPrice?: number | null;
     maxPrice?: number | null;

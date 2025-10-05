@@ -1,7 +1,7 @@
 import { Branch, Filter } from '@/types/models';
 import { router } from '@inertiajs/react';
 import { format, parse } from 'date-fns';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ScheduleModalProps {
     isUnclose: boolean;
@@ -15,6 +15,37 @@ const ScheduleModal = ({ isUnclose, onClose, baseFilters, branchs }: ScheduleMod
         ...baseFilters,
         useByDate: normalizeDate(baseFilters.useByDate),
     });
+
+    //
+    useEffect(() => {
+        const getFiltersFromUrl = () => {
+            const params = new URLSearchParams(window.location.search);
+            const filters: Record<string, unknown> = { ...baseFilters };
+
+            params.forEach((value, key) => {
+                if (value === 'true') {
+                    filters[key] = true;
+                } else if (value === 'false') {
+                    filters[key] = false;
+                } else if (!isNaN(Number(value)) && value.trim() !== '') {
+                    filters[key] = Number(value);
+                } else {
+                    filters[key] = value;
+                }
+            });
+
+            return filters;
+        };
+
+        if (isUnclose) {
+            const filters = getFiltersFromUrl();
+            setForm({
+                ...filters,
+                useByDate: normalizeDate(filters.useByDate as string),
+            } as Filter);
+        }
+    }, [baseFilters, isUnclose]);
+    //
 
     function getTodayDate(): string {
         const today = new Date();
@@ -36,12 +67,28 @@ const ScheduleModal = ({ isUnclose, onClose, baseFilters, branchs }: ScheduleMod
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
+        const params = new URLSearchParams(window.location.search);
+
+        Object.entries({
+            ...form,
+            useByDate: toDDMMYYYY(form.useByDate),
+        }).forEach(([key, value]) => {
+            if (value !== null && value !== undefined && value !== '') {
+                params.set(key, String(value));
+            } else {
+                params.delete(key);
+            }
+        });
+
+        const url = `${window.location.pathname}?${params.toString()}`;
+
         router.get(
-            '/',
-            { ...form, useByDate: toDDMMYYYY(form.useByDate) },
+            url,
+            {},
             {
                 preserveScroll: true,
                 preserveState: true,
+                replace: true,
             },
         );
 

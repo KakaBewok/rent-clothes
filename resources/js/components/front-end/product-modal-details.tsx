@@ -7,7 +7,13 @@ import { Button } from '../ui/button';
 const ProductModalDetails = ({ product, contact }: { product: Product; contact: string }) => {
     const { brand, price_detail, code, name: productName, description, sizes, types, additional_ribbon, color } = product;
     const getTypeList = () => types?.map((type) => type.name).join(', ');
-    const getSizeList = () => sizes?.map((size) => size.size).join(', ');
+    const getSizeList = () =>
+        sizes?.map((s, i) => (
+            <span key={s.id} className={`mr-1 text-slate-800 ${s.availability != '1' ? 'line-through decoration-black' : ''}`}>
+                {s.size}
+                {i != sizes.length - 1 ? ', ' : ''}
+            </span>
+        ));
 
     const queryParams = new URLSearchParams(window.location.search);
 

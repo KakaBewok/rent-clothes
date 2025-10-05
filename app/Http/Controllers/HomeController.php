@@ -70,7 +70,7 @@ class HomeController extends Controller
             'search'
         ]);
 
-        $products = $this->getProductsByFilters($baseFilters, $extraFilters);
+        $products = $this->getProductsByFilters($baseFilters, $extraFilters, $request->boolean('available'));
         $banners = Banner::where('is_active', true)->get();
         $appSetting = AppSetting::first();
         $branchs = Branch::all();
@@ -84,7 +84,7 @@ class HomeController extends Controller
         );
     }
 
-    private function getProductsByFilters(array $filters, array $extraFilters = [])
+    private function getProductsByFilters(array $filters, array $extraFilters = [], $isAvailable)
     {
         // $params = $this->constructPrams($filters);
 
@@ -185,6 +185,11 @@ class HomeController extends Controller
                 if (!empty($extraFilters['maxPrice'])) {
                     $q->where('price_after_discount', '<=', $extraFilters['maxPrice']);
                 }
+            });
+        }
+        if ($isAvailable) {
+            $query->whereHas('sizes', function ($q) {
+                $q->where('availability', true);
             });
         }
         // tambah filter by type & 1 pcs ++
