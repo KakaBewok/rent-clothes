@@ -135,18 +135,17 @@ class HelperService
     public static function calculateOrderItemPrice(callable $set, callable $get): void
     {
         $productId = $get('product_id');
-        $days = (int) $get('rent_periode');
         $qty = (int) $get('quantity');
 
-        if (! $productId || ! $days || ! $qty) {
+        if (! $productId || ! $qty) {
             return;
         }
 
         $product = Product::with('priceDetail')->find($productId);
-        $pricePerDay = $product?->priceDetail?->price_after_discount;
+        $price = $product?->priceDetail?->price_after_discount;
 
-        if ($pricePerDay) {
-            $set('rent_price', $pricePerDay * $days * $qty);
+        if ($price) {
+            $set('rent_price', $price * $qty);
         }
     }
 

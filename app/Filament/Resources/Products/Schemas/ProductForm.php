@@ -165,13 +165,11 @@ class ProductForm
                                         'Fit M'  => 'Fit M',
                                         'Fit L'  => 'Fit L',
                                         'Fit XL' => 'Fit XL',
-                                        'Fit XXL' => 'Fit XXL',
                                         'Fit XS-S' => 'Fit XS-S',
                                         'Fit S-M'  => 'Fit S-M',
                                         'Fit M-L'  => 'Fit M-L',
                                         'Fit L-XL'  => 'Fit L-XL',
                                         'Fit XL-XXL' => 'Fit XL-XXL',
-                                        'Fit XXL-XXXL' => 'Fit XXL-XXXL',
                                     ])
                                     ->required()
                                     ->searchable(),

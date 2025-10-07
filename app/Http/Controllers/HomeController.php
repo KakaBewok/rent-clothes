@@ -19,29 +19,6 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        // $firstBranch = Branch::first();
-        // $defaultParams = [
-        //         'useByDate'     => Carbon::now()->addDays(2)->format('d-m-Y'),
-        //         'duration'      => 1,
-        //         'city'          => $firstBranch ? $firstBranch->id : null,
-        //         'shippingType'  => 'Next day',
-        // ];
-
-        // if (!$request->has(array_keys($defaultParams))) {
-        //     return redirect()->route('home.index', $defaultParams)->with('showModal', true);
-        // }
-
-        // $filter = $request->only(array_keys($defaultParams));
-
-        // $products = $this->getProductsByFilters($filter);
-        // $banners = Banner::where('is_active', true)->get();
-        // $appSetting = AppSetting::first();
-        // $branchs = Branch::all();
-        
-        // $showModal = session('showModal', false);
-
-        // return Inertia::render('front-end/home-page', compact('branchs', 'products', 'banners', 'appSetting', 'showModal', 'filter'));
-
         $firstBranch = Branch::first();
         $defaultParams = [
             'useByDate'    => Carbon::now()->addDays(2)->format('d-m-Y'),
@@ -57,7 +34,6 @@ class HomeController extends Controller
         }
 
         $baseFilters = $request->only(array_keys($defaultParams));
-        // $extraFilters = $request->input('filters', []);
         $extraFilters = $request->only([
             'sortBy',
             'direction',
@@ -86,47 +62,6 @@ class HomeController extends Controller
 
     private function getProductsByFilters(array $filters, array $extraFilters = [], $isAvailable)
     {
-        // $params = $this->constructPrams($filters);
-
-        // $startDate = $params['startDate'];
-        // $endDate = $params['endDate'];
-
-        // $query =   Product::query()
-        //     ->when($filters['city'], fn($q) => $q->where('branch_id', $filters['city']))
-        //     ->whereRaw("
-        //         NOT EXISTS (
-        //             SELECT 1
-        //             FROM order_items oi
-        //             JOIN orders o ON o.id = oi.order_id
-        //             WHERE oi.product_id = products.id
-        //             AND o.status IN ('process','shipped')
-        //             AND (
-        //                 (oi.estimated_delivery_date BETWEEN ? AND ?)
-        //                 OR (oi.estimated_return_date   BETWEEN ? AND ?)
-        //                 OR (oi.estimated_delivery_date <= ? AND oi.estimated_return_date >= ?)
-        //             )
-        //         )
-        //     ", [$startDate, $endDate, $startDate, $endDate, $startDate, $endDate])
-        //     ->with([
-        //         'brand',
-        //         'types',
-        //         'priceDetail',
-        //         'sizes',
-        //     ])
-        //     ->orderByDesc('upload_at');
-
-        //     $products = $query->paginate(4);
-
-        //     return [
-        //         'data' => $products->items(),
-        //         'meta' => [
-        //             'current_page' => $products->currentPage(),
-        //             'last_page'    => $products->lastPage(),
-        //             'per_page'     => $products->perPage(),
-        //             'total'        => $products->total(),
-        //         ],
-        //     ];
-
         $params = $this->constructPrams($filters);
 
         $startDate = $params['startDate'];
@@ -142,12 +77,11 @@ class HomeController extends Controller
                     WHERE oi.product_id = products.id
                     AND o.status IN ('process','shipped')
                     AND (
-                        (oi.estimated_delivery_date BETWEEN ? AND ?)
-                        OR (oi.estimated_return_date   BETWEEN ? AND ?)
-                        OR (oi.estimated_delivery_date <= ? AND oi.estimated_return_date >= ?)
+                        DATE(oi.estimated_delivery_date) <= DATE(?)
+                        AND DATE(oi.estimated_return_date) >= DATE(?)
                     )
                 )
-            ", [$startDate, $endDate, $startDate, $endDate, $startDate, $endDate])
+            ", [$endDate, $startDate])
             ->with(['brand', 'types', 'priceDetail', 'sizes']);
 
         //  Apply extra filters
@@ -164,12 +98,28 @@ class HomeController extends Controller
         if (!empty($extraFilters['brand'])) {
             $query->where('brand_id', $extraFilters['brand']);
         }
+        // if (!empty($extraFilters['color'])) {
+        //     $query->whereIn('color_id', $extraFilters['color']);
+        // }
         if (!empty($extraFilters['color'])) {
-            $query->where('color_id', $extraFilters['color']);
+            $colors = is_array($extraFilters['color'])
+                ? $extraFilters['color']
+                : explode(',', $extraFilters['color']);
+
+            $query->whereIn('color_id', $colors);
         }
+        // if (!empty($extraFilters['type'])) {
+        //     $query->whereHas('types', function ($q) use ($extraFilters) {
+        //         $q->whereIn('types.id', $extraFilters['type']);
+        //     });
+        // }
         if (!empty($extraFilters['type'])) {
-            $query->whereHas('types', function ($q) use ($extraFilters) {
-                $q->where('types.id', $extraFilters['type']);
+            $types = is_array($extraFilters['type'])
+                ? $extraFilters['type']
+                : explode(',', $extraFilters['type']);
+
+            $query->whereHas('types', function ($q) use ($types) {
+                $q->whereIn('types.id', $types);
             });
         }
         if (!empty($extraFilters['size'])) {
@@ -192,8 +142,7 @@ class HomeController extends Controller
                 $q->where('availability', true);
             });
         }
-        // tambah filter by type & 1 pcs ++
-       // Sorting (masih masalah)
+        // sorting
         if (!empty($extraFilters['sortBy'])) {
             $direction = $extraFilters['direction'] ?? 'asc';
             switch ($extraFilters['sortBy']) {
@@ -235,36 +184,16 @@ class HomeController extends Controller
     }
 
     private function constructPrams(array $filters){
-        // $startDate = !empty($filters['useByDate'])
-        //     ? Carbon::createFromFormat('d-m-Y', $filters['useByDate'])
-        //     : null;
-
-        // if ($startDate && !empty($filters['shippingType'])) {
-        //     $deliveryDate = $filters['shippingType'] === 'Next day' ? $startDate->copy()->subDays(2) : $startDate->copy()->subDay();
-        //     $startDate = $deliveryDate;
-        // }
-
-        // if ($startDate && $startDate->lessThan(Carbon::today())) {
-        //     $startDate = Carbon::today();
-        // }
-
-        // $endDate = $startDate && !empty($filters['duration'])
-        //     ? $startDate->copy()->addDays((int) $filters['duration'])
-        //     : null;
-
-        // return [
-        //     'startDate' => $startDate,
-        //     'endDate' => $endDate
-        // ];
-
-        $startDate = !empty($filters['useByDate'])
+        $useByDate = !empty($filters['useByDate'])
             ? Carbon::createFromFormat('d-m-Y', $filters['useByDate'])
             : null;
 
-        if ($startDate && !empty($filters['shippingType'])) {
+        $startDate = $useByDate;
+
+        if ($useByDate && !empty($filters['shippingType'])) {
             $deliveryDate = $filters['shippingType'] === 'Next day'
-                ? $startDate->copy()->subDays(2)
-                : $startDate->copy()->subDay();
+                ? $useByDate->copy()->subDays(2)
+                : $useByDate->copy()->subDay();
             $startDate = $deliveryDate;
         }
 
@@ -272,13 +201,13 @@ class HomeController extends Controller
             $startDate = Carbon::today();
         }
 
-        $endDate = $startDate && !empty($filters['duration'])
-            ? $startDate->copy()->addDays((int) $filters['duration'])
+        $endDate = $useByDate && !empty($filters['duration'])
+            ? $useByDate->copy()->addDays((int) $filters['duration'])
             : null;
 
         return [
-            'startDate' => $startDate,
-            'endDate'   => $endDate,
+            'startDate' => $startDate?->format('Y-m-d'),
+            'endDate'   => $endDate?->format('Y-m-d'),
         ];
     }
 }

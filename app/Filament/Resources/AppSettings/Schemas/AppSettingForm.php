@@ -16,17 +16,11 @@ class AppSettingForm
                 TextInput::make('app_name')
                     ->required()
                     ->maxLength(255),
-
-                FileUpload::make('app_logo')
-                    ->image()
-                    ->maxSize(config('uploads.images.max_size'))
-                    ->acceptedFileTypes(config('uploads.images.accepted_types'))
-                    ->helperText('Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
-                    ->disk('public')
-                    ->directory('settings/logo')
-                    ->imageEditor()
-                    ->imageEditorAspectRatios(['16:9', '4:3', '1:1']),
-                
+                Textarea::make('description')
+                    ->rows(3)
+                    ->maxLength(1000)
+                    ->placeholder('Selamat datang di Qatia Rent, perusahaan rental baju terkemuka yang siap membantu Anda tampil sempurna di acara istimewa Anda.
+Kami memiliki koleksi baju berkualitas tinggi dari desainer terkenal untuk memenuhi kebutuhan Anda dalam acara pernikahan, lamaran, tunangan, pesta, dan acara formal lainnya. '),    
                 TextInput::make('whatsapp_number')
                     ->tel()
                     ->placeholder('62812345678')
@@ -46,30 +40,15 @@ class AppSettingForm
                     ->rows(3)
                     ->maxLength(1000)
                     ->helperText('This address will appear in the website footer to inform customers of your location.'),
-     
-                Textarea::make('description')
-                    ->rows(3)
-                    ->maxLength(1000)
-                    ->placeholder('Selamat datang di Qatia Rent, perusahaan rental baju terkemuka yang siap membantu Anda tampil sempurna di acara istimewa Anda.
-Kami memiliki koleksi baju berkualitas tinggi dari desainer terkenal untuk memenuhi kebutuhan Anda dalam acara pernikahan, lamaran, tunangan, pesta, dan acara formal lainnya. '),         
-               FileUpload::make('tnc_image')
-                    ->label('Terms & Conditions')
+                FileUpload::make('app_logo')
                     ->image()
-                    ->multiple()
-                    ->maxFiles(10)
                     ->maxSize(config('uploads.images.max_size'))
                     ->acceptedFileTypes(config('uploads.images.accepted_types'))
                     ->helperText('Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
                     ->disk('public')
-                    ->directory('settings/info')
+                    ->directory('settings/logo')
                     ->imageEditor()
-                    ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
-                    ->reorderable()
-                    ->extraAttributes([
-                        'class' => 'space-y-3',
-                    ])
-                    ->required(),
-
+                    ->imageEditorAspectRatios(['16:9', '4:3', '1:1']), 
                 FileUpload::make('instruction_image')
                     ->label('How to order')
                     ->image()
@@ -87,7 +66,23 @@ Kami memiliki koleksi baju berkualitas tinggi dari desainer terkenal untuk memen
                         'class' => 'space-y-3',
                     ])
                     ->required(),
-
+                FileUpload::make('tnc_image')
+                    ->label('Terms & Conditions')
+                    ->image()
+                    ->multiple()
+                    ->maxFiles(10)
+                    ->maxSize(config('uploads.images.max_size'))
+                    ->acceptedFileTypes(config('uploads.images.accepted_types'))
+                    ->helperText('Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
+                    ->disk('public')
+                    ->directory('settings/info')
+                    ->imageEditor()
+                    ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
+                    ->reorderable()
+                    ->extraAttributes([
+                        'class' => 'space-y-3',
+                    ])
+                    ->required(),
         ]);
     }
 }

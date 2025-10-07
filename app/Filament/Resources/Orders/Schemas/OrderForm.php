@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Orders\Schemas;
 use App\Models\Product;
 use App\Models\Size;
 use App\Services\HelperService;
-use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
@@ -237,7 +236,7 @@ class OrderForm
                                     Action::make('calculate_rent_price')
                                         ->icon('heroicon-m-calculator')
                                         ->color('success')
-                                        ->tooltip('Rent price = Price per day * Days * Quantity')
+                                        ->tooltip('Rent price = Price * Quantity')
                                         ->action(fn($set, $get) => HelperService::calculateOrderItemPrice($set, $get))
                                 ]),
                                 DatePicker::make('use_by_date')

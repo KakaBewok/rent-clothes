@@ -18,7 +18,7 @@ const ProductCard = ({ product, onOpen }: ProductProps) => {
                 className="cursor-pointer"
             >
                 {/* Ribbon badge */}
-                {product.additional_ribbon && (
+                {product.additional_ribbon && isAvailable && (
                     <div className="absolute top-0 left-0 z-10 rounded-br-xs bg-[#BAAE9E] px-1.5 py-0.5">
                         <p className="text-[10px] font-normal tracking-wide text-white md:text-[12px]">{product.additional_ribbon}</p>
                     </div>

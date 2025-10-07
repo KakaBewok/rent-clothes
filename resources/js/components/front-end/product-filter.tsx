@@ -3,60 +3,8 @@ import { Input } from '@/components/ui/input';
 import { Brand, Color, ExtraFilter, Type } from '@/types/models';
 import { router } from '@inertiajs/react';
 import { Filter, Search } from 'lucide-react';
-import { useState } from 'react';
-
-// interface ProductFilterProps {
-//     brands: Brand[];
-//     colors: Color[];
-//     types: Type[];
-// }
-
-// const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
-//     const [extraFilters, setExtraFilters] = useState<ExtraFilter>({});
-
-//     const buildUrl = () => {
-//         const params = new URLSearchParams(window.location.search);
-//         return `${window.location.pathname}?${params.toString()}`;
-//     };
-
-//     const applyFilter = () => {
-//         router.visit(buildUrl(), {
-//             method: 'get',
-//             data: { filters: extraFilters as Record<string, any> },
-//             preserveState: true,
-//             replace: true,
-//         });
-//     };
-
-//     return (
-//         <div className="mt-10 space-y-2 bg-amber-300">
-//             <input
-//                 type="text"
-//                 placeholder="Cari Produk"
-//                 value={extraFilters.search || ''}
-//                 onChange={(e) => setExtraFilters({ ...extraFilters, search: e.target.value })}
-//             />
-
-//             <select value={extraFilters.brand || ''} onChange={(e) => setExtraFilters({ ...extraFilters, brand: parseInt(e.target.value) || null })}>
-//                 <option value="">Semua Brand</option>
-//                 <option value="1">Brand A</option>
-//                 <option value="2">Brand B</option>
-//             </select>
-
-//             <select value={extraFilters.sortBy || ''} onChange={(e) => setExtraFilters({ ...extraFilters, sortBy: e.target.value })}>
-//                 <option value="">Default</option>
-//                 <option value="price">Harga</option>
-//                 <option value="name">Nama</option>
-//             </select>
-
-//             <button onClick={applyFilter} className="rounded bg-blue-500 px-4 py-2 text-white">
-//                 Terapkan Filter
-//             </button>
-//         </div>
-//     );
-// };
-
-// export default ProductFilter;
+import { useEffect, useState } from 'react';
+import FilterWithChip from './filter-with-chip';
 
 interface ProductFilterProps {
     brands: Brand[];
@@ -65,9 +13,23 @@ interface ProductFilterProps {
 }
 
 const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
-    const [extraFilters, setExtraFilters] = useState<ExtraFilter>({});
+    const [extraFilters, setExtraFilters] = useState<ExtraFilter | null>(null);
     const [showSearch, setShowSearch] = useState<boolean>(false);
     const [showFilter, setShowFilter] = useState<boolean>(false);
+
+    // Persist filter values in the form after browser reload/refresh
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const filters: Record<string, any> = {};
+
+        params.forEach((value, key) => {
+            if (value.includes(',')) filters[key] = value.split(',').map((v) => Number(v));
+            else if (!isNaN(Number(value))) filters[key] = Number(value);
+            else filters[key] = value;
+        });
+
+        setExtraFilters(filters);
+    }, []);
 
     const sizes = {
         'Fit XS': 'Fit XS',
@@ -75,34 +37,74 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
         'Fit M': 'Fit M',
         'Fit L': 'Fit L',
         'Fit XL': 'Fit XL',
-        'Fit XXL': 'Fit XXL',
         'Fit XS-S': 'Fit XS-S',
         'Fit S-M': 'Fit S-M',
         'Fit M-L': 'Fit M-L',
         'Fit L-XL': 'Fit L-XL',
         'Fit XL-XXL': 'Fit XL-XXL',
-        'Fit XXL-XXXL': 'Fit XXL-XXXL',
     };
 
+    // const applyFilter = () => {
+    //     const params = new URLSearchParams(window.location.search);
+    //     Object.entries(extraFilters || {}).forEach(([key, value]) => {
+    //         if (value !== null && value !== undefined && value !== '') {
+    //             params.set(key, String(value));
+    //         } else {
+    //             params.delete(key);
+    //         }
+    //     });
+    //     params.set('page', '1');
+
+    //     router.visit(`${window.location.pathname}?${params.toString()}`, {
+    //         method: 'get',
+    //         preserveState: true,
+    //         replace: true,
+    //     });
+    // };
+
     const applyFilter = () => {
-        // router.visit(buildUrl(), {
-        //     method: 'post',
-        //     data: { filters: extraFilters as Record<string, any> },
-        //     preserveState: true,
-        //     replace: true,
-        // });
-        const params = new URLSearchParams(window.location.search);
-        Object.entries(extraFilters).forEach(([key, value]) => {
-            if (value !== null && value !== undefined && value !== '') {
-                params.set(key, String(value));
+        const currentParams = new URLSearchParams(window.location.search);
+
+        Object.entries(extraFilters || {}).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                if (value.length > 0) {
+                    currentParams.set(key, value.join(','));
+                } else {
+                    currentParams.delete(key);
+                }
+            } else if (value !== null && value !== undefined && value !== '') {
+                currentParams.set(key, String(value));
             } else {
-                params.delete(key);
+                currentParams.delete(key);
             }
         });
-        params.set('page', '1');
 
-        router.visit(`${window.location.pathname}?${params.toString()}`, {
-            method: 'get',
+        currentParams.set('page', '1');
+
+        const url = `${window.location.pathname}?${currentParams.toString()}`;
+
+        router.get(
+            url,
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                replace: true,
+            },
+        );
+    };
+
+    const clearFilter = () => {
+        const params = new URLSearchParams(window.location.search);
+        const FILTER_KEYS = ['brand', 'color', 'size', 'type', 'minPrice', 'maxPrice', 'sortBy', 'direction'];
+
+        FILTER_KEYS.forEach((key) => params.delete(key));
+
+        setExtraFilters({ available: extraFilters?.available });
+
+        const cleanUrl = `${window.location.pathname}?${params.toString()}`;
+        router.visit(cleanUrl, {
+            preserveScroll: true,
             preserveState: true,
             replace: true,
         });
@@ -124,6 +126,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
             replace: true,
         });
     };
+
     return (
         <div className="mt-10 flex items-center justify-center bg-[#FFFBF4] py-10">
             <div className="w-full px-3 md:max-w-2xl">
@@ -133,11 +136,12 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                         <div className="flex items-center justify-center gap-2 text-sm">
                             <input
                                 type="checkbox"
-                                checked={extraFilters.available || false}
+                                checked={extraFilters?.available || false}
                                 onChange={(e) => {
                                     setExtraFilters({ ...extraFilters, available: e.target.checked });
                                     toggleAvailableOnly(e.target.checked);
                                 }}
+                                className="h-3 w-3 cursor-pointer appearance-none bg-white transition-all checked:border-white checked:bg-white checked:before:block checked:before:text-center checked:before:leading-4 checked:before:text-slate-800 checked:before:content-['✔']"
                             />
                             <label>Available Only</label>
                         </div>
@@ -170,14 +174,18 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                         <input
                             type="text"
                             placeholder="Cari produk"
-                            value={extraFilters.search || ''}
-                            onChange={(e) => setExtraFilters({ ...extraFilters, search: e.target.value })}
-                            className={`${extraFilters.search ? 'border-[#A27163]' : 'border-white'} w-full border-2 bg-white px-3 py-2 text-sm text-slate-800 transition-all duration-400 focus:border-[#484f8f] focus:ring-2 focus:ring-[#484f8f]`}
+                            value={extraFilters?.search || ''}
+                            onChange={(e) =>
+                                setExtraFilters({
+                                    ...extraFilters,
+                                    search: e.target.value,
+                                })
+                            }
+                            className={`${extraFilters?.search ? 'border-[#A27163]' : 'border-white'} w-full border-2 bg-white px-3 py-2 text-sm text-slate-800 transition-all duration-400 focus:border-[#484f8f] focus:ring-2 focus:ring-[#484f8f]`}
                         />
                         <button
                             onClick={() => {
                                 applyFilter();
-                                // setExtraFilters({ ...extraFilters, search: '' });
                             }}
                             className={`absolute top-1.5 right-1.5 flex h-[25px] w-10 cursor-pointer items-center justify-center bg-[#A27163] text-sm text-white transition duration-300 hover:bg-[#8d5a4d]`}
                         >
@@ -197,30 +205,30 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                         <Input
                             type="number"
                             placeholder="Min. Price"
-                            value={extraFilters.minPrice ?? ''}
+                            value={extraFilters?.minPrice ?? ''}
                             onChange={(e) => setExtraFilters({ ...extraFilters, minPrice: e.target.value ? parseInt(e.target.value) : null })}
-                            className={`${extraFilters.minPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
+                            className={`${extraFilters?.minPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                         />
 
                         <Input
                             type="number"
                             placeholder="Max. Price"
-                            value={extraFilters.maxPrice ?? ''}
+                            value={extraFilters?.maxPrice ?? ''}
                             onChange={(e) => setExtraFilters({ ...extraFilters, maxPrice: e.target.value ? parseInt(e.target.value) : null })}
-                            className={`${extraFilters.maxPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
+                            className={`${extraFilters?.maxPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                         />
                     </div>
 
                     {/* Brand */}
                     <select
-                        value={extraFilters.brand || ''}
+                        value={extraFilters?.brand || ''}
                         onChange={(e) =>
                             setExtraFilters({
                                 ...extraFilters,
-                                brand: parseInt(e.target.value) || null,
+                                brand: e.target.value ? parseInt(e.target.value) : null,
                             })
                         }
-                        className={`${extraFilters.brand ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
+                        className={`${extraFilters?.brand ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                     >
                         <option value="">All Brands</option>
                         {brands.map((b) => (
@@ -231,53 +239,31 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                     </select>
 
                     {/* Colors */}
-                    <select
-                        value={extraFilters.color || ''}
-                        onChange={(e) =>
-                            setExtraFilters({
-                                ...extraFilters,
-                                color: parseInt(e.target.value) || null,
-                            })
-                        }
-                        className={`${extraFilters.color ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
-                    >
-                        <option value="">All Colors</option>
-                        {colors.map((c) => (
-                            <option key={c.id} value={c.id}>
-                                {c.name}
-                            </option>
-                        ))}
-                    </select>
+                    <FilterWithChip
+                        label="Color"
+                        options={colors}
+                        value={extraFilters?.color ?? []}
+                        onChange={(val) => setExtraFilters((prev) => ({ ...prev, color: val as number[] }))}
+                    />
 
                     {/* Types */}
-                    <select
-                        value={extraFilters.type || ''}
-                        onChange={(e) =>
-                            setExtraFilters({
-                                ...extraFilters,
-                                type: parseInt(e.target.value) || null,
-                            })
-                        }
-                        className={`${extraFilters.type ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
-                    >
-                        <option value="">All Types</option>
-                        {types.map((t) => (
-                            <option key={t.id} value={t.id}>
-                                {t.name}
-                            </option>
-                        ))}
-                    </select>
+                    <FilterWithChip
+                        label="Types"
+                        options={types}
+                        value={extraFilters?.type ?? []}
+                        onChange={(val) => setExtraFilters((prev) => ({ ...prev, type: val as number[] }))}
+                    />
 
                     {/* Sizes */}
                     <select
-                        value={extraFilters.size || ''}
+                        value={extraFilters?.size || ''}
                         onChange={(e) =>
                             setExtraFilters({
                                 ...extraFilters,
-                                size: e.target.value || null,
+                                size: e.target.value,
                             })
                         }
-                        className={`${extraFilters.size ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
+                        className={`${extraFilters?.size ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                     >
                         <option value="">All Sizes</option>
                         {Object.entries(sizes).map(([key, label]) => (
@@ -289,14 +275,18 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
 
                     {/* Sort - masalah di paging (sampe sini)*/}
                     <select
-                        value={`${extraFilters.sortBy || ''}:${extraFilters.direction || ''}`}
+                        value={`${extraFilters?.sortBy || ''}:${extraFilters?.direction || ''}`}
                         onChange={(e) => {
                             const [sortBy, direction] = e.target.value.split(':');
-                            setExtraFilters({ ...extraFilters, sortBy, direction: direction as 'asc' | 'desc' });
+                            setExtraFilters({
+                                ...extraFilters,
+                                sortBy,
+                                direction: direction as 'asc' | 'desc',
+                            });
                         }}
-                        className={`${extraFilters.sortBy ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
+                        className={`${extraFilters?.sortBy ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                     >
-                        <option value="upload_at:desc">Sort By</option>
+                        <option value="">Sort By</option>
                         <option value="price_after_discount:asc">Price: Low-High</option>
                         <option value="price_after_discount:desc">Price: High-Low</option>
                         <option value="name:asc">Name: A-Z</option>
@@ -315,7 +305,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                             Apply
                         </button>
                         <button
-                            onClick={() => setExtraFilters({})}
+                            onClick={clearFilter}
                             className="w-full cursor-pointer bg-[#bc8f83] px-3 py-2 text-white transition duration-300 hover:bg-[#c19386]"
                         >
                             Clear

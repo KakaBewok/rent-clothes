@@ -23,11 +23,11 @@ const NoteBox = ({ branchs }: { branchs: Branch[] }) => {
 
     return (
         <div className="my-9 flex w-full justify-center px-6">
-            <div className="relative inline-block w-full md:max-w-lg lg:max-w-xl">
+            <div className="relative inline-block w-full max-w-sm md:max-w-lg lg:max-w-xl">
                 {/* shadow effect */}
-                <div className="absolute top-1 left-1 h-full w-full rounded-2xl bg-[#D8CFBC] md:top-2 md:left-2"></div>
+                <div className="absolute top-1 left-1 h-full w-full rounded-xl bg-[#D8CFBC] md:top-2 md:left-2 md:rounded-2xl"></div>
 
-                <div className="font-lora relative rounded-2xl border border-[#D8CFBC] bg-white px-6 py-5 text-center text-sm leading-relaxed text-gray-700 md:text-base">
+                <div className="font-lora relative rounded-xl border border-[#D8CFBC] bg-white px-3 py-2 text-center text-xs leading-relaxed text-gray-700 md:rounded-2xl md:px-6 md:py-5 md:text-base">
                     Menampilkan dress yang dapat dikirim pada <span className="font-semibold">{formatDate(shipDate)}</span> dipakai pada{' '}
                     <span className="font-semibold">{formatDate(useDate)}</span> dan perlu dikembalikan pada{' '}
                     <span className="font-semibold">{formatDate(returnDate)}</span> dengan pengiriman dari area{' '}

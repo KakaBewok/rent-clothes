@@ -7,13 +7,14 @@ import { Button } from '../ui/button';
 const ProductModalDetails = ({ product, contact }: { product: Product; contact: string }) => {
     const { brand, price_detail, code, name: productName, description, sizes, types, additional_ribbon, color } = product;
     const getTypeList = () => types?.map((type) => type.name).join(', ');
-    const getSizeList = () =>
-        sizes?.map((s, i) => (
-            <span key={s.id} className={`mr-1 text-slate-800 ${s.availability != '1' ? 'line-through decoration-black' : ''}`}>
-                {s.size}
-                {i != sizes.length - 1 ? ', ' : ''}
-            </span>
-        ));
+    const getSizeList = () => sizes?.map((size) => size.size).join(', ');
+    // const getSizeList = () =>
+    //     sizes?.map((s, i) => (
+    //         <span key={s.id} className={`mr-1 text-slate-800 ${s.availability != '1' ? 'line-through decoration-black' : ''}`}>
+    //             {s.size}
+    //             {i != sizes.length - 1 ? ', ' : ''}
+    //         </span>
+    //     ));
 
     const queryParams = new URLSearchParams(window.location.search);
 
@@ -69,7 +70,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                         <tbody>
                             {types && types.length > 0 && (
                                 <tr>
-                                    <td className="pr-2">Types</td>
+                                    <td className="pr-2">Type</td>
                                     <td className="px-1">:</td>
                                     <td>{getTypeList()}</td>
                                 </tr>
@@ -82,12 +83,12 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                                 </tr>
                             )}
                             <tr>
-                                <td className="pr-2">Sizes</td>
+                                <td className="pr-2">Size</td>
                                 <td className="px-1">:</td>
                                 <td>{getSizeList()}</td>
                             </tr>
                             <tr>
-                                <td className="pr-2">Available colors</td>
+                                <td className="pr-2">Colour</td>
                                 <td className="px-1">:</td>
                                 <td>
                                     {color?.hex_code ? (

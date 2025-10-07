@@ -186,10 +186,10 @@ export interface User {
 export interface ExtraFilter {
     search?: string;
     brand?: number | null;
-    size?: string | null;
-    color?: number | null;
-    type?: number | null;
-    available: boolean | null;
+    size?: string;
+    color?: number[];
+    type?: number[];
+    available?: boolean | null;
 
     minPrice?: number | null;
     maxPrice?: number | null;
