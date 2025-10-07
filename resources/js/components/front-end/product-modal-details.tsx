@@ -131,7 +131,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    <Button className="w-full cursor-pointer rounded-none bg-[#A27163] text-white transition-all duration-300 hover:bg-second">
+                    <Button className="w-full cursor-pointer rounded-none bg-[#A27163] text-white transition-all duration-300 hover:bg-[#976456]">
                         Rent Now
                     </Button>
                 </a>

@@ -17,20 +17,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
     const [showSearch, setShowSearch] = useState<boolean>(false);
     const [showFilter, setShowFilter] = useState<boolean>(false);
 
-    // Persist filter values in the form after browser reload/refresh
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const filters: Record<string, any> = {};
-
-        params.forEach((value, key) => {
-            if (value.includes(',')) filters[key] = value.split(',').map((v) => Number(v));
-            else if (!isNaN(Number(value))) filters[key] = Number(value);
-            else filters[key] = value;
-        });
-
-        setExtraFilters(filters);
-    }, []);
-
+    const FILTER_KEYS = ['brand', 'color', 'size', 'type', 'minPrice', 'maxPrice', 'sortBy', 'direction'];
     const sizes = {
         'Fit XS': 'Fit XS',
         'Fit S': 'Fit S',
@@ -44,23 +31,36 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
         'Fit XL-XXL': 'Fit XL-XXL',
     };
 
-    // const applyFilter = () => {
-    //     const params = new URLSearchParams(window.location.search);
-    //     Object.entries(extraFilters || {}).forEach(([key, value]) => {
-    //         if (value !== null && value !== undefined && value !== '') {
-    //             params.set(key, String(value));
-    //         } else {
-    //             params.delete(key);
-    //         }
-    //     });
-    //     params.set('page', '1');
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const filters: Record<string, any> = {};
 
-    //     router.visit(`${window.location.pathname}?${params.toString()}`, {
-    //         method: 'get',
-    //         preserveState: true,
-    //         replace: true,
-    //     });
-    // };
+        const ARRAY_KEYS = ['color', 'type'];
+
+        FILTER_KEYS.forEach((key) => {
+            if (params.has(key)) {
+                const value = params.get(key)!;
+
+                if (ARRAY_KEYS.includes(key)) {
+                    filters[key] = value.split(',').map((v) => Number(v.trim()));
+                } else if (!isNaN(Number(value)) && value.trim() !== '') {
+                    filters[key] = Number(value);
+                } else {
+                    filters[key] = value;
+                }
+            }
+        });
+
+        if (params.get('available') === 'true') {
+            filters['available'] = true;
+        }
+
+        if (params.has('search')) {
+            filters['search'] = params.get('search');
+        }
+
+        setExtraFilters(filters);
+    }, []);
 
     const applyFilter = () => {
         const currentParams = new URLSearchParams(window.location.search);
@@ -96,11 +96,10 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
 
     const clearFilter = () => {
         const params = new URLSearchParams(window.location.search);
-        const FILTER_KEYS = ['brand', 'color', 'size', 'type', 'minPrice', 'maxPrice', 'sortBy', 'direction'];
 
         FILTER_KEYS.forEach((key) => params.delete(key));
 
-        setExtraFilters({ available: extraFilters?.available });
+        setExtraFilters({ available: extraFilters?.available, search: extraFilters?.search });
 
         const cleanUrl = `${window.location.pathname}?${params.toString()}`;
         router.visit(cleanUrl, {
@@ -129,7 +128,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
 
     return (
         <div className="mt-10 flex items-center justify-center bg-[#FFFBF4] py-10">
-            <div className="w-full px-3 md:max-w-2xl">
+            <div className="w-full px-5 md:max-w-2xl md:px-3">
                 {/* control button */}
                 <div className={`flex items-center justify-center gap-2`}>
                     <div className="cursor-pointer bg-[#A27163] px-3 py-1 text-white transition duration-300 hover:bg-[#8d5a4d]">
@@ -273,7 +272,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                         ))}
                     </select>
 
-                    {/* Sort - masalah di paging (sampe sini)*/}
+                    {/* Sort*/}
                     <select
                         value={`${extraFilters?.sortBy || ''}:${extraFilters?.direction || ''}`}
                         onChange={(e) => {
