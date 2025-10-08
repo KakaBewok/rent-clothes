@@ -308,7 +308,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                         <option value="price_after_discount:asc">Price: Low-High</option>
                         <option value="price_after_discount:desc">Price: High-Low</option>
                         <option value="name:asc">Name: A-Z</option>
-                        <option value="stock:2">Stock: 2 Pcs ++ (Available Only)</option>
+                        <option value="stock:2">Stock: 2 Pcs (Available Only)</option>
                     </select>
                 </div>
 

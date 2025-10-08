@@ -2,6 +2,7 @@ import { Product } from '@/types/models';
 import { formatRupiah, formatWhatsAppNumber } from '@/utils/format';
 import { format, isValid, parse } from 'date-fns';
 import { id } from 'date-fns/locale';
+import React from 'react';
 import { Button } from '../ui/button';
 
 const ProductModalDetails = ({ product, contact }: { product: Product; contact: string }) => {
@@ -45,10 +46,10 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                     <div className="mt-0 flex items-center gap-2">
                         {price_detail?.discount ? (
                             <>
-                                <span className="text-xs text-slate-300 line-through">{formatRupiah(price_detail?.rent_price)}</span>
                                 <span className="md:text-md text-sm font-semibold text-slate-700">
                                     {formatRupiah(price_detail?.price_after_discount ?? 0)}
                                 </span>
+                                <span className="animate-pulse text-xs text-slate-300 line-through">{formatRupiah(price_detail?.rent_price)}</span>
                                 <span className="ml-2 animate-pulse bg-red-600 px-2 py-0.5 text-xs font-bold text-white">
                                     -{price_detail?.discount}%
                                 </span>
@@ -61,28 +62,29 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                 </div>
 
                 {/* ✅ BLOK BARU UNTUK MENAMPILKAN RINCIAN STOK YANG LEBIH BAIK */}
-                <div className="mb-4">
-                    <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                        <span>Available Stock on Selected Date</span>
-                    </h4>
-
+                <div className="border-b border-slate-200 pt-2 pb-5">
                     {product.stock_breakdown && product.stock_breakdown.length > 0 ? (
-                        <div className="flex flex-col gap-0 text-sm">
-                            {product.stock_breakdown.map((item) => (
-                                <div key={item.size} className="flex items-center justify-start gap-3">
-                                    <span className="text-slate-500">Size {item.size}</span>
-                                    <span className="text-slate-500">{item.stock} pcs</span>
-                                </div>
-                            ))}
-                        </div>
+                        <>
+                            <h4 className="text-sm font-semibold text-slate-700">
+                                <span>Stok Tersedia</span>
+                            </h4>
+
+                            <div className="mt-1 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-xs">
+                                {product.stock_breakdown.map((item) => (
+                                    <React.Fragment key={item.size}>
+                                        <span className="text-slate-500">{item.size}</span>
+                                        <span className="text-slate-500">{item.stock} pcs</span>
+                                    </React.Fragment>
+                                ))}
+                            </div>
+                        </>
                     ) : (
-                        // Tampilkan pesan jika tidak ada stok tersedia
-                        <p className="text-sm text-slate-500">No available stock on the selected date.</p>
+                        <p className="mt-2 text-sm text-slate-500">Tidak ada stok pada tanggal ini.</p>
                     )}
                 </div>
 
                 {/* desc */}
-                <h2 className="mt-3 text-sm font-semibold text-slate-700">Deskripsi</h2>
+                <h2 className="mt-4 text-sm font-semibold text-slate-700">Deskripsi</h2>
                 <div className="prose mt-2 max-w-none text-xs text-slate-500" dangerouslySetInnerHTML={{ __html: description ?? '' }} />
 
                 {/* additional desc */}
