@@ -19,7 +19,7 @@ const Footer = ({ setting, setModalInfo, setShowScheduleModal }: FooterProps) =>
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-4">
                     {/* general info */}
                     <div className="">
-                        <AppLogo setting={setting} logoSize={70} />
+                        <AppLogo setting={setting} logoSize={160} />
                         <p className="my-3 text-left text-xs text-slate-400 md:my-5 md:text-sm">
                             {description ??
                                 'Koleksi pakaian eksklusif untuk setiap acara. Nikmati pengalaman sewa yang nyaman, cepat, dan berkualitas tinggi.'}

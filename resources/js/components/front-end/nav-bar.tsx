@@ -18,9 +18,9 @@ const NavBar = ({ setting, setModalInfo, setShowScheduleModal }: navBarProps) =>
 
     return (
         <nav className="sticky top-0 z-40 bg-white">
-            <div className="mx-auto flex h-20 w-full items-center px-4">
+            <div className="mx-auto flex h-fit w-full items-center px-4 py-2">
                 <div className="hidden md:flex">
-                    <AppLogo setting={setting} />
+                    <AppLogo setting={setting} logoSize={127} />
                 </div>
 
                 {/* mobile menu button */}
@@ -73,7 +73,7 @@ const NavBar = ({ setting, setModalInfo, setShowScheduleModal }: navBarProps) =>
                 </div>
 
                 <div className="ml-auto block md:hidden">
-                    <AppLogo setting={setting} />
+                    <AppLogo setting={setting} logoSize={100} />
                 </div>
             </div>
 

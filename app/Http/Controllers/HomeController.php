@@ -157,7 +157,7 @@ class HomeController extends Controller
                     break;
             }
         } else {
-            $query->orderByDesc('products.upload_at'); // default
+            $query->reorder()->orderByDesc('products.upload_at'); // default
         }
 
         $products = $query->paginate(4);
