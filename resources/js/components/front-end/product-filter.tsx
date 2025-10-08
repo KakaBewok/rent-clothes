@@ -17,7 +17,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
     const [showSearch, setShowSearch] = useState<boolean>(false);
     const [showFilter, setShowFilter] = useState<boolean>(false);
 
-    const FILTER_KEYS = ['brand', 'color', 'size', 'type', 'minPrice', 'maxPrice', 'sortBy', 'direction'];
+    const FILTER_KEYS = ['brand', 'color', 'size', 'type', 'minPrice', 'maxPrice', 'stock', 'sortBy', 'direction'];
     const sizes = {
         'Fit XS': 'Fit XS',
         'Fit S': 'Fit S',
@@ -270,6 +270,25 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                                 {label}
                             </option>
                         ))}
+                    </select>
+
+                    {/* Stock */}
+                    <select
+                        value={extraFilters?.stock || ''}
+                        onChange={(e) =>
+                            setExtraFilters({
+                                ...extraFilters,
+                                stock: e.target.value ? parseInt(e.target.value) : null,
+                            })
+                        }
+                        className={`${extraFilters?.stock ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
+                    >
+                        <option value="">All Stock</option>
+                        <option value="1">1 Pcs++ (Available Only)</option>
+                        <option value="2">2 Pcs++ (Available Only)</option>
+                        <option value="3">3 Pcs++ (Available Only)</option>
+                        <option value="4">4 Pcs++ (Available Only)</option>
+                        <option value="5">5 Pcs++ (Available Only)</option>
                     </select>
 
                     {/* Sort*/}

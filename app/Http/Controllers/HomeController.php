@@ -43,7 +43,8 @@ class HomeController extends Controller
             'size',
             'color',
             'type',
-            'search'
+            'search',
+            'stock'
         ]);
 
         $products = $this->getProductsByFilters($baseFilters, $extraFilters, $request->boolean('available'));
@@ -133,6 +134,15 @@ class HomeController extends Controller
             $query->whereHas('sizes', function ($q) {
                 $q->where('availability', true);
             });
+        }
+        if (!empty($extraFilters['stock'])) {
+            $exactStock = $extraFilters['stock'];
+
+            $query->withSum(['sizes as available_sizes_sum_quantity' => function ($q) {
+                $q->where('availability', true);
+            }], 'quantity')
+
+            ->having('available_sizes_sum_quantity', '=', $exactStock);
         }
         // sorting
         if (!empty($extraFilters['sortBy'])) {

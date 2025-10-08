@@ -190,6 +190,7 @@ export interface ExtraFilter {
     color?: number[];
     type?: number[];
     available?: boolean | null;
+    stock?: number | null;
 
     minPrice?: number | null;
     maxPrice?: number | null;
