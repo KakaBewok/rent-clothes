@@ -7,6 +7,7 @@ use App\Observers\ProductObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 #[ObservedBy([ProductObserver::class])]
 class Product extends Model
@@ -73,5 +74,68 @@ class Product extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+     /**
+     *
+     * @param string $startDate
+     * @param string $endDate
+     * @return int
+     */
+    public function getAvailableStockBreakdownForPeriod($startDate, $endDate)
+    {
+        // $totalStockAvailable = $this->sizes()->where('availability', true)->sum('quantity');
+
+        // $rentedCount = $this->orderItems()
+        //     ->whereHas('order', function ($query) {
+        //         $query->whereIn('status', ['process', 'shipped']);
+        //     })
+        //     ->where(function ($query) use ($startDate, $endDate) {
+        //         $query->where('estimated_delivery_date', '<=', $endDate)
+        //             ->where('estimated_return_date', '>=', $startDate);
+        //     })
+        //     ->count();
+            
+        // return $totalStockAvailable - $rentedCount;
+
+        // ---
+
+        // 1. Ambil semua ukuran untuk produk ini yang ditandai 'available' (Kode ini sudah benar)
+        $availableSizes = $this->sizes()->where('availability', true)->get();
+
+        // 2. Hitung jumlah yang disewa untuk setiap ukuran dalam satu query
+        $rentedCountsBySize = $this->orderItems()
+            ->whereHas('order', function ($query) {
+                $query->whereIn('status', ['process', 'shipped']);
+            })
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->where('estimated_delivery_date', '<=', $endDate)
+                    ->where('estimated_return_date', '>=', $startDate);
+            })
+            // ✅ FIX: Gabungkan dengan tabel 'sizes' berdasarkan 'size_id'
+            ->join('sizes', 'order_items.size_id', '=', 'sizes.id')
+            
+            // ✅ FIX: Pilih dan kelompokkan berdasarkan 'sizes.size' dari tabel yang sudah di-join
+            ->select('sizes.size', DB::raw('count(*) as total'))
+            ->groupBy('sizes.size')
+            ->pluck('total', 'sizes.size');
+
+        $stockBreakdown = [];
+
+        // 3. Iterasi dan hitung sisa stok (Kode ini sudah benar)
+        foreach ($availableSizes as $size) {
+            $totalStockForSize = $size->quantity;
+            $rentedCountForSize = $rentedCountsBySize->get($size->size, 0);
+            $remainingStock = $totalStockForSize - $rentedCountForSize;
+
+            if ($remainingStock > 0) {
+                $stockBreakdown[] = [
+                    'size' => $size->size,
+                    'stock' => $remainingStock
+                ];
+            }
+        }
+            
+        return $stockBreakdown;
     }
 }

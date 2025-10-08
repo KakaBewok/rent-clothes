@@ -35,7 +35,9 @@ function HomePage({ branchs, products, banners, appSetting, showModal, baseFilte
     const openProduct = async (id: number) => {
         setLoading(true);
         try {
-            const res = await axios.get(`/api/products/${id}`);
+            const res = await axios.get(`/api/products/${id}`, {
+                params: baseFilters,
+            });
             setSelectedProduct(res.data as Product);
         } catch (error) {
             console.error('Error fetching product details:', error);
@@ -43,6 +45,19 @@ function HomePage({ branchs, products, banners, appSetting, showModal, baseFilte
             setLoading(false);
         }
     };
+
+    //old
+    // const openProduct = async (id: number) => {
+    //     setLoading(true);
+    //     try {
+    //         const res = await axios.get(`/api/products/${id}`);
+    //         setSelectedProduct(res.data as Product);
+    //     } catch (error) {
+    //         console.error('Error fetching product details:', error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const onCloseProductModal = () => {
         setSelectedProduct(null);

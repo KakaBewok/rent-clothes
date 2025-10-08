@@ -149,6 +149,11 @@ export interface Product {
     orderItems?: OrderItem[];
     created_at?: string;
     updated_at?: string;
+
+    stock_breakdown?: {
+        size: string;
+        stock: number;
+    }[];
 }
 
 export interface Size {
@@ -190,7 +195,7 @@ export interface ExtraFilter {
     color?: number[];
     type?: number[];
     available?: boolean | null;
-    stock?: number | null;
+    // stock?: number | null;
 
     minPrice?: number | null;
     maxPrice?: number | null;

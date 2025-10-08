@@ -60,6 +60,27 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                     <hr className="my-2 border-t border-slate-200" />
                 </div>
 
+                {/* ✅ BLOK BARU UNTUK MENAMPILKAN RINCIAN STOK YANG LEBIH BAIK */}
+                <div className="mb-4">
+                    <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                        <span>Available Stock on Selected Date</span>
+                    </h4>
+
+                    {product.stock_breakdown && product.stock_breakdown.length > 0 ? (
+                        <div className="flex flex-col gap-0 text-sm">
+                            {product.stock_breakdown.map((item) => (
+                                <div key={item.size} className="flex items-center justify-start gap-3">
+                                    <span className="text-slate-500">Size {item.size}</span>
+                                    <span className="text-slate-500">{item.stock} pcs</span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        // Tampilkan pesan jika tidak ada stok tersedia
+                        <p className="text-sm text-slate-500">No available stock on the selected date.</p>
+                    )}
+                </div>
+
                 {/* desc */}
                 <h2 className="mt-3 text-sm font-semibold text-slate-700">Deskripsi</h2>
                 <div className="prose mt-2 max-w-none text-xs text-slate-500" dangerouslySetInnerHTML={{ __html: description ?? '' }} />
