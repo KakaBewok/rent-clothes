@@ -98,9 +98,6 @@ class HomeController extends Controller
         if (!empty($extraFilters['brand'])) {
             $query->where('brand_id', $extraFilters['brand']);
         }
-        // if (!empty($extraFilters['color'])) {
-        //     $query->whereIn('color_id', $extraFilters['color']);
-        // }
         if (!empty($extraFilters['color'])) {
             $colors = is_array($extraFilters['color'])
                 ? $extraFilters['color']
@@ -108,11 +105,6 @@ class HomeController extends Controller
 
             $query->whereIn('color_id', $colors);
         }
-        // if (!empty($extraFilters['type'])) {
-        //     $query->whereHas('types', function ($q) use ($extraFilters) {
-        //         $q->whereIn('types.id', $extraFilters['type']);
-        //     });
-        // }
         if (!empty($extraFilters['type'])) {
             $types = is_array($extraFilters['type'])
                 ? $extraFilters['type']
@@ -147,23 +139,21 @@ class HomeController extends Controller
             $direction = $extraFilters['direction'] ?? 'asc';
             switch ($extraFilters['sortBy']) {
                 case 'price_after_discount':
-                    $query->orderBy(
-                        PriceDetail::select('price_after_discount')
-                            ->whereColumn('price_details.product_id', 'products.id'),
-                        $direction
-                    );
+                    $query->reorder()->join('price_details', 'products.id', '=', 'price_details.product_id')
+                      ->select('products.*')
+                      ->orderBy('price_details.price_after_discount', $direction);
                     break;
 
                 case 'name':
-                    $query->orderBy('products.name', $direction);
+                    $query->reorder()->orderBy('products.name', $direction);
                     break;
 
                 case 'upload_at':
-                    $query->orderBy('products.upload_at', $direction);
+                    $query->reorder()->orderBy('products.upload_at', $direction);
                     break;
 
                 default:
-                    $query->orderByDesc('products.upload_at'); // fallback
+                    $query->reorder()->orderByDesc('products.upload_at'); // fallback
                     break;
             }
         } else {
