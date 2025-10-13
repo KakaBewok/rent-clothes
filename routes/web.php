@@ -13,7 +13,8 @@ Route::get('/generate-sitemap', function () {
     return 'Sitemap generated!';
 });
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
-Route::get('/api/products/{product}', [ProductController::class, 'show'])->name('api.products.show');
+Route::get('/api/products/stock/{product}', [ProductController::class, 'showStockAvailable'])->name('api.products.show.stock.available');
+Route::get('/api/products', [ProductController::class, 'show'])->name('api.products.show');
 
 
 // --- LARAVEL DEFAULT ROUTES --- //

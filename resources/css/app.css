@@ -34,6 +34,20 @@ body {
     }
 }
 
+@keyframes slow-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+.animate-slow-pulse {
+    animation: slow-pulse 1.5s ease-in-out infinite;
+}
+
 .animate-fade-out {
     animation: fadeOut 3s forwards;
 }

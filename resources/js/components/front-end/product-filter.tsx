@@ -1,21 +1,73 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input } from '@/components/ui/input';
-import { Brand, Color, ExtraFilter, Type } from '@/types/models';
+import { Brand, Color, ExtraFilter, Filter as filterType, Product, Type } from '@/types/models';
 import { router } from '@inertiajs/react';
-import { Filter, Search } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Filter, Search, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import FilterWithChip from './filter-with-chip';
 
 interface ProductFilterProps {
     brands: Brand[];
     colors: Color[];
     types: Type[];
+    baseFilters: filterType;
 }
 
-const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
+const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProps) => {
     const [extraFilters, setExtraFilters] = useState<ExtraFilter | null>(null);
     const [showSearch, setShowSearch] = useState<boolean>(false);
     const [showFilter, setShowFilter] = useState<boolean>(false);
+
+    //---//
+    const [suggestions, setSuggestions] = useState<Product[]>([]);
+    const searchContainerRef = useRef<HTMLDivElement>(null);
+    const [allProductsAvailable, setAllProductsAvailable] = useState<Product[]>([]);
+
+    useEffect(() => {
+        const fetchProductsAvail = async () => {
+            try {
+                const res = await axios.get(`/api/products`, {
+                    params: baseFilters,
+                });
+                setAllProductsAvailable(res.data as Product[]);
+            } catch (error) {
+                console.error('Error fetching products available:', error);
+            }
+        };
+
+        fetchProductsAvail();
+    }, []);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const query = e.target.value;
+        setExtraFilters({ ...extraFilters, search: query });
+
+        if (query.length > 0) {
+            const filteredSuggestions = allProductsAvailable.filter((product: Product) => product.name.toLowerCase().includes(query.toLowerCase()));
+            setSuggestions(filteredSuggestions);
+        } else {
+            setSuggestions([]);
+        }
+    };
+
+    const handleSuggestionClick = (productName: string) => {
+        setExtraFilters({ ...extraFilters, search: productName });
+        setSuggestions([]);
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+                setSuggestions([]);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+    //---//
 
     const FILTER_KEYS = ['brand', 'color', 'size', 'type', 'minPrice', 'maxPrice', 'sortBy', 'direction']; // 'stock'
     const sizes = {
@@ -126,12 +178,30 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
         });
     };
 
+    const isFilterActive = !!(
+        extraFilters?.brand ||
+        (extraFilters?.size && extraFilters.size !== '') ||
+        (extraFilters?.color && extraFilters.color.length > 0) ||
+        (extraFilters?.type && extraFilters.type.length > 0) ||
+        extraFilters?.minPrice != null ||
+        extraFilters?.maxPrice != null ||
+        extraFilters?.sortBy
+    );
+
+    const isAvailActive = !!(extraFilters?.available && extraFilters.available === true);
+
+    const isSearchActive = !!(extraFilters?.search && extraFilters.search.trim() !== '');
+
     return (
         <div className="mt-10 flex items-center justify-center bg-[#FFFBF4] py-10">
             <div className="w-full px-5 md:max-w-2xl md:px-3">
                 {/* control button */}
                 <div className={`flex items-center justify-center gap-2`}>
-                    <div className="cursor-pointer bg-[#A27163] px-3 py-1 text-white transition duration-300 hover:bg-[#8d5a4d]">
+                    <div
+                        className={`${
+                            isAvailActive ? 'animate-slow-pulse bg-[#A27163]' : 'bg-[#A27163]'
+                        } cursor-pointer bg-[#A27163] px-3 py-1 text-white transition duration-300 hover:bg-[#8d5a4d]`}
+                    >
                         <div className="flex items-center justify-center gap-2 text-sm">
                             <input
                                 type="checkbox"
@@ -148,7 +218,9 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
 
                     <button
                         onClick={() => setShowFilter((prev) => !prev)}
-                        className="cursor-pointer bg-[#A27163] px-3 py-1 text-white transition duration-300 hover:bg-[#8d5a4d]"
+                        className={`cursor-pointer bg-[#A27163] px-3 py-1 text-white transition duration-300 hover:bg-[#8d5a4d] ${
+                            isFilterActive ? 'animate-slow-pulse bg-[#A27163]' : 'bg-[#A27163]'
+                        }`}
                     >
                         <span className="flex items-center justify-center gap-1 text-sm">
                             <Filter size={13} />
@@ -158,7 +230,9 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
 
                     <button
                         onClick={() => setShowSearch((prev) => !prev)}
-                        className="cursor-pointer bg-[#A27163] px-3 py-1 text-white transition duration-300 hover:bg-[#8d5a4d]"
+                        className={`${
+                            isSearchActive ? 'animate-slow-pulse bg-[#A27163]' : 'bg-[#A27163]'
+                        } cursor-pointer bg-[#A27163] px-3 py-1 text-white transition duration-300 hover:bg-[#8d5a4d]`}
                     >
                         <span className="flex items-center justify-center gap-1 text-sm">
                             <Search size={13} />
@@ -168,20 +242,36 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                 </div>
 
                 {/* Search */}
-                <div className={`overflow-hidden transition-all duration-500 ${showSearch ? 'my-4 max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <div className="relative w-full">
+                <div className={`transition-all duration-500 ${showSearch ? 'my-4 max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="relative w-full" ref={searchContainerRef}>
                         <input
                             type="text"
                             placeholder="Cari produk"
                             value={extraFilters?.search || ''}
-                            onChange={(e) =>
-                                setExtraFilters({
-                                    ...extraFilters,
-                                    search: e.target.value,
-                                })
-                            }
+                            // onChange={(e) =>
+                            //     setExtraFilters({
+                            //         ...extraFilters,
+                            //         search: e.target.value,
+                            //     })
+                            // }
+                            onChange={handleInputChange}
                             className={`${extraFilters?.search ? 'border-[#A27163]' : 'border-white'} w-full border-2 bg-white px-3 py-2 text-sm text-slate-800 transition-all duration-400 focus:border-[#484f8f] focus:ring-2 focus:ring-[#484f8f]`}
                         />
+
+                        {extraFilters?.search && (
+                            <button
+                                type="button"
+                                // onClick={() => setExtraFilters({ ...extraFilters, search: '' })}
+                                onClick={() => {
+                                    setExtraFilters({ ...extraFilters, search: '' });
+                                    setSuggestions([]);
+                                }}
+                                className="absolute top-1/2 right-14 -translate-y-1/2 cursor-pointer text-slate-700 transition hover:text-slate-800"
+                            >
+                                <X size={18} />
+                            </button>
+                        )}
+
                         <button
                             onClick={() => {
                                 applyFilter();
@@ -190,6 +280,20 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                         >
                             <Search size={15} />
                         </button>
+
+                        {suggestions && suggestions.length > 0 && (
+                            <ul className="absolute top-full left-0 z-[9999] mt-3 max-h-60 w-full overflow-y-auto border border-slate-300 bg-white shadow-sm">
+                                {suggestions.map((product, i) => (
+                                    <li
+                                        key={i}
+                                        onClick={() => handleSuggestionClick(product.name)}
+                                        className="cursor-pointer px-4 py-2 text-sm text-slate-700 hover:bg-[#A27163] hover:text-white"
+                                    >
+                                        {product.name}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                     </div>
                 </div>
 
@@ -200,11 +304,10 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                     }`}
                 >
                     {/* price mobile */}
-                    {/* <div className="grid grid-cols-1 gap-2 md:grid-cols-2"> */}
                     <Input
                         type="number"
                         placeholder="Min. Price"
-                        value={extraFilters?.minPrice ?? ''}
+                        value={extraFilters?.minPrice != null ? Math.max(extraFilters.minPrice, 0) : ''}
                         onChange={(e) => setExtraFilters({ ...extraFilters, minPrice: e.target.value ? parseInt(e.target.value) : null })}
                         className={`${extraFilters?.minPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f] md:hidden`}
                     />
@@ -212,18 +315,17 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                     <Input
                         type="number"
                         placeholder="Max. Price"
-                        value={extraFilters?.maxPrice ?? ''}
+                        value={extraFilters?.maxPrice != null ? Math.max(extraFilters.maxPrice, 0) : ''}
                         onChange={(e) => setExtraFilters({ ...extraFilters, maxPrice: e.target.value ? parseInt(e.target.value) : null })}
                         className={`${extraFilters?.maxPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f] md:hidden`}
                     />
-                    {/* </div> */}
 
                     {/* price */}
                     <div className="hidden grid-cols-1 gap-2 md:grid md:grid-cols-2">
                         <Input
                             type="number"
                             placeholder="Min. Price"
-                            value={extraFilters?.minPrice ?? ''}
+                            value={extraFilters?.minPrice != null ? Math.max(extraFilters.minPrice, 0) : ''}
                             onChange={(e) => setExtraFilters({ ...extraFilters, minPrice: e.target.value ? parseInt(e.target.value) : null })}
                             className={`${extraFilters?.minPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                         />
@@ -231,7 +333,7 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                         <Input
                             type="number"
                             placeholder="Max. Price"
-                            value={extraFilters?.maxPrice ?? ''}
+                            value={extraFilters?.maxPrice != null ? Math.max(extraFilters.maxPrice, 0) : ''}
                             onChange={(e) => setExtraFilters({ ...extraFilters, maxPrice: e.target.value ? parseInt(e.target.value) : null })}
                             className={`${extraFilters?.maxPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
                         />
@@ -313,7 +415,9 @@ const ProductFilter = ({ brands, colors, types }: ProductFilterProps) => {
                 </div>
 
                 {showFilter && (
-                    <div className="flex w-full items-center justify-center gap-2">
+                    <div
+                        className={`flex w-full items-center justify-center gap-2 transition-all duration-500 ${showFilter ? 'opacity-100' : 'opacity-0'} `}
+                    >
                         <button
                             onClick={applyFilter}
                             className="w-full cursor-pointer bg-[#A27163] px-3 py-2 text-white transition duration-300 hover:bg-[#905e51]"

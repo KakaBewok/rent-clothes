@@ -84,22 +84,6 @@ class Product extends Model
      */
     public function getAvailableStockBreakdownForPeriod($startDate, $endDate)
     {
-        // $totalStockAvailable = $this->sizes()->where('availability', true)->sum('quantity');
-
-        // $rentedCount = $this->orderItems()
-        //     ->whereHas('order', function ($query) {
-        //         $query->whereIn('status', ['process', 'shipped']);
-        //     })
-        //     ->where(function ($query) use ($startDate, $endDate) {
-        //         $query->where('estimated_delivery_date', '<=', $endDate)
-        //             ->where('estimated_return_date', '>=', $startDate);
-        //     })
-        //     ->count();
-            
-        // return $totalStockAvailable - $rentedCount;
-
-        // ---
-
         // 1. Ambil semua ukuran untuk produk ini yang ditandai 'available' (Kode ini sudah benar)
         $availableSizes = $this->sizes()->where('availability', true)->get();
 

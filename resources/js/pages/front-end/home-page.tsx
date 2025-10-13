@@ -35,7 +35,7 @@ function HomePage({ branchs, products, banners, appSetting, showModal, baseFilte
     const openProduct = async (id: number) => {
         setLoading(true);
         try {
-            const res = await axios.get(`/api/products/${id}`, {
+            const res = await axios.get(`/api/products/stock/${id}`, {
                 params: baseFilters,
             });
             setSelectedProduct(res.data as Product);
@@ -100,7 +100,7 @@ function HomePage({ branchs, products, banners, appSetting, showModal, baseFilte
             <div className="relative mx-auto min-h-screen max-w-screen-xl bg-white">
                 <NavBar setting={safeSetting} setModalInfo={setModalInfo} setShowScheduleModal={setShowScheduleModal} />
                 <Hero banners={banners} />
-                <ProductFilter brands={brands} colors={colors} types={types} />
+                <ProductFilter baseFilters={baseFilters} brands={brands} colors={colors} types={types} />
                 <NoteBox branchs={branchs} />
                 <ProductList products={products} onOpen={openProduct} />
                 <Footer setting={appSetting} setModalInfo={setModalInfo} setShowScheduleModal={setShowScheduleModal} />

@@ -10,8 +10,12 @@ const PaginationView = ({ meta }: { meta: PaginationMeta }) => {
         return `${window.location.pathname}?${params.toString()}`;
     };
 
+    const from = (meta.current_page - 1) * meta.per_page + 1;
+    const to = Math.min(meta.current_page * meta.per_page, meta.total);
+
     return (
-        <div className="mt-10 flex justify-center">
+        // <div className="mt-10 flex justify-center">
+        <div className="mt-10 flex flex-col items-center gap-4">
             <Pagination>
                 <PaginationContent className="flex items-center gap-2">
                     {/* Previous */}
@@ -72,6 +76,9 @@ const PaginationView = ({ meta }: { meta: PaginationMeta }) => {
                     )}
                 </PaginationContent>
             </Pagination>
+            <p className="text-xs text-gray-500 md:text-sm">
+                Showing {from} to {to} of {meta.total} results
+            </p>
         </div>
     );
 };
