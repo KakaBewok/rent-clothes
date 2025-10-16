@@ -56,17 +56,38 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
         setSuggestions([]);
     };
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
-                setSuggestions([]);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+    // useEffect(() => {
+    //     const handleClickOutside = (event: MouseEvent) => {
+    //         if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
+    //             setSuggestions([]);
+    //         }
+    //     };
+    //     document.addEventListener('mousedown', handleClickOutside);
+    //     return () => {
+    //         document.removeEventListener('mousedown', handleClickOutside);
+    //     };
+    // }, []);
+
+    const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+        const rawValue = e.target.value;
+
+        if (rawValue === '') {
+            setExtraFilters({ ...extraFilters, [key]: null });
+            return;
+        }
+
+        const numberValue = parseInt(rawValue);
+
+        if (isNaN(numberValue)) {
+            setExtraFilters({ ...extraFilters, [key]: null });
+            return;
+        }
+
+        setExtraFilters({
+            ...extraFilters,
+            [key]: Math.max(numberValue, 0),
+        });
+    };
     //---//
 
     const FILTER_KEYS = ['brand', 'color', 'size', 'type', 'minPrice', 'maxPrice', 'sortBy', 'direction']; // 'stock'
@@ -242,7 +263,9 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                 </div>
 
                 {/* Search */}
-                <div className={`transition-all duration-500 ${showSearch ? 'my-4 max-h-20 opacity-100' : 'max-h-0 opacity-0'}`}>
+                <div
+                    className={`transition-all duration-500 ${showSearch ? 'pointer-events-auto my-4 max-h-20 opacity-100' : 'pointer-events-none max-h-0 opacity-0'}`}
+                >
                     <div className="relative w-full" ref={searchContainerRef}>
                         <input
                             type="text"
@@ -255,7 +278,7 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                             //     })
                             // }
                             onChange={handleInputChange}
-                            className={`${extraFilters?.search ? 'border-[#A27163]' : 'border-white'} w-full border-2 bg-white px-3 py-2 text-sm text-slate-800 transition-all duration-400 focus:border-[#484f8f] focus:ring-2 focus:ring-[#484f8f]`}
+                            className={`${extraFilters?.search ? 'border-[#A27163]' : 'border-white'} w-full border-2 bg-white px-3 py-2 text-sm text-slate-800 transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none`}
                         />
 
                         {extraFilters?.search && (
@@ -309,7 +332,7 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                         placeholder="Min. Price"
                         value={extraFilters?.minPrice != null ? Math.max(extraFilters.minPrice, 0) : ''}
                         onChange={(e) => setExtraFilters({ ...extraFilters, minPrice: e.target.value ? parseInt(e.target.value) : null })}
-                        className={`${extraFilters?.minPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f] md:hidden`}
+                        className={`${extraFilters?.minPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none md:hidden`}
                     />
 
                     <Input
@@ -317,7 +340,7 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                         placeholder="Max. Price"
                         value={extraFilters?.maxPrice != null ? Math.max(extraFilters.maxPrice, 0) : ''}
                         onChange={(e) => setExtraFilters({ ...extraFilters, maxPrice: e.target.value ? parseInt(e.target.value) : null })}
-                        className={`${extraFilters?.maxPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f] md:hidden`}
+                        className={`${extraFilters?.maxPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none md:hidden`}
                     />
 
                     {/* price */}
@@ -326,16 +349,18 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                             type="number"
                             placeholder="Min. Price"
                             value={extraFilters?.minPrice != null ? Math.max(extraFilters.minPrice, 0) : ''}
-                            onChange={(e) => setExtraFilters({ ...extraFilters, minPrice: e.target.value ? parseInt(e.target.value) : null })}
-                            className={`${extraFilters?.minPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
+                            // onChange={(e) => setExtraFilters({ ...extraFilters, minPrice: e.target.value ? parseInt(e.target.value) : null })}
+                            onChange={(e) => handlePriceChange(e, 'minPrice')}
+                            className={`${extraFilters?.minPrice || extraFilters?.minPrice == 0 ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none`}
                         />
 
                         <Input
                             type="number"
                             placeholder="Max. Price"
                             value={extraFilters?.maxPrice != null ? Math.max(extraFilters.maxPrice, 0) : ''}
-                            onChange={(e) => setExtraFilters({ ...extraFilters, maxPrice: e.target.value ? parseInt(e.target.value) : null })}
-                            className={`${extraFilters?.maxPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
+                            // onChange={(e) => setExtraFilters({ ...extraFilters, maxPrice: e.target.value ? parseInt(e.target.value) : null })}
+                            onChange={(e) => handlePriceChange(e, 'maxPrice')}
+                            className={`${extraFilters?.maxPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none`}
                         />
                     </div>
 
@@ -348,7 +373,7 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                                 brand: e.target.value ? parseInt(e.target.value) : null,
                             })
                         }
-                        className={`${extraFilters?.brand ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
+                        className={`${extraFilters?.brand ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none`}
                     >
                         <option value="">All Brands</option>
                         {brands.map((b) => (
@@ -383,7 +408,7 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                                 size: e.target.value,
                             })
                         }
-                        className={`${extraFilters?.size ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
+                        className={`${extraFilters?.size ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none`}
                     >
                         <option value="">All Sizes</option>
                         {Object.entries(sizes).map(([key, label]) => (
@@ -404,7 +429,7 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                                 direction: direction as any,
                             });
                         }}
-                        className={`${extraFilters?.sortBy ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#484f8f] focus:ring-1 focus:ring-[#484f8f]`}
+                        className={`${extraFilters?.sortBy ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none`}
                     >
                         <option value="">Sort By</option>
                         <option value="price_after_discount:asc">Price: Low-High</option>
@@ -412,12 +437,8 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                         <option value="name:asc">Name: A-Z</option>
                         <option value="stock:2">Stock: 2 Pcs (Available Only)</option>
                     </select>
-                </div>
 
-                {showFilter && (
-                    <div
-                        className={`flex w-full items-center justify-center gap-2 transition-all duration-500 ${showFilter ? 'opacity-100' : 'opacity-0'} `}
-                    >
+                    <div className={`col-span-full mt-3 flex w-full items-center justify-center gap-2 transition-all duration-500`}>
                         <button
                             onClick={applyFilter}
                             className="w-full cursor-pointer bg-[#A27163] px-3 py-2 text-white transition duration-300 hover:bg-[#905e51]"
@@ -431,7 +452,7 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                             Clear
                         </button>
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );

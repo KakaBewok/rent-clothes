@@ -1,7 +1,9 @@
 import { Product } from '@/types/models';
 import { formatRupiah, formatWhatsAppNumber } from '@/utils/format';
+import { Link } from '@inertiajs/react';
 import { format, isValid, parse } from 'date-fns';
 import { id } from 'date-fns/locale';
+import { MessageCircle, ShoppingCart } from 'lucide-react';
 import React from 'react';
 import { Button } from '../ui/button';
 
@@ -61,7 +63,6 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                     <hr className="my-2 border-t border-slate-200" />
                 </div>
 
-                {/* ✅ BLOK BARU UNTUK MENAMPILKAN RINCIAN STOK YANG LEBIH BAIK */}
                 <div className="border-b border-slate-200 pt-2 pb-5">
                     {product.stock_breakdown && product.stock_breakdown.length > 0 ? (
                         <>
@@ -148,16 +149,29 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                 </div>
             </div>
 
-            <div className="pt-3">
-                <a
+            <div className="flex w-full flex-col gap-2 pt-3 md:flex-row">
+                <Link
                     href={`https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`}
                     target="_blank"
                     rel="noopener noreferrer"
+                    className="w-full md:w-1/2"
+                >
+                    <Button className="w-full cursor-pointer rounded-none bg-green-500 text-white transition-all duration-300 hover:bg-green-600">
+                        <MessageCircle className="h-6 w-6" />
+                        Chat Admin
+                    </Button>
+                </Link>
+                <Link
+                    href={`https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full md:w-1/2"
                 >
                     <Button className="w-full cursor-pointer rounded-none bg-[#A27163] text-white transition-all duration-300 hover:bg-[#976456]">
-                        Rent Now
+                        <ShoppingCart className="h-6 w-6" />
+                        Order Now
                     </Button>
-                </a>
+                </Link>
             </div>
         </div>
     );
