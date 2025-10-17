@@ -9,25 +9,6 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    //old
-    // public function show(Product $product)
-    // {
-    //     $product->load([
-    //         'brand',
-    //         'types',
-    //         'color',
-    //         'branch',
-    //         'priceDetail',
-    //         'sizes',
-    //     ]);
-        
-    //     return response()->json($product);
-    // }
-
-     /**
-     * Menampilkan detail produk tunggal beserta sisa stoknya
-     * berdasarkan rentang tanggal dari request.
-     */
     public function showStockAvailable(Product $product, Request $request) // <-- Langkah 3: Tambahkan 'Request $request'
     {
         // 1. Load relasi dasar
@@ -78,6 +59,48 @@ class ProductController extends Controller
             ->get();
 
         return response()->json($availableProducts);
+    }
+
+    public function getAvailableProducts(Request $request)
+    {
+        // $filters = [
+        //     'useByDate' => $request->query('useByDate'),
+        //     'shippingType' => $request->query('shippingType'),
+        //     'duration' => $request->query('duration'),
+        //     'city' => $request->query('city'),
+        // ];
+
+        $params = $this->constructParamsFromRequest($request);
+        $startDate = $params['startDate'];
+        $endDate   = $params['endDate'];
+
+        $products = Product::query()
+            ->when($request->query('city'), fn($q) => $q->where('branch_id', $request->query('city')))
+            ->whereRaw('
+                (
+                    COALESCE((
+                        SELECT SUM(sz.quantity)
+                        FROM sizes sz
+                        WHERE sz.product_id = products.id
+                    ), 0)
+                    -
+                    COALESCE((
+                        SELECT COUNT(*)
+                        FROM order_items oi
+                        JOIN orders o ON o.id = oi.order_id
+                        WHERE oi.product_id = products.id
+                        AND o.status IN (?, ?)
+                        AND (
+                            DATE(oi.estimated_delivery_date) <= DATE(?) AND
+                            DATE(oi.estimated_return_date) >= DATE(?)
+                        )
+                    ), 0)
+                ) > 0
+            ', ['approved', 'shipped', $endDate, $startDate])
+            // ->with(['brand', 'types', 'sizes'])
+            ->get();
+
+        return response()->json($products);
     }
 
     private function constructParamsFromRequest(Request $request)

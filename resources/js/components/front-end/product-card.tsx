@@ -28,7 +28,7 @@ const ProductCard = ({ product, onOpen }: ProductProps) => {
                 <div className="relative overflow-hidden">
                     {!isAvailable && (
                         <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-black/50">
-                            <h1 className="text-md font-semibold uppercase md:text-xl">Out of Stock</h1>
+                            <h1 className="text-md font-semibold text-white uppercase md:text-xl">Out of Stock</h1>
                         </div>
                     )}
 

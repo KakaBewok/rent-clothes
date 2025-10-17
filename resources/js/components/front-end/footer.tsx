@@ -47,7 +47,7 @@ const Footer = ({ setting, setModalInfo, setShowScheduleModal }: FooterProps) =>
                             <li>
                                 <button
                                     onClick={() => setModalInfo(instruction_image ?? null)}
-                                    className="text-slate-400 transition duration-300 hover:text-first"
+                                    className="cursor-pointer text-slate-400 transition duration-300 hover:text-first"
                                 >
                                     Cara Pemesanan
                                 </button>
@@ -55,7 +55,7 @@ const Footer = ({ setting, setModalInfo, setShowScheduleModal }: FooterProps) =>
                             <li>
                                 <button
                                     onClick={() => setModalInfo(tnc_image ?? null)}
-                                    className="text-slate-400 transition duration-300 hover:text-first"
+                                    className="cursor-pointer text-slate-400 transition duration-300 hover:text-first"
                                 >
                                     Syarat & Ketentuan
                                 </button>

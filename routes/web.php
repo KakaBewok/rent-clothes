@@ -19,7 +19,8 @@ Route::get('/form/{product}', [OrderController::class, 'show'])->name('order.for
 
 //api
 Route::get('/api/products/stock/{product}', [ProductController::class, 'showStockAvailable'])->name('api.products.show.stock.available');
-Route::get('/api/products', [ProductController::class, 'show'])->name('api.products.show');
+Route::get('/api/products', [ProductController::class, 'show'])->name('api.products.show'); // avail product for auto complete @search field
+Route::get('/api/products/available', [ProductController::class, 'getAvailableProducts']);
 
 // --- LARAVEL DEFAULT ROUTES --- //
 
