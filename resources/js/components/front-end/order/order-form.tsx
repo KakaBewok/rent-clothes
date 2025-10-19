@@ -7,12 +7,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AppSetting, Product } from '@/types/models';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
-import { Plus, Trash2 } from 'lucide-react';
+import { format } from 'date-fns';
+import { id } from 'date-fns/locale';
+import { Eye, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import { z } from 'zod';
 import AppLogo from '../app-logo';
+import { ProductSelect } from './product-select';
 
 const EXPEDITION_OPTIONS = [
     'Self Pickup',
@@ -44,6 +47,12 @@ const MAX_FILE_SIZE = 2000; // 2MB
 const addDays = (date: Date, days: number) => {
     const result = new Date(date);
     result.setDate(result.getDate() + days);
+    return result;
+};
+
+const subDays = (date: Date, days: number) => {
+    const result = new Date(date);
+    result.setDate(result.getDate() - days);
     return result;
 };
 
@@ -96,14 +105,14 @@ const orderFormSchema = z.object({
 
 type OrderFormData = z.infer<typeof orderFormSchema>;
 
-type OrderItemData = z.infer<typeof orderItemSchema>;
+// type OrderItemData = z.infer<typeof orderItemSchema>;
 
 interface OrderFormProps {
     setting: AppSetting;
     product: Product;
 }
 
-export default function OrderForm({ setting, product }: OrderFormProps) {
+export default function OrderForm({ setting }: OrderFormProps) {
     const [previewImage, setPreviewImage] = useState<string | null>(null);
     const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -219,14 +228,14 @@ export default function OrderForm({ setting, product }: OrderFormProps) {
 
     const handleSearchProducts = async () => {
         if (!item.use_by_date || !item.shipping || !item.rent_periode) {
-            alert('Lengkapi dulu tanggal, durasi, dan jenis pengiriman.');
+            toast.error('Mohon isi dulu Tanggal digunakan, Lama Sewa dan Jenis Pengiriman.');
             return;
         }
 
         setLoading(true);
         try {
             const params = {
-                useByDate: formatDateDMY(item.use_by_date), // contoh hasil: "17-10-2025"
+                useByDate: formatDateDMY(item.use_by_date),
                 shippingType: item.shipping,
                 duration: item.rent_periode,
             };
@@ -240,8 +249,21 @@ export default function OrderForm({ setting, product }: OrderFormProps) {
         }
     };
 
+    const getSelectedProduct = () => {
+        return availableProducts.find((p) => p.id === item.product_id);
+    };
+
+    // const parsed = formatDateDMY(item.use_by_date);
+    // const useDate = isValid(parsed) ? parsed : new Date();
+
+    const shipDate = item.shipping === 'Next day' ? subDays(item.use_by_date, 2) : subDays(item.use_by_date, 1);
+    const returnDate = addDays(item.use_by_date, item.rent_periode);
+
+    const formatDate = (date: Date) => format(date, 'dd MMMM yyyy', { locale: id });
+
     return (
         <div className="w-full max-w-2xl py-10">
+            <Toaster richColors position="top-center" />
             <Card className="rounded-sm border-none bg-white text-slate-800 shadow-none md:border md:border-slate-100 md:shadow-md">
                 <CardHeader>
                     <CardTitle>
@@ -475,127 +497,7 @@ export default function OrderForm({ setting, product }: OrderFormProps) {
                                         )}
                                     </div>
 
-                                    <FieldGroup className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        {/* Tombol Cari Produk */}
-                                        <Button
-                                            type="button"
-                                            onClick={handleSearchProducts}
-                                            disabled={loading}
-                                            className="rounded-none bg-slate-700 text-white shadow-none"
-                                        >
-                                            {loading ? 'Mencari...' : 'Cari Produk Tersedia'}
-                                        </Button>
-
-                                        {/* Product */}
-                                        <Controller
-                                            name={`items.${index}.product_id`}
-                                            control={control}
-                                            render={({ field: itemField, fieldState }) => (
-                                                <Field data-invalid={fieldState.invalid}>
-                                                    <FieldLabel htmlFor="produk">
-                                                        Produk <span className="text-red-500">*</span>
-                                                    </FieldLabel>
-                                                    <Select
-                                                        onValueChange={(val) => itemField.onChange(Number(val))}
-                                                        value={itemField.value ? itemField.value.toString() : undefined}
-                                                        name={itemField.name}
-                                                    >
-                                                        <SelectTrigger id="produk" className="cursor-pointer rounded-none shadow-none">
-                                                            <SelectValue placeholder="Pilih Produk" />
-                                                        </SelectTrigger>
-                                                        <SelectContent className="rounded-none text-sm shadow-none">
-                                                            {availableProducts.length === 0 ? (
-                                                                <div className="p-2 text-sm text-gray-500">
-                                                                    {loading ? 'Memuat...' : 'Belum ada produk tersedia'}
-                                                                </div>
-                                                            ) : (
-                                                                availableProducts.map((p) => (
-                                                                    <SelectItem key={p.id} value={p.id.toString()}>
-                                                                        {p.name}
-                                                                    </SelectItem>
-                                                                ))
-                                                            )}
-                                                        </SelectContent>
-                                                    </Select>
-                                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                                </Field>
-                                            )}
-                                        />
-                                        {/* Size  */}
-                                        <Controller
-                                            name={`items.${index}.size_id`}
-                                            control={control}
-                                            render={({ field: itemField, fieldState }) => (
-                                                <Field data-invalid={fieldState.invalid}>
-                                                    <FieldLabel htmlFor="ukuran">
-                                                        Ukuran <span className="text-red-500">*</span>
-                                                    </FieldLabel>
-                                                    <Select
-                                                        onValueChange={(val) => itemField.onChange(Number(val))}
-                                                        value={itemField.value ? itemField.value.toString() : undefined}
-                                                        name={itemField.name}
-                                                    >
-                                                        <SelectTrigger id="ukuran" className="cursor-pointer rounded-none shadow-none">
-                                                            <SelectValue placeholder="Pilih Ukuran" />
-                                                        </SelectTrigger>
-                                                        <SelectContent className="rounded-none text-sm shadow-none">
-                                                            <SelectItem value="101">S</SelectItem>
-                                                            <SelectItem value="102">M</SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                                </Field>
-                                            )}
-                                        />
-                                        {/* Use By Date */}
-                                        <Controller
-                                            name={`items.${index}.use_by_date`}
-                                            control={control}
-                                            render={({ field, fieldState }) => (
-                                                <Field data-invalid={fieldState.invalid}>
-                                                    <FieldLabel htmlFor="use_by_date">
-                                                        Tanggal digunakan <span className="text-red-500">*</span>
-                                                    </FieldLabel>
-                                                    <Input
-                                                        type="date"
-                                                        id="use_by_date"
-                                                        value={field.value ? field.value.toISOString().substring(0, 10) : ''}
-                                                        onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : undefined)}
-                                                        className="cursor-pointer rounded-none text-sm shadow-none"
-                                                    />
-                                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                                </Field>
-                                            )}
-                                        />
-                                        {/* Rent Periode */}
-                                        <Controller
-                                            name={`items.${index}.rent_periode`}
-                                            control={control}
-                                            render={({ field: itemField, fieldState }) => (
-                                                <Field data-invalid={fieldState.invalid} className="col-span-1">
-                                                    <FieldLabel htmlFor="rent_periode">
-                                                        Lama Sewa (Hari) <span className="text-red-500">*</span>
-                                                    </FieldLabel>
-                                                    <Input
-                                                        id="rent_periode"
-                                                        type="number"
-                                                        min={1}
-                                                        onChange={(e) => itemField.onChange(e.target.valueAsNumber)}
-                                                        value={itemField.value}
-                                                        className="cursor-pointer rounded-none text-sm shadow-none"
-                                                    />
-                                                    {/* <FieldDescription>
-                                                        Kembali:{' '}
-                                                        <span className="font-semibold">
-                                                            {useByDate && itemField.value > 0
-                                                                ? addDays(useByDate, itemField.value).toLocaleDateString('id-ID')
-                                                                : 'N/A'}
-                                                        </span>
-                                                    </FieldDescription> */}
-                                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                                                </Field>
-                                            )}
-                                        />
+                                    <FieldGroup className="grid grid-cols-1 gap-4 md:grid-cols-3">
                                         {/* Shipping */}
                                         <Controller
                                             name={`items.${index}.shipping`}
@@ -635,6 +537,147 @@ export default function OrderForm({ setting, product }: OrderFormProps) {
                                                 </Field>
                                             )}
                                         />
+
+                                        {/* Use By Date */}
+                                        <Controller
+                                            name={`items.${index}.use_by_date`}
+                                            control={control}
+                                            render={({ field, fieldState }) => (
+                                                <Field data-invalid={fieldState.invalid}>
+                                                    <FieldLabel htmlFor="use_by_date">
+                                                        Tanggal digunakan <span className="text-red-500">*</span>
+                                                    </FieldLabel>
+                                                    <Input
+                                                        type="date"
+                                                        id="use_by_date"
+                                                        value={field.value ? field.value.toISOString().substring(0, 10) : ''}
+                                                        onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : undefined)}
+                                                        className="cursor-pointer rounded-none text-sm shadow-none"
+                                                    />
+                                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                </Field>
+                                            )}
+                                        />
+
+                                        {/* Rent Periode */}
+                                        <Controller
+                                            name={`items.${index}.rent_periode`}
+                                            control={control}
+                                            render={({ field: itemField, fieldState }) => (
+                                                <Field data-invalid={fieldState.invalid} className="col-span-1">
+                                                    <FieldLabel htmlFor="rent_periode">
+                                                        Lama Sewa (Hari) <span className="text-red-500">*</span>
+                                                    </FieldLabel>
+                                                    <Input
+                                                        id="rent_periode"
+                                                        type="number"
+                                                        min={1}
+                                                        onChange={(e) => itemField.onChange(e.target.valueAsNumber)}
+                                                        value={itemField.value}
+                                                        className="cursor-pointer rounded-none text-sm shadow-none"
+                                                    />
+                                                    {/* <FieldDescription>
+                                                        Kembali:{' '}
+                                                        <span className="font-semibold">
+                                                            {useByDate && itemField.value > 0
+                                                                ? addDays(useByDate, itemField.value).toLocaleDateString('id-ID')
+                                                                : 'N/A'}
+                                                        </span>
+                                                    </FieldDescription> */}
+                                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                </Field>
+                                            )}
+                                        />
+
+                                        <Button
+                                            type="button"
+                                            onClick={handleSearchProducts}
+                                            disabled={loading}
+                                            className="col-span-full cursor-pointer rounded-none bg-slate-700 text-white shadow-none"
+                                        >
+                                            {loading ? (
+                                                <span>Mencari...</span>
+                                            ) : (
+                                                <div className="flex items-center justify-center gap-3">
+                                                    <Eye className="h-10 w-10" /> <span>Lihat Produk Tersedia</span>
+                                                </div>
+                                            )}
+                                        </Button>
+
+                                        {availableProducts.length > 0 && item.shipping && loading === false && (
+                                            <div className="col-span-full">
+                                                <div
+                                                    className="rounded-none border-t-4 border-teal-400 bg-teal-100 px-4 py-3 text-xs text-teal-800 shadow-none md:text-sm"
+                                                    role="alert"
+                                                >
+                                                    <div className="flex">
+                                                        <div>
+                                                            Menampilkan dress yang dapat dikirim pada{' '}
+                                                            <span className="font-semibold">{formatDate(shipDate)}</span> dipakai pada{' '}
+                                                            <span className="font-semibold">{formatDate(item.use_by_date)}</span> dan perlu
+                                                            dikembalikan pada <span className="font-semibold">{formatDate(returnDate)}</span>
+                                                            {/* dengan
+                                                            pengiriman dari area <span className="font-semibold">{branchName}</span> */}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </FieldGroup>
+
+                                    <FieldGroup className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                        {/* Product */}
+                                        <Controller
+                                            name={`items.${index}.product_id`}
+                                            control={control}
+                                            render={({ field, fieldState }) => (
+                                                <Field data-invalid={fieldState.invalid}>
+                                                    <ProductSelect
+                                                        value={field.value}
+                                                        onChange={(val) => field.onChange(val)}
+                                                        availableProducts={availableProducts ?? []}
+                                                        loading={loading}
+                                                    />
+                                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                </Field>
+                                            )}
+                                        />
+                                        {/* Size  */}
+                                        <Controller
+                                            name={`items.${index}.size_id`}
+                                            control={control}
+                                            render={({ field: itemField, fieldState }) => (
+                                                <Field data-invalid={fieldState.invalid}>
+                                                    <FieldLabel htmlFor="ukuran">
+                                                        Ukuran <span className="text-red-500">*</span>
+                                                    </FieldLabel>
+                                                    <Select
+                                                        onValueChange={(val) => itemField.onChange(Number(val))}
+                                                        value={itemField.value ? itemField.value.toString() : undefined}
+                                                        name={itemField.name}
+                                                    >
+                                                        <SelectTrigger id="ukuran" className="cursor-pointer rounded-none shadow-none">
+                                                            <SelectValue placeholder="Pilih Ukuran" />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="rounded-none text-sm shadow-none">
+                                                            {getSelectedProduct() ? (
+                                                                getSelectedProduct()?.sizes?.map((size) => (
+                                                                    <SelectItem key={size.id} value={size.id.toString()}>
+                                                                        {size.size}
+                                                                    </SelectItem>
+                                                                ))
+                                                            ) : (
+                                                                <SelectItem disabled value={'0'} className="text-slate-700">
+                                                                    Tidak ada ukuran tersedia
+                                                                </SelectItem>
+                                                            )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                </Field>
+                                            )}
+                                        />
+
                                         {/* Type */}
                                         <Controller
                                             name={`items.${index}.type_id`}
@@ -651,8 +694,17 @@ export default function OrderForm({ setting, product }: OrderFormProps) {
                                                             <SelectValue placeholder="Pilih Tipe" />
                                                         </SelectTrigger>
                                                         <SelectContent className="rounded-none text-sm shadow-none">
-                                                            <SelectItem value="tipe a">Tipe a</SelectItem>
-                                                            <SelectItem value="tipe b">Tipe b</SelectItem>
+                                                            {getSelectedProduct() ? (
+                                                                getSelectedProduct()?.types?.map((type) => (
+                                                                    <SelectItem key={type.id} value={type.id.toString()}>
+                                                                        {type.name}
+                                                                    </SelectItem>
+                                                                ))
+                                                            ) : (
+                                                                <SelectItem disabled value={'0'} className="text-slate-700">
+                                                                    Tidak ada tipe tersedia
+                                                                </SelectItem>
+                                                            )}
                                                         </SelectContent>
                                                     </Select>
                                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -673,9 +725,16 @@ export default function OrderForm({ setting, product }: OrderFormProps) {
                                                         id="qty"
                                                         type="number"
                                                         min={1}
+                                                        max={getSelectedProduct()?.sizes?.find((s) => s.id === item?.size_id)?.quantity}
                                                         onChange={(e) => itemField.onChange(e.target.valueAsNumber)}
                                                         value={itemField.value}
                                                     />
+                                                    {getSelectedProduct() && (
+                                                        <FieldDescription>
+                                                            jumlah Maksimal untuk ukuran terpilih adalah{' '}
+                                                            {getSelectedProduct()?.sizes?.find((s) => s.id === item?.size_id)?.quantity}
+                                                        </FieldDescription>
+                                                    )}
                                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                                 </Field>
                                             )}

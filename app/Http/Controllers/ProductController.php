@@ -9,42 +9,30 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function showStockAvailable(Product $product, Request $request) // <-- Langkah 3: Tambahkan 'Request $request'
+    public function showStockAvailable(Product $product, Request $request)
     {
-        // 1. Load relasi dasar
         $product->load(['brand', 'types', 'color', 'branch', 'priceDetail', 'sizes']);
-
-        // 2. Ambil dan hitung tanggal dari request
-        // $useByDateStr = $request->query('useByDate', now()->addDays(2)->format('d-m-Y'));
-        // $duration = (int) $request->query('duration', 1);
-        // $useByDate = Carbon::createFromFormat('d-m-Y', $useByDateStr);
-        // $startDate = $useByDate->copy()->format('Y-m-d');
-        // $endDate = $useByDate->copy()->addDays($duration - 1)->format('Y-m-d');
 
         $params = $this->constructParamsFromRequest($request);
 
         $startDate = $params['startDate'];
         $endDate   = $params['endDate'];
 
-        // 3. Panggil method baru dari model untuk mendapatkan rincian stok
         $stockBreakdown = $product->getAvailableStockBreakdownForPeriod($startDate, $endDate);
 
-        // 4. Ubah model menjadi array dan tambahkan properti baru 'stock_breakdown'
         $productData = $product->toArray();
         $productData['stock_breakdown'] = $stockBreakdown;
-        
-        // 5. Kembalikan sebagai JSON
+
         return response()->json($productData);
     }
 
-    public function show(Request $request) // <-- Langkah 3: Tambahkan 'Request $request'
+    public function show(Request $request)
     { 
         $params = $this->constructParamsFromRequest($request);
 
         $startDate = $params['startDate'];
         $endDate   = $params['endDate'];
 
-        // 3. Panggil method baru dari model untuk mendapatkan rincian stok
         $availableProducts = Product::query()
             ->whereDoesntHave('orderItems', function ($query) use ($startDate, $endDate) {
                 $query->whereHas('order', function ($subQuery) {
@@ -63,19 +51,15 @@ class ProductController extends Controller
 
     public function getAvailableProducts(Request $request)
     {
-        // $filters = [
-        //     'useByDate' => $request->query('useByDate'),
-        //     'shippingType' => $request->query('shippingType'),
-        //     'duration' => $request->query('duration'),
-        //     'city' => $request->query('city'),
-        // ];
-
         $params = $this->constructParamsFromRequest($request);
         $startDate = $params['startDate'];
         $endDate   = $params['endDate'];
 
         $products = Product::query()
             ->when($request->query('city'), fn($q) => $q->where('branch_id', $request->query('city')))
+            ->when($request->query('duration'), fn($q) =>
+                $q->where('rent_periode', '>=', $request->query('duration'))
+            )
             ->whereRaw('
                 (
                     COALESCE((
@@ -97,7 +81,7 @@ class ProductController extends Controller
                     ), 0)
                 ) > 0
             ', ['approved', 'shipped', $endDate, $startDate])
-            // ->with(['brand', 'types', 'sizes'])
+            ->with(['brand', 'sizes', 'types'])
             ->get();
 
         return response()->json($products);

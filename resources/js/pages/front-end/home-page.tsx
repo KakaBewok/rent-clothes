@@ -46,19 +46,6 @@ function HomePage({ branchs, products, banners, appSetting, showModal, baseFilte
         }
     };
 
-    //old
-    // const openProduct = async (id: number) => {
-    //     setLoading(true);
-    //     try {
-    //         const res = await axios.get(`/api/products/${id}`);
-    //         setSelectedProduct(res.data as Product);
-    //     } catch (error) {
-    //         console.error('Error fetching product details:', error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-
     const onCloseProductModal = () => {
         setSelectedProduct(null);
     };
