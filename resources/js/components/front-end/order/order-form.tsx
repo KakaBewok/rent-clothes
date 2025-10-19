@@ -523,16 +523,18 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                             ))}
                                                         </SelectContent>
                                                     </Select>
-                                                    {/* <FieldDescription>
-                                                        Estimasi Kirim:{' '}
-                                                        <span className="font-semibold">
-                                                            {useByDate && shipping
-                                                                ? addDays(form.useByDate, field.value === 'same day' ? -1 : -2).toLocaleDateString(
-                                                                      'id-ID',
-                                                                  )
-                                                                : 'N/A'}
-                                                        </span>
-                                                    </FieldDescription> */}
+                                                    <FieldDescription>
+                                                        {item.shipping && item.use_by_date && (
+                                                            <p className="text-xs">
+                                                                Estimasi Kirim:{' '}
+                                                                <span className="font-semibold">
+                                                                    {subDays(item.use_by_date, field.value === 'Same day' ? 1 : 2).toLocaleDateString(
+                                                                        'id-ID',
+                                                                    )}
+                                                                </span>
+                                                            </p>
+                                                        )}
+                                                    </FieldDescription>
                                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                                 </Field>
                                             )}
@@ -694,7 +696,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                             <SelectValue placeholder="Pilih Tipe" />
                                                         </SelectTrigger>
                                                         <SelectContent className="rounded-none text-sm shadow-none">
-                                                            {getSelectedProduct() ? (
+                                                            {getSelectedProduct() && (getSelectedProduct()?.types?.length ?? 0) > 0 ? (
                                                                 getSelectedProduct()?.types?.map((type) => (
                                                                     <SelectItem key={type.id} value={type.id.toString()}>
                                                                         {type.name}
@@ -730,9 +732,11 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         value={itemField.value}
                                                     />
                                                     {getSelectedProduct() && (
-                                                        <FieldDescription>
-                                                            jumlah Maksimal untuk ukuran terpilih adalah{' '}
-                                                            {getSelectedProduct()?.sizes?.find((s) => s.id === item?.size_id)?.quantity}
+                                                        <FieldDescription className="text-xs">
+                                                            Jumlah maksimal untuk ukuran terpilih adalah{' '}
+                                                            <span className="font-semibold">
+                                                                {getSelectedProduct()?.sizes?.find((s) => s.id === item?.size_id)?.quantity}
+                                                            </span>
                                                         </FieldDescription>
                                                     )}
                                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

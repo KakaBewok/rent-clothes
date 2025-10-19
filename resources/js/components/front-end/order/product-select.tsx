@@ -35,10 +35,15 @@ export function ProductSelect({
 
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                    <Button variant="outline" role="combobox" aria-expanded={open} className="mt-2 w-full justify-between rounded-none shadow-none">
+                    <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={open}
+                        className="mt-2 w-full justify-between overflow-x-auto rounded-none shadow-none"
+                    >
                         {selectedProduct ? (
                             <span>
-                                {selectedProduct.name} - {selectedProduct.code}
+                                {selectedProduct.name} - {selectedProduct.brand?.name} ({selectedProduct.code ?? '-'})
                             </span>
                         ) : (
                             <span className="text-gray-400">{placeholder}</span>
