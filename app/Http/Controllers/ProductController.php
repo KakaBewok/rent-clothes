@@ -79,7 +79,7 @@ class ProductController extends Controller
                             DATE(oi.estimated_return_date) >= DATE(?)
                         )
                     ), 0)
-                ) >= 0
+                ) > 0
             ', ['approved', 'shipped', $endDate, $startDate])
             ->with(['brand', 'sizes', 'types'])
             ->get();

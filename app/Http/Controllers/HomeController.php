@@ -90,7 +90,7 @@ class HomeController extends Controller
                             DATE(oi.estimated_return_date) >= DATE(?)
                         )
                     ), 0)
-                ) > 0
+                ) >= 0
             ', ['process', 'shipped', $endDate, $startDate])
             ->with(['brand', 'types', 'priceDetail', 'sizes']);
 
