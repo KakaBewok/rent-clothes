@@ -892,6 +892,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             onClick={() => {
                                 form.reset();
                                 setAvailableProducts([]);
+                                toast.info('Form berhasil direset.');
                             }}
                             className="w-full flex-1 cursor-pointer rounded-none border-none bg-slate-200 text-slate-800 transition-all duration-600 hover:bg-slate-300"
                         >
