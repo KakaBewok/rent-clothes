@@ -1,9 +1,7 @@
 import { Product } from '@/types/models';
 import { formatRupiah, formatWhatsAppNumber } from '@/utils/format';
-import { Link } from '@inertiajs/react';
 import { format, isValid, parse } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { MessageCircle, ShoppingCart } from 'lucide-react';
 import React from 'react';
 import { Button } from '../ui/button';
 
@@ -149,7 +147,19 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                 </div>
             </div>
 
-            <div className="flex w-full flex-col gap-2 pt-3 md:flex-row">
+            <div className="pt-3">
+                <a
+                    href={`https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <Button className="w-full cursor-pointer rounded-none bg-[#A27163] text-white transition-all duration-300 hover:bg-[#976456]">
+                        Rent Now
+                    </Button>
+                </a>
+            </div>
+
+            {/* <div className="flex w-full flex-col gap-2 pt-3 md:flex-row">
                 <Link
                     href={`https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`}
                     target="_blank"
@@ -172,7 +182,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                         Order Now
                     </Button>
                 </Link>
-            </div>
+            </div> */}
         </div>
     );
 };

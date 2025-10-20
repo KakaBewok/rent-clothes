@@ -68,6 +68,9 @@ class HomeController extends Controller
 
         $query = Product::query()
             ->when($filters['city'], fn($q) => $q->where('branch_id', $filters['city']))
+            ->when($filters['duration'], fn($q) =>
+                $q->where('rent_periode', '>=', $filters['duration'])
+            )
             ->whereRaw('
                 (
                     COALESCE((
