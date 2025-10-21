@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AppSetting, Product } from '@/types/models';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios from 'axios';
-import { format } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { ChevronRight, Eye, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
@@ -16,6 +16,7 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast, Toaster } from 'sonner';
 import { z } from 'zod';
 import AppLogo from '../app-logo';
+import OrderSummary from './order-summary';
 import { ProductSelect } from './product-select';
 
 const EXPEDITION_OPTIONS = [
@@ -66,7 +67,7 @@ const orderItemSchema = z.object({
     quantity: z.number().min(1, 'Minimal 1.'),
     rent_periode: z.number().min(1, 'Minimal 1 hari.'),
     shipping: z.string().min(1, 'Jenis pengiriman wajib diisi.'),
-    use_by_date: z.date().min(addDays(new Date(), 1), { error: 'Maksimal digunakan untuk besok.' }),
+    use_by_date: z.date().min(startOfDay(addDays(new Date(), 1)), { message: 'Minimal digunakan untuk besok.' }),
     estimated_delivery_date: z.date().optional(),
     estimated_return_date: z.date().optional(),
 });
@@ -102,11 +103,12 @@ const orderFormSchema = z.object({
 
     // order notes
     desc: z.string().max(500, 'Catatan maksimal 500 karakter.').optional().or(z.literal('')),
+    agreement: z.boolean().optional(),
 });
 
 type OrderFormData = z.infer<typeof orderFormSchema>;
 
-type OrderItemData = z.infer<typeof orderItemSchema>;
+export type OrderItemData = z.infer<typeof orderItemSchema>;
 
 interface OrderFormProps {
     setting: AppSetting;
@@ -152,8 +154,13 @@ export default function OrderForm({ setting }: OrderFormProps) {
     });
 
     const items = watch('items');
+    const isAgreed = watch('agreement');
 
     const onSubmit = (data: OrderFormData) => {
+        if (!isAgreed) {
+            toast.warning('Silakan centang kotak persetujuan terlebih dahulu.');
+            return;
+        }
         // --- Hitung tanggal estimasi pengiriman & pengembalian ---
         const cleanedItems = data.items.map((item) => {
             let estimatedDeliveryDate: Date | undefined;
@@ -493,33 +500,35 @@ export default function OrderForm({ setting }: OrderFormProps) {
                         {/* ## items    */}
                         {/* ======================================= */}
                         <h3 className="mt-8 border-b border-slate-200 pb-2 text-lg font-semibold text-slate-700">Item Pesanan</h3>
-                        <div className="space-y-6">
+                        <div className="space-y-3 md:space-y-6">
                             {fields.map((field, index) => {
                                 const item = items?.[index];
                                 return (
                                     <Collapsible key={field.id} className="rounded-none border bg-slate-50">
-                                        <div className="flex items-center justify-between p-4">
-                                            <div className="flex items-center gap-2">
-                                                <CollapsibleTrigger asChild>
-                                                    <button type="button" className="group flex items-center gap-2">
-                                                        <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
-                                                        <h4 className="font-semibold text-slate-700">Item {index + 1}</h4>
-                                                    </button>
-                                                </CollapsibleTrigger>
-                                            </div>
+                                        <CollapsibleTrigger asChild>
+                                            <div className="group flex items-center justify-between p-2 md:p-4">
+                                                <div className="flex items-center gap-2">
+                                                    <CollapsibleTrigger asChild>
+                                                        <button type="button" className="group flex items-center gap-2">
+                                                            <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
+                                                            <h4 className="font-semibold text-slate-700">Item {index + 1}</h4>
+                                                        </button>
+                                                    </CollapsibleTrigger>
+                                                </div>
 
-                                            {fields.length > 1 && (
-                                                <Button
-                                                    type="button"
-                                                    variant="destructive"
-                                                    size="sm"
-                                                    onClick={() => remove(index)}
-                                                    className="cursor-pointer rounded-none text-xs"
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            )}
-                                        </div>
+                                                {fields.length > 1 && (
+                                                    <Button
+                                                        type="button"
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        onClick={() => remove(index)}
+                                                        className="cursor-pointer rounded-none text-xs"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </CollapsibleTrigger>
 
                                         <CollapsibleContent className="space-y-6 border-t bg-white p-4">
                                             <div key={field.id} className="space-y-4 rounded-none border bg-slate-50 p-4">
@@ -884,9 +893,23 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 </Field>
                             )}
                         />
+
+                        <OrderSummary fields={fields} watch={watch} getSelectedProduct={getSelectedProduct} addDays={addDays} subDays={subDays} />
+
+                        {/* checkbox persetujuan */}
+                        <div className="mt-10 flex items-start space-x-2">
+                            <input
+                                id="agreement"
+                                type="checkbox"
+                                className="h-4 w-4 cursor-pointer rounded-none border-slate-200 text-slate-700 focus:ring-0"
+                            />
+                            <label htmlFor="agreement" className="cursor-pointer text-sm leading-snug text-slate-700">
+                                Saya setuju dengan syarat dan ketentuan serta memastikan data di atas sudah benar
+                            </label>
+                        </div>
                     </CardContent>
 
-                    <CardFooter className="mt-12 w-full flex-col gap-2 md:flex-row">
+                    <CardFooter className="mt-5 w-full flex-col gap-2 md:flex-row">
                         <Button
                             type="button"
                             onClick={() => {

@@ -68,7 +68,7 @@ export function ProductSelect({
                                                 onChange(p.id);
                                                 setOpen(false);
                                             }}
-                                            className="flex items-center gap-3 py-2" // beri jarak antar elemen
+                                            className="flex items-center gap-3 py-2"
                                         >
                                             {/* cover image */}
                                             <img

@@ -2,7 +2,6 @@ import { AppSetting, Product } from '@/types/models';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import OrderForm from '../../components/front-end/order/order-form';
-import OrderPreview from '../../components/front-end/order/order-preview';
 
 interface CreateOrderPageProps {
     setting: AppSetting;
@@ -11,11 +10,9 @@ interface CreateOrderPageProps {
 
 const CreateOrderPage = ({ setting, product }: CreateOrderPageProps) => {
     const [formData, setFormData] = useState<any>(null);
-    const [showPreview, setShowPreview] = useState(false);
 
     const handleSubmit = (data: any) => {
         setFormData(data);
-        setShowPreview(true);
     };
 
     const handleConfirm = () => {
@@ -37,11 +34,7 @@ const CreateOrderPage = ({ setting, product }: CreateOrderPageProps) => {
 
     return (
         <div className="flex h-full w-full items-center justify-center bg-white">
-            {!showPreview ? (
-                <OrderForm onSubmit={handleSubmit} setting={setting} product={product} />
-            ) : (
-                <OrderPreview data={formData} onBack={() => setShowPreview(false)} onConfirm={handleConfirm} />
-            )}
+            <OrderForm onSubmit={handleSubmit} setting={setting} product={product} />
         </div>
     );
 };
