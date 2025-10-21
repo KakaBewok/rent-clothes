@@ -63,7 +63,7 @@ const orderItemSchema = z.object({
     id: z.string().optional(),
     product_id: z.number().min(1, 'Pilih produk.'),
     size_id: z.number().min(1, 'Pilih ukuran.'),
-    type_id: z.number().min(1, 'Pilih tipe.'),
+    type_id: z.number().min(1, 'Pilih tipe.').optional(),
     quantity: z.number().min(1, 'Minimal 1.'),
     rent_periode: z.number().min(1, 'Minimal 1 hari.'),
     shipping: z.string().min(1, 'Jenis pengiriman wajib diisi.'),
@@ -77,19 +77,17 @@ const orderFormSchema = z.object({
     name: z.string().min(3, 'Nama minimal 3 karakter.'),
     phone_number: z.string().regex(/^(\+62|0)\d{9,13}$/, 'Format nomor telepon tidak valid. Contoh: 0812...'),
     identity_image: z
-        .array(
-            z.union([
-                z
-                    .instanceof(File)
-                    .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
-                        message: ' Hanya menerima format jpg, jpeg, png atau webp.',
-                    })
-                    .refine((file) => file.size > MAX_FILE_SIZE * 1024, {
-                        message: ` Gambar lebih dari ${MAX_FILE_SIZE / 1000} MB.`,
-                    }),
-                z.string(),
-            ]),
-        )
+        .union([
+            z
+                .instanceof(File)
+                .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+                    message: ' Hanya menerima format jpg, jpeg, png atau webp.',
+                })
+                .refine((file) => file.size > MAX_FILE_SIZE * 1024, {
+                    message: ` Gambar lebih dari ${MAX_FILE_SIZE / 1000} MB.`,
+                }),
+            z.string(),
+        ])
         .optional(),
     address: z.string().min(10, 'Alamat harus lengkap, minimal 10 karakter.'),
     expedition: z.string().min(1, 'Jasa ekspedisi wajib diisi.'),
@@ -125,7 +123,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
         defaultValues: {
             name: '',
             phone_number: '',
-            identity_image: [],
+            identity_image: undefined,
             address: '',
             expedition: '',
             account_number: '',
@@ -146,7 +144,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
             ],
         },
     });
-
     const { control, handleSubmit, watch } = form;
     const { fields, append, remove } = useFieldArray({
         control,
@@ -155,76 +152,64 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
     const items = watch('items');
     const isAgreed = watch('agreement');
+    const firstItem = items?.[0];
+    const isItemFilled =
+        firstItem &&
+        firstItem.product_id &&
+        firstItem.size_id &&
+        firstItem.type_id &&
+        firstItem.quantity &&
+        firstItem.rent_periode &&
+        firstItem.shipping &&
+        firstItem.use_by_date &&
+        watch('name') &&
+        watch('phone_number') &&
+        watch('address') &&
+        watch('expedition') &&
+        watch('provider_name') &&
+        watch('account_number');
 
     const onSubmit = (data: OrderFormData) => {
         if (!isAgreed) {
-            toast.warning('Silakan centang kotak persetujuan terlebih dahulu.');
+            toast.warning('Jangan lupa centang persetujuan dulu sebelum lanjut.');
             return;
         }
-        // --- Hitung tanggal estimasi pengiriman & pengembalian ---
-        const cleanedItems = data.items.map((item) => {
-            let estimatedDeliveryDate: Date | undefined;
-            let estimatedReturnDate: Date | undefined;
 
-            if (item.use_by_date) {
-                const deliveryOffset = item.shipping === 'same day' ? -1 : -2;
-                estimatedDeliveryDate = addDays(item.use_by_date, deliveryOffset);
+        console.log(data);
 
-                // Hitung tanggal kembali berdasarkan rent_periode item ini
-                estimatedReturnDate = addDays(item.use_by_date, item.rent_periode);
-            }
+        toast.success('Form submitted! Check the console for submitted data. Only console log for demo purposes.');
 
-            return {
-                ...item,
-                estimated_delivery_date: estimatedDeliveryDate,
-                estimated_return_date: estimatedReturnDate,
-            };
-        });
+        //TODO: CLEAR FORM AFTER SUBMITTING
 
-        // --- Hilangkan file untuk keperluan JSON preview ---
-        const { identity_image, ...dataWithoutFile } = data;
+        // const mappedItems = data.items.map((item) => ({
+        //     product_id: item.product_id,
+        //     size_id: item.size_id,
+        //     type_id: item.type_id,
+        //     quantity: item.quantity,
+        //     rent_periode: item.rent_periode,
+        //     shipping: item.shipping,
+        //     use_by_date: item.use_by_date.toISOString().split('T')[0],
+        //     estimated_return_date: addDays(item.use_by_date, item.rent_periode).toISOString().split('T')[0],
+        // }));
 
-        const finalData = {
-            ...dataWithoutFile,
-            items: cleanedItems.map(({ ...rest }) => rest),
-            identity_image_status: identity_image?.[0] instanceof File ? `File uploaded: ${identity_image[0].name}` : 'No file',
-        };
-
-        // --- Tampilkan hasil submit (preview di toast) ---
-        toast.success('Formulir Pemesanan berhasil disubmit!', {
-            description: (
-                <pre className="mt-2 w-[400px] overflow-x-auto rounded-md bg-gray-100 p-4 text-sm">
-                    <code>{JSON.stringify(finalData, null, 2)}</code>
-                </pre>
-            ),
-            position: 'bottom-right',
-        });
-
-        // --- Contoh pengiriman data ke backend (Laravel API) ---
-        const formData = new FormData();
-
-        // Gabungkan file (jika ada)
-        if (identity_image && identity_image[0] instanceof File) {
-            formData.append('identity_image', identity_image[0]);
-        }
-
-        // Gabungkan data lain (non-file)
-        formData.append('payload', JSON.stringify(finalData));
-
-        // Kirim ke endpoint Laravel kamu
-        fetch('/orders', {
-            method: 'POST',
-            body: formData,
-        })
-            .then(async (res) => {
-                if (!res.ok) throw new Error(await res.text());
-                toast.success('Pemesanan berhasil disimpan ke server!');
-            })
-            .catch((err) => {
-                toast.error('Gagal menyimpan pemesanan.', {
-                    description: err.message,
-                });
-            });
+        // router.post(
+        //     route('order.store'),
+        //     {
+        //         ...data,
+        //     },
+        //     {
+        //         onStart: () => toast.loading('Mengirim pesanan...'),
+        //         onSuccess: () => {
+        //             toast.dismiss();
+        //             toast.success('Pesanan berhasil dikirim!');
+        //         },
+        //         onError: (error) => {
+        //             toast.dismiss();
+        //             toast.error('Terjadi kesalahan, periksa kembali data.');
+        //             console.error(error);
+        //         },
+        //     },
+        // );
     };
 
     const formatDateDMY = (date: Date) => {
@@ -251,12 +236,12 @@ export default function OrderForm({ setting }: OrderFormProps) {
             const res = await axios.get('/api/products/available', { params });
 
             if (res.data.length === 0) {
-                toast.warning('Tidak ada produk yang tersedia untuk jadwal tersebut.');
+                toast.warning('Tidak ada produk tersedia untuk jadwal tersebut.');
             }
 
             setAvailableProducts(res.data);
         } catch (err) {
-            console.error('Gagal ambil produk:', err);
+            console.error('Error retrieving products data:', err);
         } finally {
             setLoading(false);
         }
@@ -603,14 +588,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                     value={itemField.value}
                                                                     className="cursor-pointer rounded-none text-sm shadow-none"
                                                                 />
-                                                                {/* <FieldDescription>
-                                                        Kembali:{' '}
-                                                        <span className="font-semibold">
-                                                            {useByDate && itemField.value > 0
-                                                                ? addDays(useByDate, itemField.value).toLocaleDateString('id-ID')
-                                                                : 'N/A'}
-                                                        </span>
-                                                    </FieldDescription> */}
                                                                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                                             </Field>
                                                         )}
@@ -703,7 +680,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                     {availableProducts.length > 0 && item.shipping && loading === false && (
                                                         <div className="col-span-full">
                                                             <div
-                                                                className="rounded-none border-t-4 border-teal-400 bg-teal-100 px-4 py-3 text-xs text-teal-800 shadow-none md:text-sm"
+                                                                className="rounded-none border-l-4 border-teal-400 bg-teal-100 px-4 py-3 text-xs text-teal-800 shadow-none md:text-sm"
                                                                 role="alert"
                                                             >
                                                                 <div className="flex">
@@ -712,9 +689,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                         <span className="font-semibold">{formatDate(item).shipDate}</span> dipakai
                                                                         pada <span className="font-semibold">{formatDate(item).useByDate}</span> dan
                                                                         perlu dikembalikan pada{' '}
-                                                                        <span className="font-semibold">{formatDate(item).returnDate}</span>
-                                                                        {/* dengan
-                                                            pengiriman dari area <span className="font-semibold">{branchName}</span> */}
+                                                                        <span className="font-semibold">{formatDate(item).returnDate}</span>.
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -885,28 +860,38 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                     </FieldLabel>
                                     <InputGroup className="rounded-none shadow-none">
                                         <InputGroupTextarea {...field} id="desc" rows={3} className="min-h-24 resize-none text-sm" />
-                                        {/* <InputGroupAddon align="block-end">
-                                            <InputGroupText className="text-xs tabular-nums">{desc?.length}/500 karakter</InputGroupText>
-                                        </InputGroupAddon> */}
                                     </InputGroup>
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
                             )}
                         />
 
-                        <OrderSummary fields={fields} watch={watch} getSelectedProduct={getSelectedProduct} addDays={addDays} subDays={subDays} />
+                        {isItemFilled ? (
+                            <OrderSummary fields={fields} watch={watch} getSelectedProduct={getSelectedProduct} addDays={addDays} subDays={subDays} />
+                        ) : (
+                            <p className="mt-8 text-center text-xs text-slate-700 italic">
+                                Lengkapi data penyewaan terlebih dahulu untuk melihat ringkasan pesanan.
+                            </p>
+                        )}
 
-                        {/* checkbox persetujuan */}
-                        <div className="mt-10 flex items-start space-x-2">
-                            <input
-                                id="agreement"
-                                type="checkbox"
-                                className="h-4 w-4 cursor-pointer rounded-none border-slate-200 text-slate-700 focus:ring-0"
-                            />
-                            <label htmlFor="agreement" className="cursor-pointer text-sm leading-snug text-slate-700">
-                                Saya setuju dengan syarat dan ketentuan serta memastikan data di atas sudah benar
-                            </label>
-                        </div>
+                        <Controller
+                            name="agreement"
+                            control={control}
+                            render={({ field }) => (
+                                <div className="mt-10 flex items-start space-x-2">
+                                    <input
+                                        id="agreement"
+                                        type="checkbox"
+                                        checked={field.value || false}
+                                        onChange={(e) => field.onChange(e.target.checked)}
+                                        className="h-4 w-4 cursor-pointer rounded-none border-slate-200 text-slate-700 focus:ring-0"
+                                    />
+                                    <label htmlFor="agreement" className="cursor-pointer text-sm leading-snug text-slate-700">
+                                        Saya setuju dengan syarat dan ketentuan serta memastikan data di atas sudah benar
+                                    </label>
+                                </div>
+                            )}
+                        />
                     </CardContent>
 
                     <CardFooter className="mt-5 w-full flex-col gap-2 md:flex-row">

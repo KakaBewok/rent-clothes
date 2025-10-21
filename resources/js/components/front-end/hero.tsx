@@ -28,7 +28,7 @@ const Hero = ({ banners }: { banners: Banner[] }) => {
     return (
         <div className="relative w-full md:px-4">
             <Carousel
-                className="w-full bg-slate-50"
+                className="w-full bg-white"
                 setApi={setApi}
                 opts={{ loop: true }}
                 plugins={[Autoplay({ delay: 3000, stopOnInteraction: false })]}
