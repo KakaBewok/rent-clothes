@@ -11,7 +11,7 @@ import axios from 'axios';
 import { format, startOfDay } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { ChevronRight, Eye, Plus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast, Toaster } from 'sonner';
 import { z } from 'zod';
@@ -61,15 +61,16 @@ const subDays = (date: Date, days: number) => {
 // --- zod schema ---
 const orderItemSchema = z.object({
     id: z.string().optional(),
-    product_id: z.number().min(1, 'Pilih produk.'),
-    size_id: z.number().min(1, 'Pilih ukuran.'),
+    product_id: z.number().min(1, 'Produk wajib diisi.'),
+    size_id: z.number().min(1, 'Ukuran wajib diisi.'),
     type_id: z.number().optional(),
     quantity: z.number().min(1, 'Minimal 1.'),
     rent_periode: z.number().min(1, 'Minimal 1 hari.'),
     shipping: z.string().min(1, 'Jenis pengiriman wajib diisi.'),
+
     use_by_date: z.date().min(startOfDay(addDays(new Date(), 1)), { message: 'Minimal digunakan untuk besok.' }),
-    estimated_delivery_date: z.date().optional(),
-    estimated_return_date: z.date().optional(),
+    estimated_delivery_date: z.date().min(startOfDay(new Date()), { message: 'Minimal dikirim hari ini.' }),
+    estimated_return_date: z.date().min(startOfDay(addDays(new Date(), 2)), { message: 'Minimal pengembalian lusa.' }),
 });
 
 const orderFormSchema = z.object({
@@ -144,7 +145,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
             ],
         },
     });
-    const { control, handleSubmit, watch } = form;
+
+    const { control, handleSubmit, watch, setValue } = form;
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'items',
@@ -157,7 +159,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
         firstItem &&
         firstItem.product_id &&
         firstItem.size_id &&
-        firstItem.type_id &&
         firstItem.quantity &&
         firstItem.rent_periode &&
         firstItem.shipping &&
@@ -168,6 +169,16 @@ export default function OrderForm({ setting }: OrderFormProps) {
         watch('expedition') &&
         watch('provider_name') &&
         watch('account_number');
+
+    useEffect(() => {
+        items.forEach((item, index) => {
+            const delivery = item.use_by_date && item.shipping ? subDays(item.use_by_date, item.shipping === 'Same day' ? 1 : 2) : null;
+            const returnDate = item.use_by_date && item.rent_periode ? addDays(item.use_by_date, item.rent_periode) : null;
+
+            setValue(`items.${index}.estimated_delivery_date`, startOfDay(delivery ?? new Date()));
+            setValue(`items.${index}.estimated_return_date`, startOfDay(returnDate ?? new Date()));
+        });
+    }, [items, setValue]);
 
     const onSubmit = (data: OrderFormData) => {
         if (!isAgreed) {
@@ -284,7 +295,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                     <CardTitle>
                         <AppLogo setting={setting} logoSize={150} />
                     </CardTitle>
-                    <CardDescription className="text-slate-600">Lengkapi informasi pengiriman, deposit dan detail pesanan</CardDescription>
+                    <CardDescription className="text-xs text-slate-600">Lengkapi informasi pengiriman, deposit dan detail pesanan</CardDescription>
                 </CardHeader>
                 <form id="order-form-rhf" onSubmit={handleSubmit(onSubmit)}>
                     <CardContent className="space-y-4 md:my-5">
@@ -839,6 +850,9 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                         <SelectValue placeholder="Pilih Tipe" />
                                                                     </SelectTrigger>
                                                                     <SelectContent className="rounded-none text-sm shadow-none">
+                                                                        <SelectItem value={'0'} className="text-slate-700">
+                                                                            Pilih tipe
+                                                                        </SelectItem>
                                                                         {getSelectedProduct(item) &&
                                                                         (getSelectedProduct(item)?.types?.length ?? 0) > 0 ? (
                                                                             getSelectedProduct(item)?.types?.map((type) => (
@@ -920,6 +934,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                     quantity: 1,
                                     rent_periode: 1,
                                     use_by_date: addDays(new Date(), 1),
+                                    estimated_delivery_date: new Date(),
+                                    estimated_return_date: addDays(new Date(), 2),
                                 })
                             }
                             className="mt-4 w-full cursor-pointer rounded-none border-1 border-dashed border-slate-400 !bg-white text-sm text-slate-700 transition duration-500 hover:bg-slate-100 hover:text-slate-700"
