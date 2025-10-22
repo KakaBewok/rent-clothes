@@ -140,7 +140,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                     shipping: SHIPPING_OPTIONS[0].value,
                     use_by_date: addDays(new Date(), 1),
                     estimated_delivery_date: new Date(),
-                    estimated_return_date: new Date(),
+                    estimated_return_date: addDays(new Date(), 2),
                 },
             ],
         },
@@ -191,6 +191,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
         toast.success('Form submitted! Check the console for submitted data. Only console log for demo purposes.');
 
         //TODO: CLEAR FORM AFTER SUBMITTING
+        //TODO: CREATE API
+        //TODO: SEND PROPER DATA
 
         // const mappedItems = data.items.map((item) => ({
         //     product_id: item.product_id,
@@ -824,7 +826,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                             </Field>
                                                         )}
                                                     />
-
                                                     {/* Type */}
                                                     <Controller
                                                         name={`items.${index}.type_id`}
