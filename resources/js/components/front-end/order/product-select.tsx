@@ -1,12 +1,15 @@
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { FieldLabel } from '@/components/ui/field';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { Product } from '@/types/models';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import * as React from 'react';
+import { ControllerFieldState } from 'react-hook-form';
 
 interface ProductSelectProps {
+    state: ControllerFieldState;
     value?: number;
     onChange: (value: number | undefined) => void;
     availableProducts: Product[];
@@ -16,6 +19,7 @@ interface ProductSelectProps {
 }
 
 export function ProductSelect({
+    state,
     value,
     onChange,
     availableProducts,
@@ -29,9 +33,9 @@ export function ProductSelect({
 
     return (
         <div className="w-full space-y-1">
-            <label className="text-sm font-medium text-gray-700">
+            <FieldLabel className={state.error ? 'text-red-500' : 'text-slate-700'}>
                 {label} <span className="text-red-500">*</span>
-            </label>
+            </FieldLabel>
 
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
@@ -39,7 +43,8 @@ export function ProductSelect({
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        className="mt-2 w-full justify-between overflow-x-auto rounded-none shadow-none"
+                        // className="mt-2 w-full justify-between overflow-x-auto rounded-none !border !border-slate-300 !bg-white shadow-none"
+                        className="mt-2 w-full justify-between overflow-x-auto rounded-none !border !border-slate-300 !bg-white shadow-none hover:!border-slate-300 hover:!bg-white hover:!text-inherit focus-visible:!ring-0 active:!bg-white dark:hover:!bg-white dark:hover:!text-slate-700"
                     >
                         {selectedProduct ? (
                             <span>
@@ -79,13 +84,18 @@ export function ProductSelect({
 
                                             {/* Info */}
                                             <div className="flex flex-col">
-                                                <span className="text-sm font-medium text-gray-900">{p.name}</span>
-                                                <span className="text-xs text-slate-500">{p.code ?? '-'}</span>
-                                                <span className="text-xs text-slate-800">{p.brand?.name ?? '-'}</span>
+                                                <span className="text-sm font-medium text-gray-900 dark:text-white">{p.name}</span>
+                                                <span className="text-xs text-slate-500 dark:text-slate-400">{p.code ?? '-'}</span>
+                                                <span className="text-xs text-slate-800 dark:text-white">{p.brand?.name ?? '-'}</span>
                                             </div>
 
                                             {/* Check Icon */}
-                                            <Check className={cn('ml-auto h-4 w-4 text-primary', value === p.id ? 'opacity-100' : 'opacity-0')} />
+                                            <Check
+                                                className={cn(
+                                                    'ml-auto h-4 w-4 text-primary dark:text-white',
+                                                    value === p.id ? 'opacity-100' : 'opacity-0',
+                                                )}
+                                            />
                                         </CommandItem>
                                     ))}
                                 </CommandGroup>

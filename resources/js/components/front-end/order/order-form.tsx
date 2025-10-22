@@ -63,7 +63,7 @@ const orderItemSchema = z.object({
     id: z.string().optional(),
     product_id: z.number().min(1, 'Pilih produk.'),
     size_id: z.number().min(1, 'Pilih ukuran.'),
-    type_id: z.number().min(1, 'Pilih tipe.').optional(),
+    type_id: z.number().optional(),
     quantity: z.number().min(1, 'Minimal 1.'),
     rent_periode: z.number().min(1, 'Minimal 1 hari.'),
     shipping: z.string().min(1, 'Jenis pengiriman wajib diisi.'),
@@ -267,6 +267,15 @@ export default function OrderForm({ setting }: OrderFormProps) {
         };
     };
 
+    const clearForm = () => {
+        form.reset();
+        setAvailableProducts([]);
+        setPreviewImage(null);
+        const fileInput = document.getElementById('identity_image') as HTMLInputElement | null;
+        if (fileInput) fileInput.value = '';
+        toast.info('Form berhasil direset.');
+    };
+
     return (
         <div className="w-full max-w-2xl py-10">
             <Toaster richColors position="top-center" />
@@ -290,11 +299,16 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor="name">
+                                        <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="name">
                                             Nama <span className="text-red-500">*</span>
                                         </FieldLabel>
-                                        <Input {...field} id="name" placeholder="Fairuz Ummi Cincayo" className="rounded-none text-sm shadow-none" />
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        <Input
+                                            {...field}
+                                            id="name"
+                                            placeholder="Yuri Chan"
+                                            className="rounded-none border border-slate-300 text-sm shadow-none"
+                                        />
+                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
@@ -304,11 +318,16 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor="phone_number">
+                                        <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="phone_number">
                                             No. Telepon <span className="text-red-500">*</span>
                                         </FieldLabel>
-                                        <Input {...field} id="phone_number" placeholder="08129827378" className="rounded-none text-sm shadow-none" />
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        <Input
+                                            {...field}
+                                            id="phone_number"
+                                            placeholder="08129827378"
+                                            className="rounded-none border border-slate-300 text-sm shadow-none"
+                                        />
+                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
@@ -318,11 +337,14 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor="expedition">
+                                        <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="expedition">
                                             Ekspedisi <span className="text-red-500">*</span>
                                         </FieldLabel>
                                         <Select onValueChange={field.onChange} value={field.value} name={field.name}>
-                                            <SelectTrigger id="expedition" className="cursor-pointer rounded-none shadow-none">
+                                            <SelectTrigger
+                                                id="expedition"
+                                                className="cursor-pointer rounded-none border border-slate-300 shadow-none"
+                                            >
                                                 <SelectValue placeholder="JNE" />
                                             </SelectTrigger>
                                             <SelectContent className="cursor-pointer rounded-none text-sm shadow-none">
@@ -333,7 +355,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
@@ -368,21 +390,23 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                     return (
                                         <Field data-invalid={fieldState.invalid}>
-                                            <FieldLabel htmlFor="identity_image">Upload foto KTP</FieldLabel>
+                                            <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="identity_image">
+                                                Upload foto KTP
+                                            </FieldLabel>
                                             <Input
                                                 {...fieldProps}
                                                 id="identity_image"
                                                 type="file"
                                                 onChange={handleFileChange}
                                                 accept={ACCEPTED_IMAGE_TYPES.join(',')}
-                                                className="cursor-pointer rounded-none text-xs shadow-none"
+                                                className="cursor-pointer rounded-none border border-slate-300 text-xs shadow-none"
                                             />
                                             <FieldDescription className="text-xs text-slate-400">
                                                 Maks. 2MB dalam format jpg/jpeg/png
                                                 <br className="my-1" />
                                                 🔒 Data kamu aman dan hanya digunakan untuk verifikasi.
                                             </FieldDescription>
-                                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                            {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
 
                                             {/* preview image */}
                                             {(previewImage || currentImageUrl) && (
@@ -413,19 +437,19 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             control={control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="address">
+                                    <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="address">
                                         Alamat Lengkap <span className="text-red-500">*</span>
                                     </FieldLabel>
-                                    <InputGroup className="rounded-none shadow-none">
+                                    <InputGroup className="rounded-none border border-slate-300 shadow-none">
                                         <InputGroupTextarea
                                             {...field}
                                             id="address"
                                             placeholder="Jalan, Nomor Rumah, RT/RW, Kelurahan, Kecamatan, Kota..."
                                             rows={3}
-                                            className="min-h-24 resize-none text-sm"
+                                            className="min-h-24 resize-none !bg-white text-sm"
                                         />
                                     </InputGroup>
-                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                    {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
                                 </Field>
                             )}
                         />
@@ -441,11 +465,11 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor="provider_name">
+                                        <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="provider_name">
                                             Bank/Provider <span className="text-red-500">*</span>
                                         </FieldLabel>
                                         <Select onValueChange={field.onChange} value={field.value} name={field.name}>
-                                            <SelectTrigger id="provider_name" className="rounded-none shadow-none">
+                                            <SelectTrigger id="provider_name" className="rounded-none border border-slate-300 shadow-none">
                                                 <SelectValue placeholder="Pilih Bank/Provider" />
                                             </SelectTrigger>
                                             <SelectContent className="rounded-none text-sm shadow-none">
@@ -456,7 +480,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                 ))}
                                             </SelectContent>
                                         </Select>
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
@@ -466,16 +490,16 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel htmlFor="account_number">
+                                        <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="account_number">
                                             No. Rekening/No. E-Wallet <span className="text-red-500">*</span>
                                         </FieldLabel>
                                         <Input
                                             {...field}
                                             id="account_number"
                                             placeholder="23942477773"
-                                            className="rounded-none text-sm shadow-none"
+                                            className="rounded-none border border-slate-300 text-sm shadow-none"
                                         />
-                                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
                                     </Field>
                                 )}
                             />
@@ -489,7 +513,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             {fields.map((field, index) => {
                                 const item = items?.[index];
                                 return (
-                                    <Collapsible key={field.id} className="rounded-none border bg-slate-50">
+                                    <Collapsible key={field.id} className="rounded-none border border-slate-300 bg-slate-50">
                                         <CollapsibleTrigger asChild>
                                             <div className="group flex items-center justify-between p-2 md:p-4">
                                                 <div className="flex items-center gap-2">
@@ -507,7 +531,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         variant="destructive"
                                                         size="sm"
                                                         onClick={() => remove(index)}
-                                                        className="cursor-pointer rounded-none text-xs"
+                                                        className="cursor-pointer rounded-none !bg-red-500 text-xs"
                                                     >
                                                         <Trash2 className="h-4 w-4" />
                                                     </Button>
@@ -515,8 +539,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                             </div>
                                         </CollapsibleTrigger>
 
-                                        <CollapsibleContent className="space-y-6 border-t bg-white p-4">
-                                            <div key={field.id} className="space-y-4 rounded-none border bg-slate-50 p-4">
+                                        <CollapsibleContent className="space-y-6 border-t border-slate-200 bg-white p-4">
+                                            <div key={field.id} className="space-y-4 rounded-none border border-slate-300 bg-slate-50 p-4">
                                                 <FieldGroup className="grid grid-cols-1 gap-4 md:grid-cols-3">
                                                     {/* Shipping */}
                                                     <Controller
@@ -524,7 +548,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel htmlFor="shipping">
+                                                                <FieldLabel
+                                                                    className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
+                                                                    htmlFor="shipping"
+                                                                >
                                                                     Jenis Pengiriman <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Select
@@ -532,7 +559,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                     value={field.value ? field.value.toString() : undefined}
                                                                     name={field.name}
                                                                 >
-                                                                    <SelectTrigger id="shipping" className="cursor-pointer rounded-none shadow-none">
+                                                                    <SelectTrigger
+                                                                        id="shipping"
+                                                                        className="cursor-pointer rounded-none border border-slate-300 shadow-none"
+                                                                    >
                                                                         <SelectValue placeholder="Pilih Jenis Pengiriman" />
                                                                     </SelectTrigger>
                                                                     <SelectContent className="rounded-none text-sm shadow-none">
@@ -543,7 +573,9 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                         ))}
                                                                     </SelectContent>
                                                                 </Select>
-                                                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                                {fieldState.invalid && (
+                                                                    <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                )}
                                                             </Field>
                                                         )}
                                                     />
@@ -554,7 +586,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel htmlFor="use_by_date">
+                                                                <FieldLabel
+                                                                    className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
+                                                                    htmlFor="use_by_date"
+                                                                >
                                                                     Tanggal digunakan <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Input
@@ -564,9 +599,11 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                     onChange={(e) =>
                                                                         field.onChange(e.target.value ? new Date(e.target.value) : undefined)
                                                                     }
-                                                                    className="cursor-pointer rounded-none text-sm shadow-none"
+                                                                    className="cursor-pointer rounded-none border border-slate-300 text-sm shadow-none"
                                                                 />
-                                                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                                {fieldState.invalid && (
+                                                                    <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                )}
                                                             </Field>
                                                         )}
                                                     />
@@ -577,7 +614,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field: itemField, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid} className="col-span-1">
-                                                                <FieldLabel htmlFor="rent_periode">
+                                                                <FieldLabel
+                                                                    className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
+                                                                    htmlFor="rent_periode"
+                                                                >
                                                                     Lama Sewa (Hari) <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Input
@@ -586,9 +626,11 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                     min={1}
                                                                     onChange={(e) => itemField.onChange(e.target.valueAsNumber)}
                                                                     value={itemField.value}
-                                                                    className="cursor-pointer rounded-none text-sm shadow-none"
+                                                                    className="cursor-pointer rounded-none border border-slate-300 text-sm shadow-none"
                                                                 />
-                                                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                                {fieldState.invalid && (
+                                                                    <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                )}
                                                             </Field>
                                                         )}
                                                     />
@@ -608,7 +650,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                                                     return (
                                                                         <Field data-invalid={fieldState.invalid}>
-                                                                            <FieldLabel htmlFor="estimated_delivery_date">
+                                                                            <FieldLabel
+                                                                                className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
+                                                                                htmlFor="estimated_delivery_date"
+                                                                            >
                                                                                 Estimasi Pengiriman
                                                                             </FieldLabel>
                                                                             <Input
@@ -620,9 +665,11 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                                         : ''
                                                                                 }
                                                                                 readOnly
-                                                                                className="cursor-not-allowed rounded-none bg-slate-100 text-sm shadow-none"
+                                                                                className="cursor-not-allowed rounded-none border border-slate-300 bg-slate-100 text-sm shadow-none"
                                                                             />
-                                                                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                                            {fieldState.invalid && (
+                                                                                <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                            )}
                                                                         </Field>
                                                                     );
                                                                 }}
@@ -640,7 +687,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                                                     return (
                                                                         <Field data-invalid={fieldState.invalid}>
-                                                                            <FieldLabel htmlFor="estimated_return_date">
+                                                                            <FieldLabel
+                                                                                className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
+                                                                                htmlFor="estimated_return_date"
+                                                                            >
                                                                                 Estimasi Pengembalian
                                                                             </FieldLabel>
                                                                             <Input
@@ -652,9 +702,11 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                                         : ''
                                                                                 }
                                                                                 readOnly
-                                                                                className="cursor-not-allowed rounded-none bg-slate-100 text-sm shadow-none"
+                                                                                className="cursor-not-allowed rounded-none border border-slate-300 bg-slate-100 text-sm shadow-none"
                                                                             />
-                                                                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                                            {fieldState.invalid && (
+                                                                                <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                            )}
                                                                         </Field>
                                                                     );
                                                                 }}
@@ -666,7 +718,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         type="button"
                                                         onClick={() => handleSearchProducts(item)}
                                                         disabled={loading}
-                                                        className="col-span-full cursor-pointer rounded-none bg-slate-700 text-white shadow-none"
+                                                        className="col-span-full cursor-pointer rounded-none bg-slate-700 text-white shadow-none hover:bg-slate-700"
                                                     >
                                                         {loading ? (
                                                             <span>Mencari...</span>
@@ -705,12 +757,15 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         render={({ field, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
                                                                 <ProductSelect
+                                                                    state={fieldState}
                                                                     value={field.value}
                                                                     onChange={(val) => field.onChange(val)}
                                                                     availableProducts={availableProducts ?? []}
                                                                     loading={loading}
                                                                 />
-                                                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                                {fieldState.invalid && (
+                                                                    <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                )}
                                                             </Field>
                                                         )}
                                                     />
@@ -720,7 +775,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field: itemField, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel htmlFor="ukuran">
+                                                                <FieldLabel
+                                                                    htmlFor="ukuran"
+                                                                    className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
+                                                                >
                                                                     Ukuran <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Select
@@ -729,7 +787,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                     name={itemField.name}
                                                                     disabled={!item?.product_id}
                                                                 >
-                                                                    <SelectTrigger id="ukuran" className="cursor-pointer rounded-none shadow-none">
+                                                                    <SelectTrigger
+                                                                        id="ukuran"
+                                                                        className="cursor-pointer rounded-none border border-slate-300 shadow-none"
+                                                                    >
                                                                         <SelectValue placeholder="Pilih Ukuran" />
                                                                     </SelectTrigger>
                                                                     <SelectContent className="rounded-none text-sm shadow-none">
@@ -746,7 +807,9 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                         )}
                                                                     </SelectContent>
                                                                 </Select>
-                                                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                                {fieldState.invalid && (
+                                                                    <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                )}
                                                             </Field>
                                                         )}
                                                     />
@@ -757,14 +820,22 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field: itemField, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel htmlFor="type">Tipe</FieldLabel>
+                                                                <FieldLabel
+                                                                    htmlFor="type"
+                                                                    className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
+                                                                >
+                                                                    Tipe
+                                                                </FieldLabel>
                                                                 <Select
                                                                     onValueChange={(val) => itemField.onChange(Number(val))}
                                                                     value={itemField.value ? itemField.value.toString() : undefined}
                                                                     name={itemField.name}
                                                                     disabled={!item?.product_id}
                                                                 >
-                                                                    <SelectTrigger id="type" className="cursor-pointer rounded-none shadow-none">
+                                                                    <SelectTrigger
+                                                                        id="type"
+                                                                        className="cursor-pointer rounded-none border border-slate-300 shadow-none"
+                                                                    >
                                                                         <SelectValue placeholder="Pilih Tipe" />
                                                                     </SelectTrigger>
                                                                     <SelectContent className="rounded-none text-sm shadow-none">
@@ -782,7 +853,9 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                         )}
                                                                     </SelectContent>
                                                                 </Select>
-                                                                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                                {fieldState.invalid && (
+                                                                    <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                )}
                                                             </Field>
                                                         )}
                                                     />
@@ -797,11 +870,14 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                                             return (
                                                                 <Field data-invalid={fieldState.invalid}>
-                                                                    <FieldLabel htmlFor={`qty-${index}`}>
+                                                                    <FieldLabel
+                                                                        htmlFor={`qty-${index}`}
+                                                                        className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
+                                                                    >
                                                                         Jumlah <span className="text-red-500">*</span>
                                                                     </FieldLabel>
                                                                     <Input
-                                                                        className="cursor-pointer rounded-none text-sm shadow-none"
+                                                                        className="cursor-pointer rounded-none border border-slate-300 text-sm shadow-none"
                                                                         id={`qty-${index}`}
                                                                         type="number"
                                                                         min={1}
@@ -816,7 +892,9 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                             <span className="font-semibold">{maxQty}</span>
                                                                         </FieldDescription>
                                                                     )}
-                                                                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                                                    {fieldState.invalid && (
+                                                                        <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                    )}
                                                                 </Field>
                                                             );
                                                         }}
@@ -844,7 +922,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                     use_by_date: addDays(new Date(), 1),
                                 })
                             }
-                            className="mt-4 w-full cursor-pointer rounded-none border-1 border-dashed border-slate-400 text-sm text-slate-700 transition duration-500 hover:bg-slate-100"
+                            className="mt-4 w-full cursor-pointer rounded-none border-1 border-dashed border-slate-400 !bg-white text-sm text-slate-700 transition duration-500 hover:bg-slate-100 hover:text-slate-700"
                         >
                             <Plus /> Tambah Item
                         </Button>
@@ -858,8 +936,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                     <FieldLabel htmlFor="desc" className="mt-3 leading-none italic">
                                         Catatan
                                     </FieldLabel>
-                                    <InputGroup className="rounded-none shadow-none">
-                                        <InputGroupTextarea {...field} id="desc" rows={3} className="min-h-24 resize-none text-sm" />
+                                    <InputGroup className="rounded-none border border-slate-300 shadow-none">
+                                        <InputGroupTextarea {...field} id="desc" rows={3} className="min-h-24 resize-none !bg-white text-sm" />
                                     </InputGroup>
                                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>
@@ -879,13 +957,30 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             control={control}
                             render={({ field }) => (
                                 <div className="mt-10 flex items-start space-x-2">
-                                    <input
-                                        id="agreement"
-                                        type="checkbox"
-                                        checked={field.value || false}
-                                        onChange={(e) => field.onChange(e.target.checked)}
-                                        className="h-4 w-4 cursor-pointer rounded-none border-slate-200 text-slate-700 focus:ring-0"
-                                    />
+                                    <div className="relative">
+                                        <input
+                                            id="agreement"
+                                            type="checkbox"
+                                            checked={field.value || false}
+                                            onChange={(e) => field.onChange(e.target.checked)}
+                                            className="peer h-4 w-4 cursor-pointer appearance-none rounded-sm border border-slate-400 transition-colors checked:border-slate-700 checked:bg-slate-700"
+                                        />
+                                        <span className="pointer-events-none absolute top-0 left-0 hidden h-5 w-5 items-center justify-center peer-checked:flex">
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="white"
+                                                strokeWidth="3"
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                className="h-5 w-5"
+                                            >
+                                                <path d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </span>
+                                    </div>
+
                                     <label htmlFor="agreement" className="cursor-pointer text-sm leading-snug text-slate-700">
                                         Saya setuju dengan syarat dan ketentuan serta memastikan data di atas sudah benar
                                     </label>
@@ -897,11 +992,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                     <CardFooter className="mt-5 w-full flex-col gap-2 md:flex-row">
                         <Button
                             type="button"
-                            onClick={() => {
-                                form.reset();
-                                setAvailableProducts([]);
-                                toast.info('Form berhasil direset.');
-                            }}
+                            onClick={clearForm}
                             className="w-full flex-1 cursor-pointer rounded-none border-none bg-slate-200 text-slate-800 transition-all duration-600 hover:bg-slate-300"
                         >
                             Reset Formulir

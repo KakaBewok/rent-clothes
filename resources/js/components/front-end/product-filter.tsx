@@ -19,7 +19,6 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
     const [showSearch, setShowSearch] = useState<boolean>(false);
     const [showFilter, setShowFilter] = useState<boolean>(false);
 
-    //---//
     const [suggestions, setSuggestions] = useState<Product[]>([]);
     const searchContainerRef = useRef<HTMLDivElement>(null);
     const [allProductsAvailable, setAllProductsAvailable] = useState<Product[]>([]);
@@ -38,71 +37,6 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
 
         fetchProductsAvail();
     }, []);
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const query = e.target.value;
-        setExtraFilters({ ...extraFilters, search: query });
-
-        if (query.length > 0) {
-            const filteredSuggestions = allProductsAvailable.filter((product: Product) => product.name.toLowerCase().includes(query.toLowerCase()));
-            setSuggestions(filteredSuggestions);
-        } else {
-            setSuggestions([]);
-        }
-    };
-
-    const handleSuggestionClick = (productName: string) => {
-        setExtraFilters({ ...extraFilters, search: productName });
-        setSuggestions([]);
-    };
-
-    // useEffect(() => {
-    //     const handleClickOutside = (event: MouseEvent) => {
-    //         if (searchContainerRef.current && !searchContainerRef.current.contains(event.target as Node)) {
-    //             setSuggestions([]);
-    //         }
-    //     };
-    //     document.addEventListener('mousedown', handleClickOutside);
-    //     return () => {
-    //         document.removeEventListener('mousedown', handleClickOutside);
-    //     };
-    // }, []);
-
-    const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
-        const rawValue = e.target.value;
-
-        if (rawValue === '') {
-            setExtraFilters({ ...extraFilters, [key]: null });
-            return;
-        }
-
-        const numberValue = parseInt(rawValue);
-
-        if (isNaN(numberValue)) {
-            setExtraFilters({ ...extraFilters, [key]: null });
-            return;
-        }
-
-        setExtraFilters({
-            ...extraFilters,
-            [key]: Math.max(numberValue, 0),
-        });
-    };
-    //---//
-
-    const FILTER_KEYS = ['brand', 'color', 'size', 'type', 'minPrice', 'maxPrice', 'sortBy', 'direction']; // 'stock'
-    const sizes = {
-        'Fit XS': 'Fit XS',
-        'Fit S': 'Fit S',
-        'Fit M': 'Fit M',
-        'Fit L': 'Fit L',
-        'Fit XL': 'Fit XL',
-        'Fit XS-S': 'Fit XS-S',
-        'Fit S-M': 'Fit S-M',
-        'Fit M-L': 'Fit M-L',
-        'Fit L-XL': 'Fit L-XL',
-        'Fit XL-XXL': 'Fit XL-XXL',
-    };
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -134,6 +68,58 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
 
         setExtraFilters(filters);
     }, []);
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const query = e.target.value;
+        setExtraFilters({ ...extraFilters, search: query });
+
+        if (query.length > 0) {
+            const filteredSuggestions = allProductsAvailable.filter((product: Product) => product.name.toLowerCase().includes(query.toLowerCase()));
+            setSuggestions(filteredSuggestions);
+        } else {
+            setSuggestions([]);
+        }
+    };
+
+    const handleSuggestionClick = (productName: string) => {
+        setExtraFilters({ ...extraFilters, search: productName });
+        setSuggestions([]);
+    };
+
+    const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>, key: string) => {
+        const rawValue = e.target.value;
+
+        if (rawValue === '') {
+            setExtraFilters({ ...extraFilters, [key]: null });
+            return;
+        }
+
+        const numberValue = parseInt(rawValue);
+
+        if (isNaN(numberValue)) {
+            setExtraFilters({ ...extraFilters, [key]: null });
+            return;
+        }
+
+        setExtraFilters({
+            ...extraFilters,
+            [key]: Math.max(numberValue, 0),
+        });
+    };
+
+    const FILTER_KEYS = ['brand', 'color', 'size', 'type', 'minPrice', 'maxPrice', 'sortBy', 'direction']; // 'stock'
+    const sizes = {
+        'Fit XS': 'Fit XS',
+        'Fit S': 'Fit S',
+        'Fit M': 'Fit M',
+        'Fit L': 'Fit L',
+        'Fit XL': 'Fit XL',
+        'Fit XS-S': 'Fit XS-S',
+        'Fit S-M': 'Fit S-M',
+        'Fit M-L': 'Fit M-L',
+        'Fit L-XL': 'Fit L-XL',
+        'Fit XL-XXL': 'Fit XL-XXL',
+    };
 
     const applyFilter = () => {
         const currentParams = new URLSearchParams(window.location.search);
@@ -271,12 +257,6 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                             type="text"
                             placeholder="Cari produk"
                             value={extraFilters?.search || ''}
-                            // onChange={(e) =>
-                            //     setExtraFilters({
-                            //         ...extraFilters,
-                            //         search: e.target.value,
-                            //     })
-                            // }
                             onChange={handleInputChange}
                             className={`${extraFilters?.search ? 'border-[#A27163]' : 'border-white'} w-full border-2 bg-white px-3 py-2 text-sm text-slate-800 transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none`}
                         />

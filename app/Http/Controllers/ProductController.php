@@ -81,6 +81,7 @@ class ProductController extends Controller
                     ), 0)
                 ) > 0
             ', ['approved', 'shipped', $endDate, $startDate])
+            ->whereHas('sizes', fn($q) => $q->where('availability', true)) // Ensure at least one size is available
             ->with(['brand', 'sizes', 'types'])
             ->get();
 
