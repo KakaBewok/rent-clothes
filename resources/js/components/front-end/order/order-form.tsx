@@ -7,13 +7,15 @@ import { InputGroup, InputGroupTextarea } from '@/components/ui/input-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AppSetting, Product } from '@/types/models';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { router } from '@inertiajs/react';
 import axios from 'axios';
 import { format, startOfDay } from 'date-fns';
 import { id } from 'date-fns/locale';
-import { ChevronRight, Eye, Plus, Trash2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { ChevronRight, Eye, Loader2, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { toast, Toaster } from 'sonner';
+import { route } from 'ziggy-js';
 import { z } from 'zod';
 import AppLogo from '../app-logo';
 import OrderSummary from './order-summary';
@@ -43,7 +45,7 @@ const SHIPPING_OPTIONS = [
 
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
-const MAX_FILE_SIZE = 2000; // 2MB
+const MAX_FILE_SIZE = 2048; // 2MB
 
 // --- utils ---
 const addDays = (date: Date, days: number) => {
@@ -63,7 +65,7 @@ const orderItemSchema = z.object({
     id: z.string().optional(),
     product_id: z.number().min(1, 'Produk wajib diisi.'),
     size_id: z.number().min(1, 'Ukuran wajib diisi.'),
-    type_id: z.number().optional(),
+    type: z.string().optional(),
     quantity: z.number().min(1, 'Minimal 1.'),
     rent_periode: z.number().min(1, 'Minimal 1 hari.'),
     shipping: z.string().min(1, 'Jenis pengiriman wajib diisi.'),
@@ -84,7 +86,7 @@ const orderFormSchema = z.object({
                 .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
                     message: ' Hanya menerima format jpg, jpeg, png atau webp.',
                 })
-                .refine((file) => file.size > MAX_FILE_SIZE * 1024, {
+                .refine((file) => file.size <= MAX_FILE_SIZE * 1024, {
                     message: ` Gambar lebih dari ${MAX_FILE_SIZE / 1000} MB.`,
                 }),
             z.string(),
@@ -134,7 +136,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                 {
                     product_id: 0,
                     size_id: 0,
-                    type_id: 0,
+                    type: '',
                     quantity: 1,
                     rent_periode: 1,
                     shipping: SHIPPING_OPTIONS[0].value,
@@ -146,7 +148,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
         },
     });
 
-    const { control, handleSubmit, watch, setValue } = form;
+    const { control, handleSubmit, watch } = form;
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'items',
@@ -170,15 +172,17 @@ export default function OrderForm({ setting }: OrderFormProps) {
         watch('provider_name') &&
         watch('account_number');
 
-    useEffect(() => {
-        items.forEach((item, index) => {
-            const delivery = item.use_by_date && item.shipping ? subDays(item.use_by_date, item.shipping === 'Same day' ? 1 : 2) : null;
-            const returnDate = item.use_by_date && item.rent_periode ? addDays(item.use_by_date, item.rent_periode) : null;
+    const clearForm = (type: string) => {
+        form.reset();
+        setAvailableProducts([]);
+        setPreviewImage(null);
+        const fileInput = document.getElementById('identity_image') as HTMLInputElement | null;
+        if (fileInput) fileInput.value = '';
 
-            setValue(`items.${index}.estimated_delivery_date`, startOfDay(delivery ?? new Date()));
-            setValue(`items.${index}.estimated_return_date`, startOfDay(returnDate ?? new Date()));
-        });
-    }, [items, setValue]);
+        if (type == 'reset') {
+            toast.info('Form berhasil direset.');
+        }
+    };
 
     const onSubmit = (data: OrderFormData) => {
         if (!isAgreed) {
@@ -186,43 +190,57 @@ export default function OrderForm({ setting }: OrderFormProps) {
             return;
         }
 
-        console.log(data);
+        setLoading(true);
 
-        toast.success('Form submitted! Check the console for submitted data. Only console log for demo purposes.');
+        const computedItems = data.items.map((item) => {
+            const delivery = item.use_by_date && item.shipping ? subDays(new Date(item.use_by_date), item.shipping === 'Same day' ? 1 : 2) : null;
+            const returnDate = item.use_by_date && item.rent_periode ? addDays(new Date(item.use_by_date), item.rent_periode) : null;
 
-        //TODO: CLEAR FORM AFTER SUBMITTING
-        //TODO: CREATE API
-        //TODO: SEND PROPER DATA
+            return {
+                ...item,
+                estimated_delivery_date: delivery ? delivery.toISOString().split('T')[0] : '',
+                estimated_return_date: returnDate ? returnDate.toISOString().split('T')[0] : '',
+                use_by_date: item.use_by_date ? new Date(item.use_by_date).toISOString().split('T')[0] : '',
+            };
+        });
 
-        // const mappedItems = data.items.map((item) => ({
-        //     product_id: item.product_id,
-        //     size_id: item.size_id,
-        //     type_id: item.type_id,
-        //     quantity: item.quantity,
-        //     rent_periode: item.rent_periode,
-        //     shipping: item.shipping,
-        //     use_by_date: item.use_by_date.toISOString().split('T')[0],
-        //     estimated_return_date: addDays(item.use_by_date, item.rent_periode).toISOString().split('T')[0],
-        // }));
+        const payload = {
+            ...data,
+            items: computedItems,
+            agreement: data.agreement ? 1 : 0,
+        };
 
-        // router.post(
-        //     route('order.store'),
-        //     {
-        //         ...data,
-        //     },
-        //     {
-        //         onStart: () => toast.loading('Mengirim pesanan...'),
-        //         onSuccess: () => {
-        //             toast.dismiss();
-        //             toast.success('Pesanan berhasil dikirim!');
-        //         },
-        //         onError: (error) => {
-        //             toast.dismiss();
-        //             toast.error('Terjadi kesalahan, periksa kembali data.');
-        //             console.error(error);
-        //         },
-        //     },
-        // );
+        const formData = new FormData();
+
+        Object.entries(payload).forEach(([key, value]) => {
+            if (key === 'identity_image' && value instanceof File) {
+                formData.append(key, value);
+            } else if (key !== 'items') {
+                formData.append(key, String(value ?? ''));
+            }
+        });
+
+        payload.items.forEach((item, index) => {
+            Object.entries(item).forEach(([field, val]) => {
+                formData.append(`items[${index}][${field}]`, String(val ?? ''));
+            });
+        });
+
+        router.post(route('order.store'), formData, {
+            forceFormData: true,
+            onSuccess: (page) => {
+                toast.dismiss();
+                toast.success('Pesanan berhasil disimpan!');
+                console.log('Response:', page.props);
+                clearForm('submit');
+            },
+            onError: (errors) => {
+                toast.dismiss();
+                toast.error('Terjadi kesalahan, periksa kembali data.');
+                console.error('Error:', errors);
+            },
+            onFinish: () => setLoading(false),
+        });
     };
 
     const formatDateDMY = (date: Date) => {
@@ -280,15 +298,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
         };
     };
 
-    const clearForm = () => {
-        form.reset();
-        setAvailableProducts([]);
-        setPreviewImage(null);
-        const fileInput = document.getElementById('identity_image') as HTMLInputElement | null;
-        if (fileInput) fileInput.value = '';
-        toast.info('Form berhasil direset.');
-    };
-
     return (
         <div className="w-full max-w-2xl py-10">
             <Toaster richColors position="top-center" />
@@ -312,7 +321,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="name">
+                                        <FieldLabel className="text-slate-700" htmlFor="name">
                                             Nama <span className="text-red-500">*</span>
                                         </FieldLabel>
                                         <Input
@@ -331,7 +340,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="phone_number">
+                                        <FieldLabel className="text-slate-700" htmlFor="phone_number">
                                             No. Telepon <span className="text-red-500">*</span>
                                         </FieldLabel>
                                         <Input
@@ -350,7 +359,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="expedition">
+                                        <FieldLabel className="text-slate-700" htmlFor="expedition">
                                             Ekspedisi <span className="text-red-500">*</span>
                                         </FieldLabel>
                                         <Select onValueChange={field.onChange} value={field.value} name={field.name}>
@@ -403,7 +412,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                     return (
                                         <Field data-invalid={fieldState.invalid}>
-                                            <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="identity_image">
+                                            <FieldLabel className="text-slate-700" htmlFor="identity_image">
                                                 Upload foto KTP
                                             </FieldLabel>
                                             <Input
@@ -450,7 +459,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             control={control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="address">
+                                    <FieldLabel className="text-slate-700" htmlFor="address">
                                         Alamat Lengkap <span className="text-red-500">*</span>
                                     </FieldLabel>
                                     <InputGroup className="rounded-none border border-slate-300 shadow-none">
@@ -478,7 +487,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="provider_name">
+                                        <FieldLabel className="text-slate-700" htmlFor="provider_name">
                                             Bank/Provider <span className="text-red-500">*</span>
                                         </FieldLabel>
                                         <Select onValueChange={field.onChange} value={field.value} name={field.name}>
@@ -503,7 +512,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel className={fieldState.error ? 'text-red-500' : 'text-slate-700'} htmlFor="account_number">
+                                        <FieldLabel className="text-slate-700" htmlFor="account_number">
                                             No. Rekening/No. E-Wallet <span className="text-red-500">*</span>
                                         </FieldLabel>
                                         <Input
@@ -561,10 +570,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel
-                                                                    className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
-                                                                    htmlFor="shipping"
-                                                                >
+                                                                <FieldLabel className="text-slate-700" htmlFor="shipping">
                                                                     Jenis Pengiriman <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Select
@@ -599,10 +605,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel
-                                                                    className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
-                                                                    htmlFor="use_by_date"
-                                                                >
+                                                                <FieldLabel className="text-slate-700" htmlFor="use_by_date">
                                                                     Tanggal digunakan <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Input
@@ -627,10 +630,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field: itemField, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid} className="col-span-1">
-                                                                <FieldLabel
-                                                                    className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
-                                                                    htmlFor="rent_periode"
-                                                                >
+                                                                <FieldLabel className="text-slate-700" htmlFor="rent_periode">
                                                                     Lama Sewa (Hari) <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Input
@@ -663,10 +663,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                                                     return (
                                                                         <Field data-invalid={fieldState.invalid}>
-                                                                            <FieldLabel
-                                                                                className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
-                                                                                htmlFor="estimated_delivery_date"
-                                                                            >
+                                                                            <FieldLabel className="text-slate-700" htmlFor="estimated_delivery_date">
                                                                                 Estimasi Pengiriman
                                                                             </FieldLabel>
                                                                             <Input
@@ -700,10 +697,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                                                     return (
                                                                         <Field data-invalid={fieldState.invalid}>
-                                                                            <FieldLabel
-                                                                                className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
-                                                                                htmlFor="estimated_return_date"
-                                                                            >
+                                                                            <FieldLabel className="text-slate-700" htmlFor="estimated_return_date">
                                                                                 Estimasi Pengembalian
                                                                             </FieldLabel>
                                                                             <Input
@@ -770,7 +764,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         render={({ field, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
                                                                 <ProductSelect
-                                                                    state={fieldState}
                                                                     value={field.value}
                                                                     onChange={(val) => field.onChange(val)}
                                                                     availableProducts={availableProducts ?? []}
@@ -788,10 +781,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field: itemField, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel
-                                                                    htmlFor="ukuran"
-                                                                    className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
-                                                                >
+                                                                <FieldLabel htmlFor="ukuran" className="text-slate-700">
                                                                     Ukuran <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Select
@@ -828,19 +818,16 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                     />
                                                     {/* Type */}
                                                     <Controller
-                                                        name={`items.${index}.type_id`}
+                                                        name={`items.${index}.type`}
                                                         control={control}
                                                         render={({ field: itemField, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel
-                                                                    htmlFor="type"
-                                                                    className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
-                                                                >
+                                                                <FieldLabel htmlFor="type" className="text-slate-700">
                                                                     Tipe
                                                                 </FieldLabel>
                                                                 <Select
-                                                                    onValueChange={(val) => itemField.onChange(Number(val))}
-                                                                    value={itemField.value ? itemField.value.toString() : undefined}
+                                                                    onValueChange={(val) => itemField.onChange(val === '0' ? null : val)}
+                                                                    value={itemField.value ? itemField.value : '0'}
                                                                     name={itemField.name}
                                                                     disabled={!item?.product_id}
                                                                 >
@@ -855,17 +842,12 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                             Pilih tipe
                                                                         </SelectItem>
                                                                         {getSelectedProduct(item) &&
-                                                                        (getSelectedProduct(item)?.types?.length ?? 0) > 0 ? (
+                                                                            (getSelectedProduct(item)?.types?.length ?? 0) > 0 &&
                                                                             getSelectedProduct(item)?.types?.map((type) => (
-                                                                                <SelectItem key={type.id} value={type.id.toString()}>
+                                                                                <SelectItem key={type.id} value={type.name}>
                                                                                     {type.name}
                                                                                 </SelectItem>
-                                                                            ))
-                                                                        ) : (
-                                                                            <SelectItem disabled value={'0'} className="text-slate-700">
-                                                                                Tidak ada tipe tersedia
-                                                                            </SelectItem>
-                                                                        )}
+                                                                            ))}
                                                                     </SelectContent>
                                                                 </Select>
                                                                 {fieldState.invalid && (
@@ -885,10 +867,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                                             return (
                                                                 <Field data-invalid={fieldState.invalid}>
-                                                                    <FieldLabel
-                                                                        htmlFor={`qty-${index}`}
-                                                                        className={fieldState.error ? 'text-red-500' : 'text-slate-700'}
-                                                                    >
+                                                                    <FieldLabel htmlFor={`qty-${index}`} className="text-slate-700">
                                                                         Jumlah <span className="text-red-500">*</span>
                                                                     </FieldLabel>
                                                                     <Input
@@ -931,7 +910,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                     product_id: 0,
                                     size_id: 0,
                                     shipping: SHIPPING_OPTIONS[0].value,
-                                    type_id: 0,
+                                    type: '',
                                     quantity: 1,
                                     rent_periode: 1,
                                     use_by_date: addDays(new Date(), 1),
@@ -1009,7 +988,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                     <CardFooter className="mt-5 w-full flex-col gap-2 md:flex-row">
                         <Button
                             type="button"
-                            onClick={clearForm}
+                            onClick={() => clearForm('reset')}
                             className="w-full flex-1 cursor-pointer rounded-none border-none bg-slate-200 text-slate-800 transition-all duration-600 hover:bg-slate-300"
                         >
                             Reset Formulir
@@ -1019,7 +998,13 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             form="order-form-rhf"
                             className="w-full flex-1 cursor-pointer rounded-none bg-slate-800 text-slate-50 transition-all duration-400 hover:bg-slate-900"
                         >
-                            Proses Pesanan
+                            {loading ? (
+                                <>
+                                    <Loader2 className="h-5 w-5 animate-spin text-white" /> <span>Memproses...</span>
+                                </>
+                            ) : (
+                                'Proses Pesanan'
+                            )}
                         </Button>
                     </CardFooter>
                 </form>

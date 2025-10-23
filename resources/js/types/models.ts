@@ -89,6 +89,7 @@ export interface Order {
     total_rent_price?: number;
     total_deposit?: number;
     first_product_name?: string | null;
+    created_by?: string | null;
 }
 
 export interface OrderItem {

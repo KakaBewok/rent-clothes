@@ -23,6 +23,7 @@ class Order extends Model
         'address',
         'status',
         'desc',
+        'created_by'
     ];
 
     public function items()

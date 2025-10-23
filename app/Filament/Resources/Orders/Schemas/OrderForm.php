@@ -92,6 +92,7 @@ class OrderForm
                         Select::make('status')
                             ->label('Order Status')
                             ->options([
+                                'pending'  => 'Pending',
                                 'process'  => 'Process',
                                 'shipped'   => 'Shipped',
                                 'returned'  => 'Returned',
@@ -150,11 +151,28 @@ class OrderForm
                                     ->afterStateUpdated(function ($state, callable $set) {
                                         $set('quantity', Size::find($state)?->quantity);
                                     }),
+
                                 Select::make('type')
-                                    ->options([
-                                        'Hijab' => 'Hijab',
-                                        'Non Hijab'   => 'Non Hijab',
-                                    ])->nullable(),
+                                    ->label('Tipe')
+                                    ->options(function (callable $get) {
+                                        $productId = $get('product_id');
+                                        
+                                        if (!$productId) {
+                                            return [];
+                                        }
+
+                                        $product = Product::with('types')->find($productId);
+
+                                        if (!$product) {
+                                            return [];
+                                        }
+                                        return $product->types->pluck('name', 'name')->toArray();
+                                    })
+                                    ->searchable()
+                                    ->preload()
+                                    ->reactive()
+                                    ->disabled(fn (callable $get) => !$get('product_id'))
+                                    ->nullable(),
                                 TextInput::make('quantity')
                                     ->numeric()
                                     ->required()

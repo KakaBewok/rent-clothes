@@ -6,10 +6,8 @@ import { cn } from '@/lib/utils';
 import { Product } from '@/types/models';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import * as React from 'react';
-import { ControllerFieldState } from 'react-hook-form';
 
 interface ProductSelectProps {
-    state: ControllerFieldState;
     value?: number;
     onChange: (value: number | undefined) => void;
     availableProducts: Product[];
@@ -19,7 +17,6 @@ interface ProductSelectProps {
 }
 
 export function ProductSelect({
-    state,
     value,
     onChange,
     availableProducts,
@@ -33,7 +30,7 @@ export function ProductSelect({
 
     return (
         <div className="w-full space-y-1">
-            <FieldLabel className={state.error ? 'text-red-500' : 'text-slate-700'}>
+            <FieldLabel className="text-slate-700">
                 {label} <span className="text-red-500">*</span>
             </FieldLabel>
 

@@ -26,6 +26,7 @@ class ProductController extends Controller
         return response()->json($productData);
     }
 
+    // for auto complete @search field
     public function show(Request $request)
     { 
         $params = $this->constructParamsFromRequest($request);

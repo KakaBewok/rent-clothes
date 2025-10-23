@@ -56,6 +56,7 @@ class OrdersTable
                 SelectFilter::make('status')
                     ->label('Order Status')
                     ->options([
+                        'pending'   => 'Pending',
                         'process'   => 'Process',
                         'shipped'   => 'Shipped',
                         'returned'  => 'Returned',

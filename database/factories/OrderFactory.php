@@ -26,6 +26,7 @@ class OrderFactory extends Factory
             'address' => $this->faker->address,
             'status' => $this->faker->randomElement(['process', 'shipped', 'returned', 'cancel']),
             'desc' => $this->faker->sentence,
+            'created_by' => $this->faker->randomElement(['Customer', 'Admin']),
         ];
     }
 }

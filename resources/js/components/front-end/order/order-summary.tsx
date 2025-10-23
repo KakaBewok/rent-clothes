@@ -54,7 +54,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ fields, watch, getSelectedP
                             const item = watch(`items.${index}`);
                             const product = getSelectedProduct(item);
                             const size = product?.sizes?.find((s) => s.id === item?.size_id)?.size ?? '-';
-                            const type = product?.types?.find((t) => t.id === item?.type_id)?.name ?? '-';
+                            // const type = product?.types?.find((t) => t.id === item?.type_id)?.name ?? '-';
                             const estimatedReturn = item.use_by_date && item.rent_periode ? addDays(item.use_by_date, item.rent_periode) : null;
                             const estimatedDelivery =
                                 item.use_by_date && item.shipping ? subDays(item.use_by_date, item.shipping === 'Same day' ? 1 : 2) : null;
@@ -71,7 +71,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ fields, watch, getSelectedP
                                         <p>: {size}</p>
 
                                         <p className="font-semibold">Tipe</p>
-                                        <p>: {type}</p>
+                                        <p>: {item.type ?? '-'}</p>
 
                                         <p className="font-semibold">Jumlah</p>
                                         <p>: {item?.quantity ?? 1}</p>
