@@ -96,7 +96,7 @@ class HomeController extends Controller
 
         $this->getExtraFilters($query, $extraFilters, $isAvailable);
 
-        $products = $query->paginate(4);
+        $products = $query->paginate(24);
 
         return [
             'data' => $products->items(),
