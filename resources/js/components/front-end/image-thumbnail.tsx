@@ -16,7 +16,7 @@ const ImageThumbnail = ({ img, i, selectedImage, setSelectedImage }: ImageThumbn
             onClick={() => setSelectedImage(img)}
             className={`relative cursor-pointer overflow-hidden border-2 ${selectedImage === img ? 'border-first' : 'border-transparent'}`}
         >
-            {!isImageLoaded && <div className="absolute inset-0 z-10 h-25 w-full animate-pulse bg-slate-400" />}
+            {!isImageLoaded && <div className="absolute inset-0 z-10 h-25 w-full animate-pulse bg-slate-100" />}
 
             <img
                 src={`/storage/${img}`}

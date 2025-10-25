@@ -12,7 +12,7 @@ const BannerImage: React.FC<BannerImageProps> = ({ src, alt, className, loading 
 
     return (
         <div className={`relative overflow-hidden ${className}`}>
-            {!loaded && <div className="absolute inset-0 animate-pulse bg-slate-400" />}
+            {!loaded && <div className="absolute inset-0 animate-pulse bg-slate-100" />}
 
             <img
                 src={src}
