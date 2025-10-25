@@ -1,5 +1,6 @@
 import { Product } from '@/types/models';
 import { useEffect, useState } from 'react';
+import ImageThumbnail from './image-thumbnail';
 import ProductModalDetails from './product-modal-details';
 
 interface ProductModalContentProps {
@@ -37,15 +38,16 @@ const ProductModalContent = ({ product, contact, onClose, selectedImage, setSele
                         {(images ? [cover_image, ...images] : [])
                             .filter((img): img is string => Boolean(img))
                             .map((img, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => setSelectedImage(img)}
-                                    className={`cursor-pointer overflow-hidden border-2 ${
-                                        selectedImage === img ? 'border-first' : 'border-transparent'
-                                    }`}
-                                >
-                                    <img src={`/storage/${img}`} alt={`Thumbnail ${i + 1}`} className="h-25 w-full object-cover" />
-                                </button>
+                                <ImageThumbnail key={i} img={img} i={i} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
+                                // <button
+                                //     key={i}
+                                //     onClick={() => setSelectedImage(img)}
+                                //     className={`cursor-pointer overflow-hidden border-2 ${
+                                //         selectedImage === img ? 'border-first' : 'border-transparent'
+                                //     }`}
+                                // >
+                                //     <img src={`/storage/${img}`} alt={`Thumbnail ${i + 1}`} className="h-25 w-full object-cover" />
+                                // </button>
                             ))}
                     </div>
                 </div>

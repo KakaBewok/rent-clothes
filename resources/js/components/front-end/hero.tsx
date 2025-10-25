@@ -2,6 +2,7 @@ import { Carousel, CarouselApi, CarouselContent, CarouselItem } from '@/componen
 import { Banner } from '@/types/models';
 import Autoplay from 'embla-carousel-autoplay';
 import { useEffect, useState } from 'react';
+import BannerImage from './banner-image';
 
 const Hero = ({ banners }: { banners: Banner[] }) => {
     const [api, setApi] = useState<CarouselApi>();
@@ -37,12 +38,13 @@ const Hero = ({ banners }: { banners: Banner[] }) => {
                     {slides.map((slide) => (
                         <CarouselItem key={slide.key}>
                             <div className="w-full flex-shrink-0">
-                                <img
+                                {/* <img
                                     src={`/storage/${slide.image}`}
                                     loading="lazy"
                                     alt={slide.title}
                                     className="h-[300px] w-full object-contain object-center md:h-[400px]"
-                                />
+                                /> */}
+                                <BannerImage src={`/storage/${slide.image}`} alt={slide.title} className="h-[300px] md:h-[400px]" loading="lazy" />
                             </div>
                         </CarouselItem>
                     ))}
