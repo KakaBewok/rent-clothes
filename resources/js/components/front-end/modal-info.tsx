@@ -24,7 +24,7 @@ const ModalInfo = ({ setModalInfo, modalInfo, showHint }: ModalInfoProps) => {
                 <CarouselContent>
                     {modalInfo?.map((slide, i) => (
                         <CarouselItem key={i}>
-                            <div className="relative flex h-full w-full flex-shrink-0 items-center justify-center overflow-hidden">
+                            <div className="flex h-full w-full flex-shrink-0 items-center justify-center">
                                 {/* <img
                                     src={`/storage/${slide}`}
                                     loading="lazy"
