@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { InputGroup, InputGroupTextarea } from '@/components/ui/input-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AppSetting, Product } from '@/types/models';
+import { formatWhatsAppNumber } from '@/utils/format';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from '@inertiajs/react';
 import axios from 'axios';
@@ -69,6 +70,8 @@ const orderItemSchema = z.object({
     quantity: z.number().min(1, 'Minimal 1.'),
     rent_periode: z.number().min(1, 'Minimal 1 hari.'),
     shipping: z.string().min(1, 'Jenis pengiriman wajib diisi.'),
+    product_name: z.string().optional(),
+    size_label: z.string().optional(),
 
     use_by_date: z.date().min(startOfDay(addDays(new Date(), 1)), { message: 'Minimal digunakan untuk besok.' }),
     estimated_delivery_date: z.date().min(startOfDay(new Date()), { message: 'Minimal dikirim hari ini.' }),
@@ -148,7 +151,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
         },
     });
 
-    const { control, handleSubmit, watch } = form;
+    const { control, handleSubmit, watch, getValues, setValue } = form;
     const { fields, append, remove } = useFieldArray({
         control,
         name: 'items',
@@ -184,6 +187,94 @@ export default function OrderForm({ setting }: OrderFormProps) {
         }
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const createWhatsAppMessage = (payload: any): string => {
+        const message = encodeURIComponent(
+            `Halo! \n\nAku udah isi form order, berikut detail pesanannya:\n\n` +
+                `Nama: ${payload.name}\n` +
+                `No. HP: ${payload.phone_number}\n` +
+                `Expedisi: ${payload.expedition}\n` +
+                `Alamat: ${payload.address}\n\n` +
+                `Catatan: ${payload.desc ?? '-'}\n\n` +
+                `Daftar Item:\n` +
+                payload.items
+                    .map(
+                        (item: OrderItemData, i: number) =>
+                            `${i + 1}. Produk: ${item.product_name}\n
+                            Ukuran: ${item.size_label}\n
+                            Tipe: ${item.type ?? '-'}\n
+                            Jumlah: ${item.quantity}\n
+                            Jenis Pengiriman: ${item.shipping}\n
+                            Durasi Sewa: ${item.rent_periode} hari\n 
+                            Tanggal digunakan: ${format(item.use_by_date, 'EEE, dd MMM yyyy', { locale: id })}`,
+                    )
+                    .join('\n\n') +
+                `\n\nMohon konfirmasi ya, terima kasih.`,
+        );
+
+        return `https://wa.me/${formatWhatsAppNumber(setting.whatsapp_number ?? '628877935678')}?text=${message}`;
+    };
+
+    // const onSubmit = (data: OrderFormData) => {
+    //     if (!isAgreed) {
+    //         toast.warning('Jangan lupa centang persetujuan dulu sebelum lanjut.');
+    //         return;
+    //     }
+
+    //     setLoading(true);
+
+    //     const computedItems = data.items.map((item) => {
+    //         const delivery = item.use_by_date && item.shipping ? subDays(new Date(item.use_by_date), item.shipping === 'Same day' ? 1 : 2) : null;
+    //         const returnDate = item.use_by_date && item.rent_periode ? addDays(new Date(item.use_by_date), item.rent_periode) : null;
+
+    //         return {
+    //             ...item,
+    //             estimated_delivery_date: delivery ? delivery.toISOString().split('T')[0] : '',
+    //             estimated_return_date: returnDate ? returnDate.toISOString().split('T')[0] : '',
+    //             use_by_date: item.use_by_date ? new Date(item.use_by_date).toISOString().split('T')[0] : '',
+    //         };
+    //     });
+
+    //     const payload = {
+    //         ...data,
+    //         items: computedItems,
+    //         agreement: data.agreement ? 1 : 0,
+    //     };
+
+    //     const formData = new FormData();
+
+    //     Object.entries(payload).forEach(([key, value]) => {
+    //         if (key === 'identity_image' && value instanceof File) {
+    //             formData.append(key, value);
+    //         } else if (key !== 'items') {
+    //             formData.append(key, String(value ?? ''));
+    //         }
+    //     });
+
+    //     payload.items.forEach((item, index) => {
+    //         Object.entries(item).forEach(([field, val]) => {
+    //             formData.append(`items[${index}][${field}]`, String(val ?? ''));
+    //         });
+    //     });
+
+    //     router.post(route('order.store'), formData, {
+    //         forceFormData: true,
+    //         onSuccess: (page) => {
+    //             toast.dismiss();
+    //             toast.success('Pesanan berhasil disimpan!');
+    //             console.log('Response:', page.props);
+    //             clearForm('submit');
+    //         },
+    //         onError: (errors) => {
+    //             toast.dismiss();
+    //             toast.error('Terjadi kesalahan, periksa kembali data.');
+    //             console.error('Error:', errors);
+    //         },
+    //         onFinish: () => setLoading(false),
+    //     });
+    // };
+
+    //new
     const onSubmit = (data: OrderFormData) => {
         if (!isAgreed) {
             toast.warning('Jangan lupa centang persetujuan dulu sebelum lanjut.');
@@ -228,14 +319,21 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
         router.post(route('order.store'), formData, {
             forceFormData: true,
-            onSuccess: (page) => {
+            onSuccess: () => {
                 toast.dismiss();
-                toast.success('Pesanan berhasil disimpan!');
-                console.log('Response:', page.props);
+                setLoading(false);
+
+                const whatsAppUrl = createWhatsAppMessage(payload);
+                console.log(whatsAppUrl);
+
+                window.open(whatsAppUrl, '_blank');
+
+                toast.success('Pesanan berhasil disimpan! Kamu lagi diarahkan ke WhatsApp...');
                 clearForm('submit');
             },
             onError: (errors) => {
                 toast.dismiss();
+                setLoading(false);
                 toast.error('Terjadi kesalahan, periksa kembali data.');
                 console.error('Error:', errors);
             },
@@ -299,6 +397,12 @@ export default function OrderForm({ setting }: OrderFormProps) {
     };
 
     const formatDateForInput = (d?: Date | null) => (d ? format(d, 'yyyy-MM-dd') : '');
+
+    const updateItem = (index: number, data: Partial<OrderItemData>) => {
+        const items = getValues('items');
+        const updated = { ...items[index], ...data };
+        setValue(`items.${index}`, updated);
+    };
 
     return (
         <div className="w-full max-w-2xl py-10">
@@ -767,7 +871,16 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                             <Field data-invalid={fieldState.invalid}>
                                                                 <ProductSelect
                                                                     value={field.value}
-                                                                    onChange={(val) => field.onChange(val)}
+                                                                    // onChange={(val) => field.onChange(val)}
+                                                                    onChange={(val) => {
+                                                                        field.onChange(val);
+                                                                        const selected = availableProducts.find((p) => p.id === val);
+                                                                        if (selected) {
+                                                                            updateItem(index, {
+                                                                                product_name: selected.name,
+                                                                            });
+                                                                        }
+                                                                    }}
                                                                     availableProducts={availableProducts ?? []}
                                                                     loading={loading}
                                                                 />
@@ -787,7 +900,20 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                     Ukuran <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Select
-                                                                    onValueChange={(val) => itemField.onChange(Number(val))}
+                                                                    // onValueChange={(val) => itemField.onChange(Number(val))}
+                                                                    onValueChange={(val) => {
+                                                                        itemField.onChange(Number(val));
+
+                                                                        const selectedProduct = getSelectedProduct(item);
+                                                                        const selectedSize = selectedProduct?.sizes?.find(
+                                                                            (s) => s.id === Number(val),
+                                                                        );
+                                                                        if (selectedSize) {
+                                                                            updateItem(index, {
+                                                                                size_label: selectedSize.size,
+                                                                            });
+                                                                        }
+                                                                    }}
                                                                     value={itemField.value ? itemField.value.toString() : undefined}
                                                                     name={itemField.name}
                                                                     disabled={!item?.product_id}
