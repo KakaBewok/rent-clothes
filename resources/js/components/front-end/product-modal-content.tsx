@@ -23,6 +23,12 @@ const ProductModalContent = ({ product, contact, onClose, selectedImage, setSele
         return () => clearTimeout(timer);
     }, []);
 
+    const handlePreview = (image: string) => {
+        const img = new Image();
+        img.src = `/storage/${image}`;
+        img.onload = () => setPreviewImage(image);
+    };
+
     return (
         <div className="relative z-10 mx-auto flex h-[90vh] w-full max-w-5xl flex-col bg-white p-4 shadow-sm md:flex-row">
             {/* close button */}
@@ -39,15 +45,6 @@ const ProductModalContent = ({ product, contact, onClose, selectedImage, setSele
                             .filter((img): img is string => Boolean(img))
                             .map((img, i) => (
                                 <ImageThumbnail key={i} img={img} i={i} selectedImage={selectedImage} setSelectedImage={setSelectedImage} />
-                                // <button
-                                //     key={i}
-                                //     onClick={() => setSelectedImage(img)}
-                                //     className={`cursor-pointer overflow-hidden border-2 ${
-                                //         selectedImage === img ? 'border-first' : 'border-transparent'
-                                //     }`}
-                                // >
-                                //     <img src={`/storage/${img}`} alt={`Thumbnail ${i + 1}`} className="h-25 w-full object-cover" />
-                                // </button>
                             ))}
                     </div>
                 </div>
@@ -55,7 +52,8 @@ const ProductModalContent = ({ product, contact, onClose, selectedImage, setSele
                 {/* Main image */}
                 <div
                     className="relative flex h-full flex-1 cursor-zoom-in items-center justify-center"
-                    onClick={() => setPreviewImage(selectedImage)}
+                    // onClick={() => setPreviewImage(selectedImage)}
+                    onClick={() => handlePreview(selectedImage)}
                 >
                     <img
                         src={
