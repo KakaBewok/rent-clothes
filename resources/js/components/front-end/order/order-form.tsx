@@ -90,7 +90,7 @@ const orderFormSchema = z.object({
                     message: ' Hanya menerima format jpg, jpeg, png atau webp.',
                 })
                 .refine((file) => file.size <= MAX_FILE_SIZE * 1024, {
-                    message: ` Gambar lebih dari ${MAX_FILE_SIZE / 1000} MB.`,
+                    message: ` Gambar lebih dari ${MAX_FILE_SIZE / 1000} kb.`,
                 }),
             z.string(),
         ])
@@ -190,23 +190,17 @@ export default function OrderForm({ setting }: OrderFormProps) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createWhatsAppMessage = (payload: any): string => {
         const message = encodeURIComponent(
-            `Halo! \n\nAku udah isi form order, berikut detail pesanannya:\n\n` +
+            `Halo! \nAku udah isi form order, berikut detail pesanannya:\n\n` +
                 `Nama: ${payload.name}\n` +
                 `No. HP: ${payload.phone_number}\n` +
                 `Expedisi: ${payload.expedition}\n` +
-                `Alamat: ${payload.address}\n\n` +
-                `Catatan: ${payload.desc ?? '-'}\n\n` +
+                `Alamat: ${payload.address}\n` +
+                `Catatan: ${payload.desc ?? '-'}\n` +
                 `Daftar Item:\n` +
                 payload.items
                     .map(
                         (item: OrderItemData, i: number) =>
-                            `${i + 1}. Produk: ${item.product_name}\n
-                            Ukuran: ${item.size_label}\n
-                            Tipe: ${item.type ?? '-'}\n
-                            Jumlah: ${item.quantity}\n
-                            Jenis Pengiriman: ${item.shipping}\n
-                            Durasi Sewa: ${item.rent_periode} hari\n 
-                            Tanggal digunakan: ${format(item.use_by_date, 'EEE, dd MMM yyyy', { locale: id })}`,
+                            `${i + 1}. Produk: ${item.product_name}\n Ukuran: ${item.size_label}\n Tipe: ${item.type ?? '-'}\n Jumlah: ${item.quantity}\n Jenis Pengiriman: ${item.shipping}\n Durasi Sewa: ${item.rent_periode} hari\n Tanggal digunakan: ${format(item.use_by_date, 'EEE, dd MMM yyyy', { locale: id })}`,
                     )
                     .join('\n\n') +
                 `\n\nMohon konfirmasi ya, terima kasih.`,
