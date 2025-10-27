@@ -51,12 +51,10 @@ function HomePage({ branchs, products, banners, appSetting, showModal, baseFilte
 
     const onCloseProductModal = () => {
         setSelectedProduct(null);
-        setTimeout(() => {
-            window.scrollTo({
-                top: scrollPosition,
-                behavior: 'smooth',
-            });
-        }, 0);
+
+        requestAnimationFrame(() => {
+            window.scrollTo(0, scrollPosition);
+        });
     };
 
     const safeSetting: AppSetting = appSetting ?? {
