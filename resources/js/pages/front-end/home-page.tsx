@@ -31,8 +31,11 @@ function HomePage({ branchs, products, banners, appSetting, showModal, baseFilte
     const [modalInfo, setModalInfo] = useState<string[] | null>(null);
     const [showHint, setShowHint] = useState<boolean>(true);
     const [showScheduleModal, setShowScheduleModal] = useState<boolean>(false);
+    const [scrollPosition, setScrollPosition] = useState<number>(0);
 
     const openProduct = async (id: number) => {
+        setScrollPosition(window.pageYOffset);
+
         setLoading(true);
         try {
             const res = await axios.get(`/api/products/stock/${id}`, {
@@ -48,6 +51,12 @@ function HomePage({ branchs, products, banners, appSetting, showModal, baseFilte
 
     const onCloseProductModal = () => {
         setSelectedProduct(null);
+        setTimeout(() => {
+            window.scrollTo({
+                top: scrollPosition,
+                behavior: 'smooth',
+            });
+        }, 0);
     };
 
     const safeSetting: AppSetting = appSetting ?? {

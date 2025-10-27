@@ -9,15 +9,15 @@ It allows customers to browse, book, and manage rental clothing easily, while ad
 
 ### 🌐 Public Website
 
-- Browse clothing collections by category, size, and color.
+- Browse clothing collections by category, size, price, brand and color.
 - Detailed product pages with gallery and rental information.
 - Online booking with custom rental period and size selection.
 - Responsive and mobile-friendly UI.
 
 ### 🛠️ Admin Panel
 
-- Manage products, sizes, stock, and galleries.
-- Customer & order management (pending, approved, returned).
+- Manage products, sizes, stock and galleries.
+- Customer & order management (pending, process, shipping, returned and cancel).
 - Analytics & reports:
     - Total orders
     - Orders by status
@@ -34,4 +34,6 @@ It allows customers to browse, book, and manage rental clothing easily, while ad
 - React — Frontend
 - Filament 4 — Admin panel
 - TailwindCSS — Styling & design system
-- Database: MySQL / PostgreSQL
+- Database: MySQL
+
+created by \_kkbwk

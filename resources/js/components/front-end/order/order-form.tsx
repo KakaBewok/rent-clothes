@@ -139,10 +139,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
                     type: '',
                     quantity: 1,
                     rent_periode: 1,
-                    shipping: SHIPPING_OPTIONS[0].value,
-                    use_by_date: addDays(new Date(), 1),
-                    estimated_delivery_date: new Date(),
-                    estimated_return_date: addDays(new Date(), 2),
+                    shipping: SHIPPING_OPTIONS[1].value,
+                    use_by_date: startOfDay(addDays(startOfDay(new Date()), 2)),
+                    estimated_delivery_date: startOfDay(new Date()),
+                    estimated_return_date: startOfDay(addDays(startOfDay(new Date()), 3)),
                 },
             ],
         },
@@ -297,6 +297,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
             useByDate: formattedUseByDate,
         };
     };
+
+    const formatDateForInput = (d?: Date | null) => (d ? format(d, 'yyyy-MM-dd') : '');
 
     return (
         <div className="w-full max-w-2xl py-10">
@@ -611,7 +613,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                 <Input
                                                                     type="date"
                                                                     id="use_by_date"
-                                                                    value={field.value ? field.value.toISOString().substring(0, 10) : ''}
+                                                                    value={formatDateForInput(field.value as Date | undefined)}
                                                                     onChange={(e) =>
                                                                         field.onChange(e.target.value ? new Date(e.target.value) : undefined)
                                                                     }
@@ -656,7 +658,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                 name={`items.${index}.estimated_delivery_date`}
                                                                 control={control}
                                                                 render={({ fieldState }) => {
-                                                                    const estimatedDate =
+                                                                    const estimatedDelivery =
                                                                         item.use_by_date && item.shipping
                                                                             ? subDays(item.use_by_date, item.shipping === 'Same day' ? 1 : 2)
                                                                             : null;
@@ -670,8 +672,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                                 type="date"
                                                                                 id="estimated_delivery_date"
                                                                                 value={
-                                                                                    estimatedDate
-                                                                                        ? estimatedDate.toISOString().substring(0, 10) // format yyyy-MM-dd
+                                                                                    estimatedDelivery
+                                                                                        ? formatDateForInput(estimatedDelivery as Date | undefined) // format yyyy-MM-dd
                                                                                         : ''
                                                                                 }
                                                                                 readOnly
@@ -705,7 +707,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                                 id="estimated_return_date"
                                                                                 value={
                                                                                     estimatedReturn
-                                                                                        ? estimatedReturn.toISOString().substring(0, 10)
+                                                                                        ? formatDateForInput(estimatedReturn as Date | undefined)
                                                                                         : ''
                                                                                 }
                                                                                 readOnly
@@ -909,13 +911,13 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 append({
                                     product_id: 0,
                                     size_id: 0,
-                                    shipping: SHIPPING_OPTIONS[0].value,
                                     type: '',
                                     quantity: 1,
                                     rent_periode: 1,
-                                    use_by_date: addDays(new Date(), 1),
-                                    estimated_delivery_date: new Date(),
-                                    estimated_return_date: addDays(new Date(), 2),
+                                    shipping: SHIPPING_OPTIONS[1].value,
+                                    use_by_date: startOfDay(addDays(startOfDay(new Date()), 2)),
+                                    estimated_delivery_date: startOfDay(new Date()),
+                                    estimated_return_date: startOfDay(addDays(startOfDay(new Date()), 3)),
                                 })
                             }
                             className="mt-4 w-full cursor-pointer rounded-none border-1 border-dashed border-slate-400 !bg-white text-sm text-slate-700 transition duration-500 hover:bg-slate-100 hover:text-slate-700"
