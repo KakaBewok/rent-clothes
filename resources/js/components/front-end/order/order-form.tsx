@@ -321,7 +321,21 @@ export default function OrderForm({ setting }: OrderFormProps) {
                 const whatsAppUrl = createWhatsAppMessage(payload);
                 window.open(whatsAppUrl, '_blank');
 
-                toast.success('Pesanan berhasil disimpan! Kamu lagi diarahkan ke WhatsApp...');
+                toast.success(<p className="text-sm font-semibold">Pesanan berhasil disimpan!</p>, {
+                    description: (
+                        <div className="mt-2 flex flex-col gap-2">
+                            <p className="text-xs">Jika tidak ter-redirect otomatis, klik tombol di bawah ini:</p>
+                            <button
+                                onClick={() => window.open(whatsAppUrl, '_blank')}
+                                className="rounded-sm bg-green-500 px-3 py-1.5 text-sm text-white hover:bg-green-600"
+                            >
+                                Konfirmasi via WhatsApp
+                            </button>
+                        </div>
+                    ),
+                    duration: 60000,
+                });
+
                 clearForm('submit');
             },
             onError: (errors) => {
