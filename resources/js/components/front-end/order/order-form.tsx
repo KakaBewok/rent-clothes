@@ -193,17 +193,18 @@ export default function OrderForm({ setting }: OrderFormProps) {
             `Halo! \nAku udah isi form order, berikut detail pesanannya:\n\n` +
                 `Nama: ${payload.name}\n` +
                 `No. HP: ${payload.phone_number}\n` +
+                `Foto KTP: ${payload.identity_image ? `Sudah diupload` : `Belum diupload`}\n` +
                 `Expedisi: ${payload.expedition}\n` +
                 `Alamat: ${payload.address}\n` +
                 `Catatan: ${payload.desc ?? '-'}\n` +
-                `Daftar Item:\n` +
+                `Daftar Item:\n\n` +
                 payload.items
                     .map(
                         (item: OrderItemData, i: number) =>
-                            `${i + 1}. Produk: ${item.product_name}\n Ukuran: ${item.size_label}\n Tipe: ${item.type ?? '-'}\n Jumlah: ${item.quantity}\n Jenis Pengiriman: ${item.shipping}\n Durasi Sewa: ${item.rent_periode} hari\n Tanggal digunakan: ${format(item.use_by_date, 'EEE, dd MMM yyyy', { locale: id })}`,
+                            `${i + 1}. Produk: ${item.product_name}\n Ukuran: ${item.size_label}\n Tipe: ${item.type ?? '-'}\n Jumlah: ${item.quantity}\n Jenis Pengiriman: ${item.shipping}\n Durasi Sewa: ${item.rent_periode} hari\n Tanggal digunakan: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
                     )
                     .join('\n\n') +
-                `\n\nMohon konfirmasi ya, terima kasih.`,
+                `\n\nMohon konfirmasinya ya, terima kasih.`,
         );
 
         return `https://wa.me/${formatWhatsAppNumber(setting.whatsapp_number ?? '628877935678')}?text=${message}`;
@@ -283,9 +284,9 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
             return {
                 ...item,
-                estimated_delivery_date: delivery ? delivery.toISOString().split('T')[0] : '',
-                estimated_return_date: returnDate ? returnDate.toISOString().split('T')[0] : '',
-                use_by_date: item.use_by_date ? new Date(item.use_by_date).toISOString().split('T')[0] : '',
+                estimated_delivery_date: delivery ? format(delivery, 'yyyy-MM-dd') : '',
+                estimated_return_date: returnDate ? format(returnDate, 'yyyy-MM-dd') : '',
+                use_by_date: item.use_by_date ? format(new Date(item.use_by_date), 'yyyy-MM-dd') : '',
             };
         });
 
@@ -318,8 +319,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
                 setLoading(false);
 
                 const whatsAppUrl = createWhatsAppMessage(payload);
-                console.log(whatsAppUrl);
-
                 window.open(whatsAppUrl, '_blank');
 
                 toast.success('Pesanan berhasil disimpan! Kamu lagi diarahkan ke WhatsApp...');
