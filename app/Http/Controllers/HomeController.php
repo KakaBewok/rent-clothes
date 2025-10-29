@@ -80,7 +80,7 @@ class HomeController extends Controller
                     ), 0)
                     -
                     COALESCE((
-                        SELECT COUNT(*)
+                        SELECT COALESCE(SUM(oi.quantity), 0)
                         FROM order_items oi
                         JOIN orders o ON o.id = oi.order_id
                         WHERE oi.product_id = products.id
@@ -90,7 +90,7 @@ class HomeController extends Controller
                             DATE(oi.estimated_return_date) >= DATE(?)
                         )
                     ), 0)
-                ) >= 0
+                ) > 0
             ', ['process', 'shipped', $endDate, $startDate])
             ->with(['brand', 'types', 'priceDetail', 'sizes']);
 

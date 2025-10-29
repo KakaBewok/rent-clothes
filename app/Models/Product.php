@@ -100,16 +100,20 @@ class Product extends Model
             ->join('sizes', 'order_items.size_id', '=', 'sizes.id')
             
             // ✅ FIX: Pilih dan kelompokkan berdasarkan 'sizes.size' dari tabel yang sudah di-join
-            ->select('sizes.size', DB::raw('count(*) as total'))
-            ->groupBy('sizes.size')
-            ->pluck('total', 'sizes.size');
+            // ->select('sizes.size', DB::raw('count(*) as total'))
+            ->select('sizes.id as size_id', DB::raw('COALESCE(SUM(order_items.quantity),0) as total'))
+            // ->groupBy('sizes.size')
+            ->groupBy('sizes.id')
+            // ->pluck('total', 'sizes.size');
+            ->pluck('total', 'size_id');
 
         $stockBreakdown = [];
 
         // 3. Iterasi dan hitung sisa stok (Kode ini sudah benar)
         foreach ($availableSizes as $size) {
             $totalStockForSize = $size->quantity;
-            $rentedCountForSize = $rentedCountsBySize->get($size->size, 0);
+            // $rentedCountForSize = $rentedCountsBySize->get($size->size, 0);
+            $rentedCountForSize = (int) $rentedCountsBySize->get($size->id, 0);
             $remainingStock = $totalStockForSize - $rentedCountForSize;
 
             if ($remainingStock > 0) {

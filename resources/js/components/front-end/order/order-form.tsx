@@ -66,7 +66,7 @@ const orderItemSchema = z.object({
     id: z.string().optional(),
     product_id: z.number().min(1, 'Produk wajib diisi.'),
     size_id: z.number().min(1, 'Ukuran wajib diisi.'),
-    type: z.string().optional(),
+    type: z.string().nullable().optional(),
     quantity: z.number().min(1, 'Minimal 1.'),
     rent_periode: z.number().min(1, 'Minimal 1 hari.'),
     shipping: z.string().min(1, 'Jenis pengiriman wajib diisi.'),
@@ -352,7 +352,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
     };
 
     return (
-        <div className="w-full max-w-2xl py-10">
+        <div className="w-full max-w-[100vw] py-10 md:w-xl lg:w-2xl">
             <Toaster richColors position="top-center" />
             <Card className="rounded-sm border-none bg-white text-slate-800 shadow-none md:border md:border-slate-100 md:shadow-md">
                 <CardHeader>
@@ -1052,7 +1052,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                         </span>
                                     </div>
 
-                                    <label htmlFor="agreement" className="cursor-pointer text-sm leading-snug text-slate-700">
+                                    <label htmlFor="agreement" className="cursor-pointer text-xs leading-snug text-slate-700 md:text-sm">
                                         Saya setuju dengan syarat dan ketentuan serta memastikan data di atas sudah benar
                                     </label>
                                 </div>
