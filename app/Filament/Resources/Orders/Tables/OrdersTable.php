@@ -45,10 +45,11 @@ class OrdersTable
                 TextColumn::make('status')
                     ->badge()
                     ->colors([
-                        'primary' => 'process',
+                        'gray' => 'process',
                         'info'    => 'shipped',
                         'success' => 'returned',
                         'danger'  => 'cancel',
+                        'warning' => 'pending',
                     ])
                     ->formatStateUsing(fn($state) => ucfirst($state)),
             ])->defaultSort('created_at', 'desc')

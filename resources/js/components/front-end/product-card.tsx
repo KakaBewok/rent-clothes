@@ -1,4 +1,5 @@
 import { Product } from '@/types/models';
+import { useState } from 'react';
 import ProductCardContent from './product-card-content';
 
 interface ProductProps {
@@ -7,6 +8,7 @@ interface ProductProps {
 }
 
 const ProductCard = ({ product, onOpen }: ProductProps) => {
+    const [isImageLoaded, setIsImageLoaded] = useState<boolean>(false);
     const isAvailable = product.sizes?.some((size) => size.availability === '1') || false;
     return (
         <div key={product.id} className="group relative">
@@ -26,7 +28,10 @@ const ProductCard = ({ product, onOpen }: ProductProps) => {
 
                 {/* Product image */}
                 <div className="relative overflow-hidden">
-                    {!isAvailable && (
+                    {/* Skeleton loading */}
+                    {!isImageLoaded && <div className="absolute inset-0 animate-pulse bg-gray-400" />}
+
+                    {!isAvailable && isImageLoaded && (
                         <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-black/50">
                             <h1 className="text-md font-semibold text-white uppercase md:text-xl">Out of Stock</h1>
                         </div>
@@ -39,7 +44,9 @@ const ProductCard = ({ product, onOpen }: ProductProps) => {
                                 ? `/storage/${product.cover_image}`
                                 : 'https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-01.jpg'
                         }
-                        className={`${isAvailable ? 'group-hover:scale-105 group-hover:opacity-80' : ''} aspect-[2/3] w-full transform bg-gray-200 object-cover transition-all duration-300`}
+                        onLoad={() => setIsImageLoaded(true)}
+                        onError={() => setIsImageLoaded(true)}
+                        className={`${!isImageLoaded ? 'opacity-0' : 'opacity-100'} ${isAvailable ? 'group-hover:scale-105 group-hover:opacity-80' : ''} aspect-[2/3] w-full transform bg-gray-200 object-cover transition-all duration-300`}
                     />
                 </div>
 

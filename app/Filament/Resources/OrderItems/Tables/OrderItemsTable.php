@@ -48,10 +48,11 @@ class OrderItemsTable
                     ->label('Status')
                     ->badge()
                     ->colors([
-                        'primary' => 'process',
+                        'gray' => 'process',
                         'info'    => 'shipped',
                         'success' => 'returned',
                         'danger'  => 'cancel',
+                        'warning' => 'pending',
                     ])
                     ->formatStateUsing(fn($state) => ucfirst($state)),
             ])

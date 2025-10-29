@@ -210,66 +210,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
         return `https://wa.me/${formatWhatsAppNumber(setting.whatsapp_number ?? '628877935678')}?text=${message}`;
     };
 
-    // const onSubmit = (data: OrderFormData) => {
-    //     if (!isAgreed) {
-    //         toast.warning('Jangan lupa centang persetujuan dulu sebelum lanjut.');
-    //         return;
-    //     }
-
-    //     setLoading(true);
-
-    //     const computedItems = data.items.map((item) => {
-    //         const delivery = item.use_by_date && item.shipping ? subDays(new Date(item.use_by_date), item.shipping === 'Same day' ? 1 : 2) : null;
-    //         const returnDate = item.use_by_date && item.rent_periode ? addDays(new Date(item.use_by_date), item.rent_periode) : null;
-
-    //         return {
-    //             ...item,
-    //             estimated_delivery_date: delivery ? delivery.toISOString().split('T')[0] : '',
-    //             estimated_return_date: returnDate ? returnDate.toISOString().split('T')[0] : '',
-    //             use_by_date: item.use_by_date ? new Date(item.use_by_date).toISOString().split('T')[0] : '',
-    //         };
-    //     });
-
-    //     const payload = {
-    //         ...data,
-    //         items: computedItems,
-    //         agreement: data.agreement ? 1 : 0,
-    //     };
-
-    //     const formData = new FormData();
-
-    //     Object.entries(payload).forEach(([key, value]) => {
-    //         if (key === 'identity_image' && value instanceof File) {
-    //             formData.append(key, value);
-    //         } else if (key !== 'items') {
-    //             formData.append(key, String(value ?? ''));
-    //         }
-    //     });
-
-    //     payload.items.forEach((item, index) => {
-    //         Object.entries(item).forEach(([field, val]) => {
-    //             formData.append(`items[${index}][${field}]`, String(val ?? ''));
-    //         });
-    //     });
-
-    //     router.post(route('order.store'), formData, {
-    //         forceFormData: true,
-    //         onSuccess: (page) => {
-    //             toast.dismiss();
-    //             toast.success('Pesanan berhasil disimpan!');
-    //             console.log('Response:', page.props);
-    //             clearForm('submit');
-    //         },
-    //         onError: (errors) => {
-    //             toast.dismiss();
-    //             toast.error('Terjadi kesalahan, periksa kembali data.');
-    //             console.error('Error:', errors);
-    //         },
-    //         onFinish: () => setLoading(false),
-    //     });
-    // };
-
-    //new
     const onSubmit = (data: OrderFormData) => {
         if (!isAgreed) {
             toast.warning('Jangan lupa centang persetujuan dulu sebelum lanjut.');
@@ -323,11 +263,11 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                 toast.success(<p className="text-sm font-semibold">Pesanan berhasil disimpan!</p>, {
                     description: (
-                        <div className="mt-2 flex flex-col gap-2">
+                        <div className="mt-2 flex max-w-[90vw] flex-col gap-2">
                             <p className="text-xs">Jika tidak ter-redirect otomatis, klik tombol di bawah ini:</p>
                             <button
                                 onClick={() => window.open(whatsAppUrl, '_blank')}
-                                className="rounded-sm bg-green-500 px-3 py-1.5 text-sm text-white hover:bg-green-600"
+                                className="cursor-pointer rounded-sm bg-green-500 px-3 py-1.5 text-sm text-white transition-all duration-400 hover:bg-green-600"
                             >
                                 Konfirmasi via WhatsApp
                             </button>
