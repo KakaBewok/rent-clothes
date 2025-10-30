@@ -28,7 +28,7 @@ export function BrandSelect({ value, onChange, brands, placeholder = 'Choose Bra
                         role="combobox"
                         aria-expanded={open}
                         className={cn(
-                            'w-full cursor-pointer justify-between rounded-none border-2 px-2 py-2 text-sm text-slate-700 hover:bg-white dark:bg-white dark:hover:bg-white dark:hover:text-slate-700',
+                            'scrollbar-hide w-full cursor-pointer justify-between overflow-x-auto rounded-none border-2 px-2 py-2 text-sm text-slate-700 shadow-none hover:bg-white dark:bg-white dark:hover:bg-white dark:hover:text-slate-700',
                             value ? 'border-[#A27163] dark:border-[#A27163]' : 'border-white bg-white dark:border-white',
                         )}
                     >
@@ -37,9 +37,9 @@ export function BrandSelect({ value, onChange, brands, placeholder = 'Choose Bra
                     </Button>
                 </PopoverTrigger>
 
-                <PopoverContent className="mt-1 w-[var(--radix-popover-trigger-width)] rounded-none p-0 shadow-none">
+                <PopoverContent className="mt-1 mr-3 w-sm max-w-[80vw] rounded-none p-0 shadow-none md:w-[var(--radix-popover-trigger-width)]">
                     <Command>
-                        <CommandInput placeholder="Cari brand..." />
+                        <CommandInput placeholder="Cari..." />
                         <CommandList>
                             <CommandEmpty>Brand not found</CommandEmpty>
                             <CommandGroup>

@@ -14,7 +14,6 @@ const PaginationView = ({ meta }: { meta: PaginationMeta }) => {
     const to = Math.min(meta.current_page * meta.per_page, meta.total);
 
     return (
-        // <div className="mt-10 flex justify-center">
         <div className="mt-10 flex flex-col items-center gap-4">
             <Pagination>
                 <PaginationContent className="flex items-center gap-2">
