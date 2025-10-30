@@ -9,9 +9,8 @@ use Spatie\Sitemap\SitemapGenerator;
 
 
 Route::get('/generate-sitemap', function () {
-    SitemapGenerator::create('https://qatiarent-development.site')
+    SitemapGenerator::create('https://qatiarent.com')
         ->writeToFile(public_path('sitemap.xml'));
-
     return 'Sitemap generated!';
 });
 Route::get('/', [HomeController::class, 'index'])->name('home.index');

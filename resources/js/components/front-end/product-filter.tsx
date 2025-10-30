@@ -313,7 +313,7 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                         placeholder="Min. Price"
                         value={extraFilters?.minPrice != null ? Math.max(extraFilters.minPrice, 0) : ''}
                         onChange={(e) => setExtraFilters({ ...extraFilters, minPrice: e.target.value ? parseInt(e.target.value) : null })}
-                        className={`${extraFilters?.minPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none md:hidden`}
+                        className={`${extraFilters?.minPrice || extraFilters?.minPrice == 0 ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none md:hidden`}
                     />
 
                     <Input
@@ -321,7 +321,7 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                         placeholder="Max. Price"
                         value={extraFilters?.maxPrice != null ? Math.max(extraFilters.maxPrice, 0) : ''}
                         onChange={(e) => setExtraFilters({ ...extraFilters, maxPrice: e.target.value ? parseInt(e.target.value) : null })}
-                        className={`${extraFilters?.maxPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none md:hidden`}
+                        className={`${extraFilters?.maxPrice || extraFilters?.maxPrice == 0 ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none md:hidden`}
                     />
 
                     {/* price */}
@@ -330,7 +330,6 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                             type="number"
                             placeholder="Min. Price"
                             value={extraFilters?.minPrice != null ? Math.max(extraFilters.minPrice, 0) : ''}
-                            // onChange={(e) => setExtraFilters({ ...extraFilters, minPrice: e.target.value ? parseInt(e.target.value) : null })}
                             onChange={(e) => handlePriceChange(e, 'minPrice')}
                             className={`${extraFilters?.minPrice || extraFilters?.minPrice == 0 ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none`}
                         />
@@ -339,9 +338,8 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                             type="number"
                             placeholder="Max. Price"
                             value={extraFilters?.maxPrice != null ? Math.max(extraFilters.maxPrice, 0) : ''}
-                            // onChange={(e) => setExtraFilters({ ...extraFilters, maxPrice: e.target.value ? parseInt(e.target.value) : null })}
                             onChange={(e) => handlePriceChange(e, 'maxPrice')}
-                            className={`${extraFilters?.maxPrice ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none`}
+                            className={`${extraFilters?.maxPrice || extraFilters?.maxPrice == 0 ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none`}
                         />
                     </div>
 
