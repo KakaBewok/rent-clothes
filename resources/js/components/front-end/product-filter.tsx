@@ -5,6 +5,7 @@ import { router } from '@inertiajs/react';
 import axios from 'axios';
 import { Filter, Search, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { BrandSelect } from './brand-select';
 import FilterWithChip from './filter-with-chip';
 
 interface ProductFilterProps {
@@ -345,7 +346,18 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                     </div>
 
                     {/* Brand */}
-                    <select
+                    <BrandSelect
+                        value={extraFilters?.brand ?? null}
+                        onChange={(val) =>
+                            setExtraFilters({
+                                ...extraFilters,
+                                brand: val,
+                            })
+                        }
+                        brands={brands}
+                        placeholder="All Brands"
+                    />
+                    {/* <select
                         value={extraFilters?.brand || ''}
                         onChange={(e) =>
                             setExtraFilters({
@@ -361,7 +373,7 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                                 {b.name}
                             </option>
                         ))}
-                    </select>
+                    </select> */}
 
                     {/* Colors */}
                     <FilterWithChip

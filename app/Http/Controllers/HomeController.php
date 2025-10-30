@@ -96,6 +96,8 @@ class HomeController extends Controller
 
         $this->getExtraFilters($query, $extraFilters, $isAvailable);
 
+        $query->orderBy('upload_at', 'desc');
+
         $products = $query->paginate(24);
 
         return [

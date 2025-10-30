@@ -70,7 +70,7 @@ class ProductController extends Controller
                     ), 0)
                     -
                     COALESCE((
-                        SELECT COUNT(*)
+                        SELECT COALESCE(SUM(oi.quantity), 0)
                         FROM order_items oi
                         JOIN orders o ON o.id = oi.order_id
                         WHERE oi.product_id = products.id
