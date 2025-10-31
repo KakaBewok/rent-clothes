@@ -89,11 +89,51 @@ class OrdersTable
                     ])
                     ->query(function ($query, array $data) {
                         return $query
-                        ->when($data['start_shipping'], fn($q) => $q->whereDate('estimated_delivery_date', '>=', $data['start_shipping']))
-                        ->when($data['end_shipping'], fn($q) => $q->whereDate('estimated_delivery_date', '<=', $data['end_shipping']))
-                        ->when($data['start_transaction'], fn($q) => $q->whereDate('created_at', '>=', $data['start_transaction']))
-                        ->when($data['end_transaction'], fn($q) => $q->whereDate('created_at', '<=', $data['end_transaction']));
+                            ->when($data['start_shipping'], fn($q) =>
+                                $q->whereHas('items', fn($sub) =>
+                                    $sub->whereDate('estimated_delivery_date', '>=', $data['start_shipping'])
+                                )
+                            )
+                            ->when($data['end_shipping'], fn($q) =>
+                                $q->whereHas('items', fn($sub) =>
+                                    $sub->whereDate('estimated_delivery_date', '<=', $data['end_shipping'])
+                                )
+                            )
+                            ->when($data['start_transaction'], fn($q) =>
+                                $q->whereDate('created_at', '>=', $data['start_transaction'])
+                            )
+                            ->when($data['end_transaction'], fn($q) =>
+                                $q->whereDate('created_at', '<=', $data['end_transaction'])
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['start_shipping'] ?? null) {
+                            $indicators['start_shipping'] = 'Start Shipping: ' . \Carbon\Carbon::parse($data['start_shipping'])->format('d M Y');
+                        }
+
+                        if ($data['end_shipping'] ?? null) {
+                            $indicators['end_shipping'] = 'End Shipping: ' . \Carbon\Carbon::parse($data['end_shipping'])->format('d M Y');
+                        }
+
+                        if ($data['start_transaction'] ?? null) {
+                            $indicators['start_transaction'] = 'Start Transaction: ' . \Carbon\Carbon::parse($data['start_transaction'])->format('d M Y');
+                        }
+
+                        if ($data['end_transaction'] ?? null) {
+                            $indicators['end_transaction'] = 'End Transaction: ' . \Carbon\Carbon::parse($data['end_transaction'])->format('d M Y');
+                        }
+
+                        return $indicators;
                     }),
+                    // ->query(function ($query, array $data) {
+                    //     return $query
+                    //     ->when($data['start_shipping'], fn($q) => $q->whereDate('estimated_delivery_date', '>=', $data['start_shipping']))
+                    //     ->when($data['end_shipping'], fn($q) => $q->whereDate('estimated_delivery_date', '<=', $data['end_shipping']))
+                    //     ->when($data['start_transaction'], fn($q) => $q->whereDate('created_at', '>=', $data['start_transaction']))
+                    //     ->when($data['end_transaction'], fn($q) => $q->whereDate('created_at', '<=', $data['end_transaction']));
+                    // }),
             ])
             ->recordActions([
                 ViewAction::make()->iconButton('heroicon-o-eye'),
@@ -105,9 +145,20 @@ class OrdersTable
                     DeleteBulkAction::make(),
                 ]),
                 Action::make('exportExcel')
-                    ->label('Excel')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->action(fn() => Excel::download(new OrdersExport, 'orders-' . now()->format('Y-m-d') . '.xlsx')),
+                ->label('Excel')
+                ->icon('heroicon-o-arrow-down-tray')
+                ->action(function ($livewire) {
+                    $filteredQuery = $livewire->getFilteredTableQuery();
+
+                    return Excel::download(
+                        new OrdersExport($filteredQuery),
+                        'orders-' . now()->format('Y-m-d') . '.xlsx'
+                    );
+                }),
+                // Action::make('exportExcel')
+                //     ->label('Excel')
+                //     ->icon('heroicon-o-arrow-down-tray')
+                //     ->action(fn() => Excel::download(new OrdersExport, 'orders-' . now()->format('Y-m-d') . '.xlsx')),
             ]);
     }
 }

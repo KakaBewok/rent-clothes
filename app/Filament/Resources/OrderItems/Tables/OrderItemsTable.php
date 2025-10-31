@@ -8,6 +8,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Carbon\Carbon;
 
 class OrderItemsTable
 {
@@ -97,6 +98,23 @@ class OrderItemsTable
                         ->when($data['end_shipping'], fn($q) => $q->whereDate('estimated_delivery_date', '<=', $data['end_shipping']))
                         ->when($data['start_transaction'], fn($q) => $q->whereDate('created_at', '>=', $data['start_transaction']))
                         ->when($data['end_transaction'], fn($q) => $q->whereDate('created_at', '<=', $data['end_transaction']));
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if (!empty($data['start_shipping']) || !empty($data['end_shipping'])) {
+                            $start = $data['start_shipping'] ? Carbon::parse($data['start_shipping'])->format('d M Y') : '...';
+                            $end = $data['end_shipping'] ? Carbon::parse($data['end_shipping'])->format('d M Y') : '...';
+                            $indicators['shipping_range'] = "Shipping: {$start} - {$end}";
+                        }
+
+                        if (!empty($data['start_transaction']) || !empty($data['end_transaction'])) {
+                            $start = $data['start_transaction'] ? Carbon::parse($data['start_transaction'])->format('d M Y') : '...';
+                            $end = $data['end_transaction'] ? Carbon::parse($data['end_transaction'])->format('d M Y') : '...';
+                            $indicators['transaction_range'] = "Transaction: {$start} - {$end}";
+                        }
+
+                        return $indicators;
                     }),
             ])
             ->recordActions([
