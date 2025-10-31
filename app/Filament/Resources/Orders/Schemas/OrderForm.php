@@ -152,27 +152,32 @@ class OrderForm
                                         $set('quantity', Size::find($state)?->quantity);
                                     }),
 
-                                Select::make('type')
-                                    ->label('Tipe')
-                                    ->options(function (callable $get) {
-                                        $productId = $get('product_id');
+                                // Select::make('type')
+                                //     ->label('Tipe')
+                                //     ->options(function (callable $get) {
+                                //         $productId = $get('product_id');
                                         
-                                        if (!$productId) {
-                                            return [];
-                                        }
+                                //         if (!$productId) {
+                                //             return [];
+                                //         }
 
-                                        $product = Product::with('types')->find($productId);
+                                //         $product = Product::with('types')->find($productId);
 
-                                        if (!$product) {
-                                            return [];
-                                        }
-                                        return $product->types->pluck('name', 'name')->toArray();
-                                    })
-                                    ->searchable()
-                                    ->preload()
-                                    ->reactive()
-                                    ->disabled(fn (callable $get) => !$get('product_id'))
-                                    ->nullable(),
+                                //         if (!$product) {
+                                //             return [];
+                                //         }
+                                //         return $product->types->pluck('name', 'name')->toArray();
+                                //     })
+                                //     ->searchable()
+                                //     ->preload()
+                                //     ->reactive()
+                                //     ->disabled(fn (callable $get) => !$get('product_id'))
+                                //     ->nullable(),
+                                Select::make('type')
+                                    ->options([
+                                        "Hijab" => "Hijab",
+                                        "Non Hijab" => "Non Hijab",
+                                    ])->nullable(),
                                 TextInput::make('quantity')
                                     ->numeric()
                                     ->required()

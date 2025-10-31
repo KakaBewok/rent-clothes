@@ -892,7 +892,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         )}
                                                     />
                                                     {/* Type */}
-                                                    <Controller
+                                                    {/* <Controller
                                                         name={`items.${index}.type`}
                                                         control={control}
                                                         render={({ field: itemField, fieldState }) => (
@@ -923,6 +923,38 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                                     {type.name}
                                                                                 </SelectItem>
                                                                             ))}
+                                                                    </SelectContent>
+                                                                </Select>
+                                                                {fieldState.invalid && (
+                                                                    <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                )}
+                                                            </Field>
+                                                        )}
+                                                    /> */}
+                                                    {/* Type */}
+                                                    <Controller
+                                                        name={`items.${index}.type`}
+                                                        control={control}
+                                                        render={({ field, fieldState }) => (
+                                                            <Field data-invalid={fieldState.invalid}>
+                                                                <FieldLabel className="text-slate-700" htmlFor="type">
+                                                                    Tipe
+                                                                </FieldLabel>
+                                                                <Select
+                                                                    onValueChange={field.onChange}
+                                                                    value={field.value ? field.value.toString() : undefined}
+                                                                    name={field.name}
+                                                                >
+                                                                    <SelectTrigger
+                                                                        id="type"
+                                                                        className="cursor-pointer rounded-none border border-slate-300 shadow-none"
+                                                                    >
+                                                                        <SelectValue placeholder="Pilih Tipe" />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent className="rounded-none text-sm shadow-none">
+                                                                        <SelectItem value="-">Pilih Tipe</SelectItem>
+                                                                        <SelectItem value="Hijab">Hijab</SelectItem>
+                                                                        <SelectItem value="Non Hijab">Non Hijab</SelectItem>
                                                                     </SelectContent>
                                                                 </Select>
                                                                 {fieldState.invalid && (
