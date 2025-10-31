@@ -61,30 +61,30 @@ class OrderItemsTable
             ->filters([
                 SelectFilter::make('order.status')
                     ->relationship('order', 'status')
-                    ->label('Order Status')
-                    ->options([
-                       'process'  => 'Process',
-                       'shipped'   => 'Shipped',
-                       'returned'  => 'Returned',
-                       'cancel' => 'Cancel',
-                    ]),
+                    ->label('Order Status'),
+                    // ->options([
+                    //    'process'  => 'Process',
+                    //    'shipped'   => 'Shipped',
+                    //    'returned'  => 'Returned',
+                    //    'cancel' => 'Cancel',
+                    // ]),
                 SelectFilter::make('order.expedition')
                     ->relationship('order', 'expedition')
-                    ->label('Shipping Service')
-                    ->options([
-                        'Self Pickup' => 'Self Pickup',
-                        'Paxel' => 'Paxel',
-                        'JNE' => 'JNE',
-                        'J&T Express' => 'J&T Express',
-                        'TIKI' => 'TIKI',
-                        'POS Indonesia' => 'POS Indonesia',
-                        'SiCepat' => 'SiCepat',
-                        'Lion Parcel' => 'Lion Parcel',
-                        'AnterAja' => 'AnterAja',
-                        'Shopee Express' => 'Shopee Express',
-                        'Grab Express' => 'Grab Express',
-                        'Gojek (GoSend)' => 'Gojek (GoSend)',
-                    ]),
+                    ->label('Shipping Service'),
+                    // ->options([
+                    //     'Self Pickup' => 'Self Pickup',
+                    //     'Paxel' => 'Paxel',
+                    //     'JNE' => 'JNE',
+                    //     'J&T Express' => 'J&T Express',
+                    //     'TIKI' => 'TIKI',
+                    //     'POS Indonesia' => 'POS Indonesia',
+                    //     'SiCepat' => 'SiCepat',
+                    //     'Lion Parcel' => 'Lion Parcel',
+                    //     'AnterAja' => 'AnterAja',
+                    //     'Shopee Express' => 'Shopee Express',
+                    //     'Grab Express' => 'Grab Express',
+                    //     'Gojek (GoSend)' => 'Gojek (GoSend)',
+                    // ]),
                 Filter::make('date_range')
                     ->schema([
                         DatePicker::make('start_shipping')->label('Start Shipping'),
