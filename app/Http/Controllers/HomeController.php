@@ -235,11 +235,6 @@ class HomeController extends Controller
                 }
             });
         }
-        // if ($isAvailable) {
-        //     $query->whereHas('sizes', function ($q) {
-        //         $q->where('availability', true);
-        //     });
-        // }
         if ($isAvailable) {
             $query
                 ->having('available_stock', '>', 0)
@@ -252,9 +247,9 @@ class HomeController extends Controller
             $direction = $extraFilters['direction'] ?? 'asc';
             switch ($extraFilters['sortBy']) {
                 case 'price_after_discount':
-                    $query->reorder()->join('price_details', 'products.id', '=', 'price_details.product_id')
-                      ->select('products.*')
-                      ->orderBy('price_details.price_after_discount', $direction);
+                    $query->reorder()
+                        ->leftJoin('price_details', 'products.id', '=', 'price_details.product_id')
+                        ->orderBy('price_details.price_after_discount', $direction);
                     break;
                 case 'name':
                     $query->reorder()->orderBy('products.name', $direction);
@@ -306,24 +301,6 @@ class HomeController extends Controller
     }
 }
 
-//old basic query
-        // $query = Product::query()
-        //     ->when($filters['city'], fn($q) => $q->where('branch_id', $filters['city']))
-        //     ->whereRaw("
-        //         NOT EXISTS (
-        //             SELECT 1
-        //             FROM order_items oi
-        //             JOIN orders o ON o.id = oi.order_id
-        //             WHERE oi.product_id = products.id
-        //             AND o.status IN ('process','shipped')
-        //             AND (
-        //                 DATE(oi.estimated_delivery_date) <= DATE(?)
-        //                 AND DATE(oi.estimated_return_date) >= DATE(?)
-        //             )
-        //         )
-        //     ", [$endDate, $startDate])
-        //     ->with(['brand', 'types', 'priceDetail', 'sizes']);
-
 // blocking
 // if (!empty($extraFilters['stock'])) {
 //             $exactStock = $extraFilters['stock'];
@@ -333,30 +310,4 @@ class HomeController extends Controller
 //             }], 'quantity')
 
 //             ->having('available_sizes_sum_quantity', '=', $exactStock);
-//         }
-
-// old sort
-// if (!empty($extraFilters['sortBy'])) {
-//             $direction = $extraFilters['direction'] ?? 'asc';
-//             switch ($extraFilters['sortBy']) {
-//                 case 'price_after_discount':
-//                     $query->reorder()->join('price_details', 'products.id', '=', 'price_details.product_id')
-//                       ->select('products.*')
-//                       ->orderBy('price_details.price_after_discount', $direction);
-//                     break;
-
-//                 case 'name':
-//                     $query->reorder()->orderBy('products.name', $direction);
-//                     break;
-
-//                 case 'upload_at':
-//                     $query->reorder()->orderBy('products.upload_at', $direction);
-//                     break;
-
-//                 default:
-//                     $query->reorder()->orderByDesc('products.upload_at'); // fallback
-//                     break;
-//             }
-//         } else {
-//             $query->reorder()->orderByDesc('products.upload_at'); // default
 //         }
