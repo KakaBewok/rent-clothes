@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\Type;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -59,6 +60,58 @@ class HomeController extends Controller
         );
     }
 
+    // private function getProductsByFilters(array $filters, array $extraFilters = [], $isAvailable)
+    // {
+    //     $params = $this->constructPrams($filters);
+
+    //     $startDate = $params['startDate'];
+    //     $endDate   = $params['endDate'];
+
+    //     $query = Product::query()
+    //         ->when($filters['city'], fn($q) => $q->where('branch_id', $filters['city']))
+    //         ->when($filters['duration'], fn($q) =>
+    //             $q->where('rent_periode', '>=', $filters['duration'])
+    //         )
+    //         ->whereRaw('
+    //             (
+    //                 COALESCE((
+    //                     SELECT SUM(sz.quantity)
+    //                     FROM sizes sz
+    //                     WHERE sz.product_id = products.id
+    //                 ), 0)
+    //                 -
+    //                 COALESCE((
+    //                     SELECT COALESCE(SUM(oi.quantity), 0)
+    //                     FROM order_items oi
+    //                     JOIN orders o ON o.id = oi.order_id
+    //                     WHERE oi.product_id = products.id
+    //                     AND o.status IN (?, ?)
+    //                     AND (
+    //                         DATE(oi.estimated_delivery_date) <= DATE(?) AND
+    //                         DATE(oi.estimated_return_date) >= DATE(?)
+    //                     )
+    //                 ), 0)
+    //             ) > 0
+    //         ', ['process', 'shipped', $endDate, $startDate])
+    //         ->with(['brand', 'types', 'priceDetail', 'sizes']);
+
+    //     $this->getExtraFilters($query, $extraFilters, $isAvailable);
+
+    //     $query->orderBy('upload_at', 'desc');
+
+    //     $products = $query->paginate(24);
+
+    //     return [
+    //         'data' => $products->items(),
+    //         'meta' => [
+    //             'current_page' => $products->currentPage(),
+    //             'last_page'    => $products->lastPage(),
+    //             'per_page'     => $products->perPage(),
+    //             'total'        => $products->total(),
+    //         ],
+    //     ];
+    // }
+
     private function getProductsByFilters(array $filters, array $extraFilters = [], $isAvailable)
     {
         $params = $this->constructPrams($filters);
@@ -67,38 +120,61 @@ class HomeController extends Controller
         $endDate   = $params['endDate'];
 
         $query = Product::query()
-            ->when($filters['city'], fn($q) => $q->where('branch_id', $filters['city']))
-            ->when($filters['duration'], fn($q) =>
-                $q->where('rent_periode', '>=', $filters['duration'])
-            )
-            ->whereRaw('
-                (
-                    COALESCE((
-                        SELECT SUM(sz.quantity)
-                        FROM sizes sz
-                        WHERE sz.product_id = products.id
-                    ), 0)
-                    -
-                    COALESCE((
-                        SELECT COALESCE(SUM(oi.quantity), 0)
-                        FROM order_items oi
-                        JOIN orders o ON o.id = oi.order_id
-                        WHERE oi.product_id = products.id
-                        AND o.status IN (?, ?)
-                        AND (
-                            DATE(oi.estimated_delivery_date) <= DATE(?) AND
-                            DATE(oi.estimated_return_date) >= DATE(?)
-                        )
-                    ), 0)
-                ) > 0
-            ', ['process', 'shipped', $endDate, $startDate])
-            ->with(['brand', 'types', 'priceDetail', 'sizes']);
+            ->select([
+                'products.*',
 
+                // count fixed stock
+                DB::raw('(
+                    SELECT COALESCE(SUM(sz.quantity), 0)
+                    FROM sizes sz
+                    WHERE sz.product_id = products.id
+                ) as total_stock'),
+
+                // count rented stock (in periode, process/shipped status)
+                DB::raw('(
+                    SELECT COALESCE(SUM(oi.quantity), 0)
+                    FROM order_items oi
+                    JOIN orders o ON o.id = oi.order_id
+                    WHERE oi.product_id = products.id
+                    AND o.status IN ("process", "shipped")
+                    AND DATE(oi.estimated_delivery_date) <= DATE("' . $endDate . '")
+                    AND DATE(oi.estimated_return_date) >= DATE("' . $startDate . '")
+                ) as rented_stock'),
+
+                // count available stock (fixed stock - rented)
+                DB::raw('(
+                    (SELECT COALESCE(SUM(sz.quantity), 0)
+                    FROM sizes sz
+                    WHERE sz.product_id = products.id)
+                    -
+                    (SELECT COALESCE(SUM(oi.quantity), 0)
+                    FROM order_items oi
+                    JOIN orders o ON o.id = oi.order_id
+                    WHERE oi.product_id = products.id
+                    AND o.status IN ("process", "shipped")
+                    AND DATE(oi.estimated_delivery_date) <= DATE("' . $endDate . '")
+                    AND DATE(oi.estimated_return_date) >= DATE("' . $startDate . '"))
+                ) as available_stock'),
+            ])
+            ->when($filters['city'], fn($q) => $q->where('branch_id', $filters['city']))
+            // ->when($filters['duration'], fn($q) =>
+            //     $q->where('rent_periode', '>=', $filters['duration'])
+            // )
+            ->with(['brand', 'types', 'priceDetail', 'sizes'])
+            ->orderBy('upload_at', 'desc');
+
+        // additional filter
         $this->getExtraFilters($query, $extraFilters, $isAvailable);
 
-        $query->orderBy('upload_at', 'desc');
-
+        // Pagination
         $products = $query->paginate(24);
+
+        // mark out of stock and add two field
+        $products->getCollection()->transform(function ($product) {
+            $product->available_stock = max($product->available_stock, 0);
+            $product->is_out_of_stock = $product->available_stock <= 0;
+            return $product;
+        });
 
         return [
             'data' => $products->items(),
@@ -110,6 +186,7 @@ class HomeController extends Controller
             ],
         ];
     }
+
 
     private function getExtraFilters($query, array $extraFilters = [], $isAvailable)
     {
@@ -158,9 +235,16 @@ class HomeController extends Controller
                 }
             });
         }
+        // if ($isAvailable) {
+        //     $query->whereHas('sizes', function ($q) {
+        //         $q->where('availability', true);
+        //     });
+        // }
         if ($isAvailable) {
-            $query->whereHas('sizes', function ($q) {
-                $q->where('availability', true);
+            $query
+                ->having('available_stock', '>', 0)
+                ->whereHas('sizes', function ($q) {
+                     $q->where('availability', true);
             });
         }
         // sorting

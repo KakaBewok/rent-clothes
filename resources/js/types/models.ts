@@ -155,6 +155,9 @@ export interface Product {
         size: string;
         stock: number;
     }[];
+
+    available_stock?: number;
+    is_out_of_stock?: boolean;
 }
 
 export interface Size {

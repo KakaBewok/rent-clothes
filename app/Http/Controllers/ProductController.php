@@ -27,24 +27,35 @@ class ProductController extends Controller
     }
 
     // for auto complete @search field
+    // public function show(Request $request)
+    // { 
+    //     $params = $this->constructParamsFromRequest($request);
+
+    //     $startDate = $params['startDate'];
+    //     $endDate   = $params['endDate'];
+
+    //     $availableProducts = Product::query()
+    //         ->whereDoesntHave('orderItems', function ($query) use ($startDate, $endDate) {
+    //             $query->whereHas('order', function ($subQuery) {
+    //                 $subQuery->whereIn('status', ['process', 'shipped']);
+    //             })
+    //             ->where(function ($subQuery) use ($startDate, $endDate) {
+    //                 $subQuery->where('estimated_delivery_date', '<=', $endDate)
+    //                     ->where('estimated_return_date', '>=', $startDate);
+    //             });
+    //         })
+    //         ->select('name')
+    //         ->get();
+
+    //     return response()->json($availableProducts);
+    // }
+
+    // for auto complete @search field
     public function show(Request $request)
-    { 
-        $params = $this->constructParamsFromRequest($request);
-
-        $startDate = $params['startDate'];
-        $endDate   = $params['endDate'];
-
+    {
         $availableProducts = Product::query()
-            ->whereDoesntHave('orderItems', function ($query) use ($startDate, $endDate) {
-                $query->whereHas('order', function ($subQuery) {
-                    $subQuery->whereIn('status', ['process', 'shipped']);
-                })
-                ->where(function ($subQuery) use ($startDate, $endDate) {
-                    $subQuery->where('estimated_delivery_date', '<=', $endDate)
-                        ->where('estimated_return_date', '>=', $startDate);
-                });
-            })
             ->select('name')
+            ->orderBy('name')
             ->get();
 
         return response()->json($availableProducts);
