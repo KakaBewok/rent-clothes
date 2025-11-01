@@ -21,13 +21,13 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
 
     const createMessage = () => {
         const useByDate = queryParams.get('useByDate') || '';
-        const duration = Number(queryParams.get('duration') || 1);
+        // const duration = Number(queryParams.get('duration') || 1);
 
         const parsedUseByDate = parse(useByDate, 'dd-MM-yyyy', new Date());
         const validUseByDate = isValid(parsedUseByDate) ? parsedUseByDate : new Date();
-        const completeUseByDate = format(validUseByDate, 'EEEE, d MMMM yyyy', { locale: id });
+        const completeUseByDate = format(validUseByDate, 'd MMMM yyyy', { locale: id });
 
-        return `Hai! aku mau sewa *${productName} (${code})* mulai hari *${completeUseByDate}* selama *${duration} hari*. Mohon infonya`;
+        return `Hai! aku mau sewa *${productName} (${code})* di tanggal *${completeUseByDate}* Mohon infonya`;
     };
 
     const whatsappNumber = formatWhatsAppNumber(contact);
