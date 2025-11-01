@@ -68,10 +68,17 @@ function HomePage({ branchs, products, banners, appSetting, showModal, baseFilte
         }
     }, [showModal]);
 
+    // useEffect(() => {
+    //     const timer = setTimeout(() => setLoading(false), 300);
+    //     return () => clearTimeout(timer);
+    // }, []);
+
     useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 300);
-        return () => clearTimeout(timer);
-    }, []);
+        if (products && banners) {
+            const timer = setTimeout(() => setLoading(false), 200);
+            return () => clearTimeout(timer);
+        }
+    }, [products, banners]);
 
     useEffect(() => {
         if (modalInfo) {
