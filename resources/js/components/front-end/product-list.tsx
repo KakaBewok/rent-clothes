@@ -9,7 +9,7 @@ interface ProductListProps {
 
 const ProductList = ({ products, onOpen }: ProductListProps) => {
     const { data, meta } = products;
-    console.log(products);
+
     return (
         <div className="w-full">
             <div className="mx-auto px-4 py-4 md:px-6 md:py-6">
