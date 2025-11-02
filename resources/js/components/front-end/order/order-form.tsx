@@ -818,7 +818,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                             <Field data-invalid={fieldState.invalid}>
                                                                 <ProductSelect
                                                                     value={field.value}
-                                                                    // onChange={(val) => field.onChange(val)}
                                                                     onChange={(val) => {
                                                                         field.onChange(val);
                                                                         const selected = availableProducts.find((p) => p.id === val);
@@ -833,6 +832,11 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                 />
                                                                 {fieldState.invalid && (
                                                                     <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                )}
+                                                                {availableProducts.length > 0 && (
+                                                                    <FieldDescription className="text-xs">
+                                                                        {availableProducts.length} Product Tersedia
+                                                                    </FieldDescription>
                                                                 )}
                                                             </Field>
                                                         )}
@@ -891,46 +895,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                             </Field>
                                                         )}
                                                     />
-                                                    {/* Type */}
-                                                    {/* <Controller
-                                                        name={`items.${index}.type`}
-                                                        control={control}
-                                                        render={({ field: itemField, fieldState }) => (
-                                                            <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel htmlFor="type" className="text-slate-700">
-                                                                    Tipe
-                                                                </FieldLabel>
-                                                                <Select
-                                                                    onValueChange={(val) => itemField.onChange(val === '0' ? null : val)}
-                                                                    value={itemField.value ? itemField.value : '0'}
-                                                                    name={itemField.name}
-                                                                    disabled={!item?.product_id}
-                                                                >
-                                                                    <SelectTrigger
-                                                                        id="type"
-                                                                        className="cursor-pointer rounded-none border border-slate-300 shadow-none"
-                                                                    >
-                                                                        <SelectValue placeholder="Pilih Tipe" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent className="rounded-none text-sm shadow-none">
-                                                                        <SelectItem value={'0'} className="text-slate-700">
-                                                                            Pilih tipe
-                                                                        </SelectItem>
-                                                                        {getSelectedProduct(item) &&
-                                                                            (getSelectedProduct(item)?.types?.length ?? 0) > 0 &&
-                                                                            getSelectedProduct(item)?.types?.map((type) => (
-                                                                                <SelectItem key={type.id} value={type.name}>
-                                                                                    {type.name}
-                                                                                </SelectItem>
-                                                                            ))}
-                                                                    </SelectContent>
-                                                                </Select>
-                                                                {fieldState.invalid && (
-                                                                    <FieldError className="text-red-500" errors={[fieldState.error]} />
-                                                                )}
-                                                            </Field>
-                                                        )}
-                                                    /> */}
                                                     {/* Type */}
                                                     <Controller
                                                         name={`items.${index}.type`}
