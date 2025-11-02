@@ -11,7 +11,7 @@ interface OrderSummaryProps {
     fields: { id: string }[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     watch: UseFormWatch<any>;
-    getSelectedProduct: (item: OrderItemData) => Product | undefined;
+    getSelectedProduct: (item: OrderItemData, index: number) => Product | undefined;
     addDays: (date: Date, days: number) => Date;
     subDays: (date: Date, days: number) => Date;
 }
@@ -52,7 +52,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ fields, watch, getSelectedP
                     <ul className="space-y-2 md:space-y-4">
                         {fields.map((field, index) => {
                             const item = watch(`items.${index}`);
-                            const product = getSelectedProduct(item);
+                            const product = getSelectedProduct(item, index);
                             const size = product?.sizes?.find((s) => s.id === item?.size_id)?.size ?? '-';
                             // const type = product?.types?.find((t) => t.id === item?.type_id)?.name ?? '-';
                             const estimatedReturn = item.use_by_date && item.rent_periode ? addDays(item.use_by_date, item.rent_periode) : null;

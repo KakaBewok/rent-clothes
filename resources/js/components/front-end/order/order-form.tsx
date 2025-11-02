@@ -121,7 +121,10 @@ interface OrderFormProps {
 
 export default function OrderForm({ setting }: OrderFormProps) {
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-    const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
+
+    // const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
+    const [availableProductsMap, setAvailableProductsMap] = useState<Record<number, Product[]>>({});
+
     const [loading, setLoading] = useState<boolean>(false);
 
     const form = useForm<OrderFormData>({
@@ -177,7 +180,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
     const clearForm = (type: string) => {
         form.reset();
-        setAvailableProducts([]);
+        setAvailableProductsMap({});
         setPreviewImage(null);
         const fileInput = document.getElementById('identity_image') as HTMLInputElement | null;
         if (fileInput) fileInput.value = '';
@@ -295,7 +298,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
         return `${day}-${month}-${year}`;
     };
 
-    const handleSearchProducts = async (item: OrderItemData) => {
+    const handleSearchProducts = async (item: OrderItemData, index: number) => {
         if (!item.use_by_date || !item.shipping || !item.rent_periode) {
             toast.error('Mohon isi dulu Tanggal digunakan, Lama Sewa dan Jenis Pengiriman.');
             return;
@@ -315,7 +318,11 @@ export default function OrderForm({ setting }: OrderFormProps) {
                 toast.warning('Tidak ada produk tersedia untuk jadwal tersebut.');
             }
 
-            setAvailableProducts(res.data);
+            // setAvailableProducts(res.data);
+            setAvailableProductsMap((prev) => ({
+                ...prev,
+                [index]: res.data,
+            }));
         } catch (err) {
             console.error('Error retrieving products data:', err);
         } finally {
@@ -323,8 +330,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
         }
     };
 
-    const getSelectedProduct = (item: OrderItemData) => {
-        return availableProducts.find((p) => p.id === item.product_id);
+    const getSelectedProduct = (item: OrderItemData, index: number) => {
+        return availableProductsMap[index]?.find((p) => p.id === item.product_id);
     };
 
     const formatDate = (item: OrderItemData) => {
@@ -776,7 +783,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                                     <Button
                                                         type="button"
-                                                        onClick={() => handleSearchProducts(item)}
+                                                        onClick={() => handleSearchProducts(item, index)}
                                                         disabled={loading}
                                                         className="col-span-full cursor-pointer rounded-none bg-slate-700 text-white shadow-none hover:bg-slate-700"
                                                     >
@@ -789,7 +796,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         )}
                                                     </Button>
 
-                                                    {availableProducts.length > 0 && item.shipping && loading === false && (
+                                                    {availableProductsMap[index]?.length > 0 && item.shipping && loading === false && (
                                                         <div className="col-span-full">
                                                             <div
                                                                 className="rounded-none border-l-4 border-teal-400 bg-teal-100 px-4 py-3 text-xs text-teal-800 shadow-none md:text-sm"
@@ -820,22 +827,22 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                     value={field.value}
                                                                     onChange={(val) => {
                                                                         field.onChange(val);
-                                                                        const selected = availableProducts.find((p) => p.id === val);
+                                                                        const selected = availableProductsMap[index]?.find((p) => p.id === val);
                                                                         if (selected) {
                                                                             updateItem(index, {
                                                                                 product_name: selected.name,
                                                                             });
                                                                         }
                                                                     }}
-                                                                    availableProducts={availableProducts ?? []}
+                                                                    availableProducts={availableProductsMap[index] ?? []}
                                                                     loading={loading}
                                                                 />
                                                                 {fieldState.invalid && (
                                                                     <FieldError className="text-red-500" errors={[fieldState.error]} />
                                                                 )}
-                                                                {availableProducts.length > 0 && (
+                                                                {availableProductsMap[index]?.length > 0 && (
                                                                     <FieldDescription className="text-xs">
-                                                                        {availableProducts.length} Product Tersedia
+                                                                        {availableProductsMap[index]?.length} Product Tersedia
                                                                     </FieldDescription>
                                                                 )}
                                                             </Field>
@@ -851,11 +858,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                     Ukuran <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Select
-                                                                    // onValueChange={(val) => itemField.onChange(Number(val))}
                                                                     onValueChange={(val) => {
                                                                         itemField.onChange(Number(val));
 
-                                                                        const selectedProduct = getSelectedProduct(item);
+                                                                        const selectedProduct = getSelectedProduct(item, index);
                                                                         const selectedSize = selectedProduct?.sizes?.find(
                                                                             (s) => s.id === Number(val),
                                                                         );
@@ -876,8 +882,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                         <SelectValue placeholder="Pilih Ukuran" />
                                                                     </SelectTrigger>
                                                                     <SelectContent className="rounded-none text-sm shadow-none">
-                                                                        {getSelectedProduct(item) ? (
-                                                                            getSelectedProduct(item)?.sizes?.map((size) => (
+                                                                        {getSelectedProduct(item, index) ? (
+                                                                            getSelectedProduct(item, index)?.sizes?.map((size) => (
                                                                                 <SelectItem key={size.id} value={size.id.toString()}>
                                                                                     {size.size}
                                                                                 </SelectItem>
@@ -932,7 +938,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         name={`items.${index}.quantity`}
                                                         control={control}
                                                         render={({ field: itemField, fieldState }) => {
-                                                            const selectedProduct = getSelectedProduct(item);
+                                                            const selectedProduct = getSelectedProduct(item, index);
                                                             const selectedSize = selectedProduct?.sizes?.find((s) => s.id === item?.size_id);
                                                             const maxQty = selectedSize?.quantity;
 
