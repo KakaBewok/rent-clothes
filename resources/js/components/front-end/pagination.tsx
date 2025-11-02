@@ -16,7 +16,7 @@ const PaginationView = ({ meta }: { meta: PaginationMeta }) => {
     return (
         <div className="mt-10 flex flex-col items-center gap-4">
             <Pagination>
-                <PaginationContent className="flex items-center gap-2 px-2">
+                <PaginationContent className="flex items-center gap-2">
                     {/* Previous */}
                     {meta.current_page > 1 && (
                         <PaginationItem>
