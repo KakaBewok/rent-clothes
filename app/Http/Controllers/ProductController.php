@@ -69,9 +69,9 @@ class ProductController extends Controller
 
         $products = Product::query()
             ->when($request->query('city'), fn($q) => $q->where('branch_id', $request->query('city')))
-            ->when($request->query('duration'), fn($q) =>
-                $q->where('rent_periode', '>=', $request->query('duration'))
-            )
+            // ->when($request->query('duration'), fn($q) =>
+            //     $q->where('rent_periode', '>=', $request->query('duration'))
+            // )
             ->whereRaw('
                 (
                     COALESCE((
