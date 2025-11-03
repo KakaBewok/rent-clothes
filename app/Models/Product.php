@@ -84,10 +84,8 @@ class Product extends Model
      */
     public function getAvailableStockBreakdownForPeriod($startDate, $endDate)
     {
-        // 1. Ambil semua ukuran untuk produk ini yang ditandai 'available' (Kode ini sudah benar)
         $availableSizes = $this->sizes()->where('availability', true)->get();
 
-        // 2. Hitung jumlah yang disewa untuk setiap ukuran dalam satu query
         $rentedCountsBySize = $this->orderItems()
             ->whereHas('order', function ($query) {
                 $query->whereIn('status', ['process', 'shipped']);
@@ -96,23 +94,16 @@ class Product extends Model
                 $query->where('estimated_delivery_date', '<=', $endDate)
                     ->where('estimated_return_date', '>=', $startDate);
             })
-            // ✅ FIX: Gabungkan dengan tabel 'sizes' berdasarkan 'size_id'
             ->join('sizes', 'order_items.size_id', '=', 'sizes.id')
             
-            // ✅ FIX: Pilih dan kelompokkan berdasarkan 'sizes.size' dari tabel yang sudah di-join
-            // ->select('sizes.size', DB::raw('count(*) as total'))
             ->select('sizes.id as size_id', DB::raw('COALESCE(SUM(order_items.quantity),0) as total'))
-            // ->groupBy('sizes.size')
             ->groupBy('sizes.id')
-            // ->pluck('total', 'sizes.size');
             ->pluck('total', 'size_id');
 
         $stockBreakdown = [];
 
-        // 3. Iterasi dan hitung sisa stok (Kode ini sudah benar)
         foreach ($availableSizes as $size) {
             $totalStockForSize = $size->quantity;
-            // $rentedCountForSize = $rentedCountsBySize->get($size->size, 0);
             $rentedCountForSize = (int) $rentedCountsBySize->get($size->id, 0);
             $remainingStock = $totalStockForSize - $rentedCountForSize;
 
