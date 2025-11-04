@@ -9,13 +9,6 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
     const { brand, price_detail, code, name: productName, description, sizes, types, additional_ribbon, color } = product;
     const getTypeList = () => types?.map((type) => type.name).join(', ');
     const getSizeList = () => sizes?.map((size) => size.size).join(', ');
-    // const getSizeList = () =>
-    //     sizes?.map((s, i) => (
-    //         <span key={s.id} className={`mr-1 text-slate-800 ${s.availability != '1' ? 'line-through decoration-black' : ''}`}>
-    //             {s.size}
-    //             {i != sizes.length - 1 ? ', ' : ''}
-    //         </span>
-    //     ));
 
     const queryParams = new URLSearchParams(window.location.search);
 
@@ -149,12 +142,23 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
 
             <div className="pt-3">
                 <a
-                    href={`https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`}
+                    href={
+                        product.stock_breakdown && product.stock_breakdown.length > 0
+                            ? `https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`
+                            : undefined
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    <Button className="w-full cursor-pointer rounded-none bg-[#A27163] text-white transition-all duration-300 hover:bg-[#976456]">
-                        Rent Now
+                    <Button
+                        disabled={!product.stock_breakdown || product.stock_breakdown.length === 0}
+                        className={`w-full cursor-pointer rounded-none transition-all duration-300 ${
+                            product.stock_breakdown && product.stock_breakdown.length > 0
+                                ? 'bg-[#A27163] text-white hover:bg-[#976456]'
+                                : 'cursor-not-allowed bg-slate-700 text-gray-50'
+                        }`}
+                    >
+                        {product.stock_breakdown && product.stock_breakdown.length > 0 ? 'Rent Now' : 'Out of Stock'}
                     </Button>
                 </a>
             </div>
