@@ -121,8 +121,6 @@ interface OrderFormProps {
 
 export default function OrderForm({ setting }: OrderFormProps) {
     const [previewImage, setPreviewImage] = useState<string | null>(null);
-
-    // const [availableProducts, setAvailableProducts] = useState<Product[]>([]);
     const [availableProductsMap, setAvailableProductsMap] = useState<Record<number, Product[]>>({});
 
     const [loading, setLoading] = useState<boolean>(false);
@@ -318,7 +316,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
                 toast.warning('Tidak ada produk tersedia untuk jadwal tersebut.');
             }
 
-            // setAvailableProducts(res.data);
             setAvailableProductsMap((prev) => ({
                 ...prev,
                 [index]: res.data,
@@ -370,9 +367,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                 </CardHeader>
                 <form id="order-form-rhf" onSubmit={handleSubmit(onSubmit)}>
                     <CardContent className="space-y-4 md:my-5">
-                        {/* ======================================= */}
                         {/* ## shipping info                 */}
-                        {/* ======================================= */}
                         <h3 className="border-b border-slate-200 pb-2 text-lg font-semibold text-slate-700">Info Pengiriman</h3>
                         <FieldGroup className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             {/* name */}
@@ -536,9 +531,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             )}
                         />
 
-                        {/* ======================================= */}
                         {/* ## return info            */}
-                        {/* ======================================= */}
                         <h3 className="mt-8 border-b border-slate-200 pb-2 text-lg font-semibold text-slate-700">Pengembalian Deposit</h3>
                         <FieldGroup className="grid grid-cols-1 gap-4 md:grid-cols-2">
                             {/* Provider */}
@@ -587,9 +580,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             />
                         </FieldGroup>
 
-                        {/* ======================================= */}
                         {/* ## items    */}
-                        {/* ======================================= */}
                         <h3 className="mt-8 border-b border-slate-200 pb-2 text-lg font-semibold text-slate-700">Item Pesanan</h3>
                         <div className="space-y-3 md:space-y-6">
                             {fields.map((field, index) => {

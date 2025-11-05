@@ -54,7 +54,6 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ fields, watch, getSelectedP
                             const item = watch(`items.${index}`);
                             const product = getSelectedProduct(item, index);
                             const size = product?.sizes?.find((s) => s.id === item?.size_id)?.size ?? '-';
-                            // const type = product?.types?.find((t) => t.id === item?.type_id)?.name ?? '-';
                             const estimatedReturn = item.use_by_date && item.rent_periode ? addDays(item.use_by_date, item.rent_periode) : null;
                             const estimatedDelivery =
                                 item.use_by_date && item.shipping ? subDays(item.use_by_date, item.shipping === 'Same day' ? 1 : 2) : null;

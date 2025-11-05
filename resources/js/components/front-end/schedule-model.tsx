@@ -16,7 +16,6 @@ const ScheduleModal = ({ isUnclose, onClose, baseFilters, branchs }: ScheduleMod
         useByDate: normalizeDate(baseFilters.useByDate),
     });
 
-    //
     useEffect(() => {
         const getFiltersFromUrl = () => {
             const params = new URLSearchParams(window.location.search);
@@ -45,7 +44,6 @@ const ScheduleModal = ({ isUnclose, onClose, baseFilters, branchs }: ScheduleMod
             } as Filter);
         }
     }, [baseFilters, isUnclose]);
-    //
 
     function getTodayDate(): string {
         const today = new Date();

@@ -2,13 +2,15 @@
 
 namespace App\Filament\Resources\OrderItems\Tables;
 
+use App\Models\Order;
+use Carbon\Carbon;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Carbon\Carbon;
+use Illuminate\Support\Str;
 
 class OrderItemsTable
 {
@@ -59,32 +61,44 @@ class OrderItemsTable
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
-                SelectFilter::make('order.status')
-                    ->relationship('order', 'status')
-                    ->label('Order Status'),
-                    // ->options([
-                    //    'process'  => 'Process',
-                    //    'shipped'   => 'Shipped',
-                    //    'returned'  => 'Returned',
-                    //    'cancel' => 'Cancel',
-                    // ]),
+                SelectFilter::make('status')
+                ->label('Order Status')
+                ->options([
+                    'pending'   => 'Pending',
+                    'process'   => 'Process',
+                    'shipped'   => 'Shipped',
+                    'returned'  => 'Returned',
+                    'cancel'    => 'Cancel',
+                ])
+                ->query(function ($query, array $data) {
+                    if (!empty($data['value'])) {
+                        $query->whereHas('order', fn($q) => $q->where('status', $data['value']));
+                    }
+                }),
+                SelectFilter::make('expedition')
+                ->label('Shipping Service')
+                ->options([
+                        'Self Pickup' => 'Self Pickup',
+                        'Paxel' => 'Paxel',
+                        'JNE' => 'JNE',
+                        'J&T Express' => 'J&T Express',
+                        'TIKI' => 'TIKI',
+                        'POS Indonesia' => 'POS Indonesia',
+                        'SiCepat' => 'SiCepat',
+                        'Lion Parcel' => 'Lion Parcel',
+                        'AnterAja' => 'AnterAja',
+                        'Shopee Express' => 'Shopee Express',
+                        'Grab Express' => 'Grab Express',
+                        'Gojek (GoSend)' => 'Gojek (GoSend)',
+                ])
+                ->query(function ($query, array $data) {
+                    if (!empty($data['value'])) {
+                        $query->whereHas('order', fn($q) => $q->where('expedition', $data['value']));
+                    }
+                }),
                 SelectFilter::make('order.expedition')
                     ->relationship('order', 'expedition')
                     ->label('Shipping Service'),
-                    // ->options([
-                    //     'Self Pickup' => 'Self Pickup',
-                    //     'Paxel' => 'Paxel',
-                    //     'JNE' => 'JNE',
-                    //     'J&T Express' => 'J&T Express',
-                    //     'TIKI' => 'TIKI',
-                    //     'POS Indonesia' => 'POS Indonesia',
-                    //     'SiCepat' => 'SiCepat',
-                    //     'Lion Parcel' => 'Lion Parcel',
-                    //     'AnterAja' => 'AnterAja',
-                    //     'Shopee Express' => 'Shopee Express',
-                    //     'Grab Express' => 'Grab Express',
-                    //     'Gojek (GoSend)' => 'Gojek (GoSend)',
-                    // ]),
                 Filter::make('date_range')
                     ->schema([
                         DatePicker::make('start_shipping')->label('Start Shipping'),

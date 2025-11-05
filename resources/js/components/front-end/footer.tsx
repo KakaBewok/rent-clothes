@@ -11,7 +11,7 @@ interface FooterProps {
 
 const Footer = ({ setting, setModalInfo, setShowScheduleModal }: FooterProps) => {
     const { address, description, instagram, app_name, whatsapp_number, email, instruction_image, tnc_image } = setting;
-    const message = 'Hai Kak! Aku mau sewa dress nih. Boleh dibantu proses selanjutnya? Terima kasih.';
+    const message = 'Hai Kak! Aku mau sewa dress. Boleh dibantu proses selanjutnya? Terima kasih.';
 
     return (
         <footer className="mt-24 bg-white py-4 text-slate-700">

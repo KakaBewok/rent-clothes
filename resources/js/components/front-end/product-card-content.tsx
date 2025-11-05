@@ -71,7 +71,6 @@ const ProductCardContent = ({ product }: { product: Product }) => {
             <div className="flex h-fit w-fit flex-col items-end">
                 <div className="flex flex-col flex-wrap items-end gap-1">
                     {(() => {
-                        // const availableSizes = product.sizes?.filter((size) => size.availability === '1') || [];
                         return renderSizes(product.sizes || []);
                     })()}
                 </div>

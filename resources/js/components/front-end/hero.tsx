@@ -6,9 +6,6 @@ import { useEffect, useState } from 'react';
 import BannerImage from './banner-image';
 
 const Hero = ({ banners }: { banners: Banner[] }) => {
-    // const { url } = usePage();
-    // const currentType = new URLSearchParams(url.split('?')[1]).get('type');
-
     const [api, setApi] = useState<CarouselApi>();
     const [current, setCurrent] = useState<number>(0);
     const slides =
@@ -21,7 +18,6 @@ const Hero = ({ banners }: { banners: Banner[] }) => {
             })),
         ) ?? [];
 
-    //
     const handleBannerClick = (typeId?: number) => {
         if (!typeId) return;
 
@@ -42,7 +38,6 @@ const Hero = ({ banners }: { banners: Banner[] }) => {
             replace: true,
         });
     };
-    //
 
     useEffect(() => {
         if (!api) return;

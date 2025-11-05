@@ -155,10 +155,6 @@ class OrdersTable
                         'orders-' . now()->format('Y-m-d') . '.xlsx'
                     );
                 }),
-                // Action::make('exportExcel')
-                //     ->label('Excel')
-                //     ->icon('heroicon-o-arrow-down-tray')
-                //     ->action(fn() => Excel::download(new OrdersExport, 'orders-' . now()->format('Y-m-d') . '.xlsx')),
             ]);
     }
 }

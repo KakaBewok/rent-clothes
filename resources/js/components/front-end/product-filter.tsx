@@ -265,7 +265,6 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                         {extraFilters?.search && (
                             <button
                                 type="button"
-                                // onClick={() => setExtraFilters({ ...extraFilters, search: '' })}
                                 onClick={() => {
                                     setExtraFilters({ ...extraFilters, search: '' });
                                     setSuggestions([]);
@@ -280,7 +279,7 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                             onClick={() => {
                                 applyFilter();
                             }}
-                            className={`absolute top-1.5 right-1.5 flex h-[25px] w-10 cursor-pointer items-center justify-center bg-[#A27163] text-sm text-white transition duration-300 hover:bg-[#8d5a4d]`}
+                            className={`absolute top-1.5 right-1.5 flex h-[27px] w-10 cursor-pointer items-center justify-center bg-[#A27163] text-sm text-white transition duration-300 hover:bg-[#8d5a4d]`}
                         >
                             <Search size={15} />
                         </button>
@@ -355,23 +354,6 @@ const ProductFilter = ({ baseFilters, brands, colors, types }: ProductFilterProp
                         brands={brands}
                         placeholder="All Brands"
                     />
-                    {/* <select
-                        value={extraFilters?.brand || ''}
-                        onChange={(e) =>
-                            setExtraFilters({
-                                ...extraFilters,
-                                brand: e.target.value ? parseInt(e.target.value) : null,
-                            })
-                        }
-                        className={`${extraFilters?.brand ? 'border-[#A27163]' : 'border-white'} w-full rounded-none border-2 bg-white px-2 py-2 text-sm text-slate-800 shadow-none transition-all duration-400 focus:border-[#A27163] focus:ring-1 focus:ring-[#A27163] focus:outline-none`}
-                    >
-                        <option value="">All Brands</option>
-                        {brands.map((b) => (
-                            <option key={b.id} value={b.id}>
-                                {b.name}
-                            </option>
-                        ))}
-                    </select> */}
 
                     {/* Colors */}
                     <FilterWithChip

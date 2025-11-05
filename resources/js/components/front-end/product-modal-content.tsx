@@ -50,11 +50,7 @@ const ProductModalContent = ({ product, contact, onClose, selectedImage, setSele
                 </div>
 
                 {/* Main image */}
-                <div
-                    className="relative flex h-full flex-1 cursor-zoom-in items-center justify-center"
-                    // onClick={() => setPreviewImage(selectedImage)}
-                    onClick={() => handlePreview(selectedImage)}
-                >
+                <div className="relative flex h-full flex-1 cursor-zoom-in items-center justify-center" onClick={() => handlePreview(selectedImage)}>
                     <img
                         src={
                             selectedImage

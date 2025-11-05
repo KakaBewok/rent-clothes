@@ -14,7 +14,6 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
 
     const createMessage = () => {
         const useByDate = queryParams.get('useByDate') || '';
-        // const duration = Number(queryParams.get('duration') || 1);
 
         const parsedUseByDate = parse(useByDate, 'dd-MM-yyyy', new Date());
         const validUseByDate = isValid(parsedUseByDate) ? parsedUseByDate : new Date();

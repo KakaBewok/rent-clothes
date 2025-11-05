@@ -40,7 +40,6 @@ export function ProductSelect({
                         variant="outline"
                         role="combobox"
                         aria-expanded={open}
-                        // className="mt-2 w-full justify-between overflow-x-auto rounded-none !border !border-slate-300 !bg-white shadow-none"
                         className="mt-2 w-full justify-between overflow-x-auto rounded-none !border !border-slate-300 !bg-white shadow-none hover:!border-slate-300 hover:!bg-white hover:!text-inherit focus-visible:!ring-0 active:!bg-white dark:hover:!bg-white dark:hover:!text-slate-700"
                     >
                         {selectedProduct ? (

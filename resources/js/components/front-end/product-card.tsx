@@ -21,12 +21,6 @@ const ProductCard = ({ product, onOpen }: ProductProps) => {
                 className="cursor-pointer"
             >
                 {/* Ribbon badge */}
-                {/* {product.additional_ribbon && isAvailable && (
-                    <div className="absolute top-0 left-0 z-10 rounded-br-xs bg-[#BAAE9E] px-1.5 py-0.5">
-                        <p className="text-[10px] font-normal tracking-wide text-white md:text-[12px]">{product.additional_ribbon}</p>
-                    </div>
-                )} */}
-
                 {product.additional_ribbon && !product.is_out_of_stock && (
                     <div className="absolute top-0 left-0 z-10 rounded-br-xs bg-[#BAAE9E] px-1.5 py-0.5">
                         <p className="text-[10px] font-normal tracking-wide text-white md:text-[12px]">{product.additional_ribbon}</p>
@@ -37,12 +31,6 @@ const ProductCard = ({ product, onOpen }: ProductProps) => {
                 <div className="relative overflow-hidden">
                     {/* Skeleton loading */}
                     {!isImageLoaded && <div className="absolute inset-0 animate-pulse bg-gray-400" />}
-
-                    {/* {!isAvailable && isImageLoaded && (
-                        <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-black/50">
-                            <h1 className="text-md font-semibold text-white uppercase md:text-xl">Out of Stock</h1>
-                        </div>
-                    )} */}
 
                     {(product.is_out_of_stock || !isAvailable) && isImageLoaded && (
                         <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-black/50">
@@ -59,7 +47,6 @@ const ProductCard = ({ product, onOpen }: ProductProps) => {
                         }
                         onLoad={() => setIsImageLoaded(true)}
                         onError={() => setIsImageLoaded(true)}
-                        // className={`${!isImageLoaded ? 'opacity-0' : 'opacity-100'} ${isAvailable ? 'group-hover:scale-105 group-hover:opacity-80' : ''} aspect-[2/3] w-full transform bg-gray-200 object-cover transition-all duration-300`}
                         className={`${!isImageLoaded ? 'opacity-0' : 'opacity-100'} ${!product.is_out_of_stock && isAvailable ? 'group-hover:scale-105 group-hover:opacity-80' : ''} aspect-[2/3] w-full transform bg-gray-200 object-cover transition-all duration-300`}
                     />
                 </div>
