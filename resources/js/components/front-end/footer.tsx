@@ -2,6 +2,7 @@ import { AppSetting } from '@/types/models';
 import { formatWhatsAppNumber } from '@/utils/format';
 import { Instagram, Mail, MapPin, MessageCircle } from 'lucide-react';
 import AppLogo from './app-logo';
+import InstallPwaButton from './install-pwa-button';
 
 interface FooterProps {
     setting: AppSetting;
@@ -59,6 +60,9 @@ const Footer = ({ setting, setModalInfo, setShowScheduleModal }: FooterProps) =>
                                 >
                                     Syarat & Ketentuan
                                 </button>
+                            </li>
+                            <li>
+                                <InstallPwaButton />
                             </li>
                         </ul>
                     </div>

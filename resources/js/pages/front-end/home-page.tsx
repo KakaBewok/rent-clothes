@@ -12,6 +12,7 @@ import { AppSetting, Banner, Branch, Brand, Color, Filter, PaginatedProducts, Pr
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Toaster } from 'sonner';
 
 interface HomePageProps {
     products: PaginatedProducts;
@@ -98,6 +99,7 @@ function HomePage({ branchs, products, banners, appSetting, showModal, baseFilte
 
     return (
         <div className="w-full bg-gray-50">
+            <Toaster position="top-center" />
             <div className="relative mx-auto min-h-screen max-w-screen-xl bg-white">
                 <NavBar setting={safeSetting} setModalInfo={setModalInfo} setShowScheduleModal={setShowScheduleModal} />
                 <Hero banners={banners} />

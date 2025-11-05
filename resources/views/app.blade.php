@@ -5,8 +5,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Qatiarent">
+    <link rel="apple-touch-icon" href="/android-chrome-512x512.png">
 
-    <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) for google analitycs-->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-YSV2T775CJ"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
