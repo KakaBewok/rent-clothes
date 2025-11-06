@@ -96,9 +96,6 @@ class OrderItemsTable
                         $query->whereHas('order', fn($q) => $q->where('expedition', $data['value']));
                     }
                 }),
-                SelectFilter::make('order.expedition')
-                    ->relationship('order', 'expedition')
-                    ->label('Shipping Service'),
                 Filter::make('date_range')
                     ->schema([
                         DatePicker::make('start_shipping')->label('Start Shipping'),
