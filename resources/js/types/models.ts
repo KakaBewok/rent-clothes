@@ -156,6 +156,8 @@ export interface Product {
         stock: number;
     }[];
 
+    booked_dates?: string[];
+
     available_stock?: number;
     is_out_of_stock?: boolean;
 }

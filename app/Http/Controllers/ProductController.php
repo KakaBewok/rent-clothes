@@ -9,46 +9,23 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    // for details product page
     public function showStockAvailable(Product $product, Request $request)
     {
         $product->load(['brand', 'types', 'color', 'branch', 'priceDetail', 'sizes']);
 
         $params = $this->constructParamsFromRequest($request);
-
         $startDate = $params['startDate'];
         $endDate   = $params['endDate'];
 
-        $stockBreakdown = $product->getAvailableStockBreakdownForPeriod($startDate, $endDate);
+        $availabilityData = $product->getAvailabilityForPeriod($startDate, $endDate);
 
         $productData = $product->toArray();
-        $productData['stock_breakdown'] = $stockBreakdown;
+        $productData['stock_breakdown'] = $availabilityData['stock_breakdown'];
+        $productData['booked_dates'] = $availabilityData['booked_dates'];
 
         return response()->json($productData);
     }
-
-    // for auto complete @search field
-    // public function show(Request $request)
-    // { 
-    //     $params = $this->constructParamsFromRequest($request);
-
-    //     $startDate = $params['startDate'];
-    //     $endDate   = $params['endDate'];
-
-    //     $availableProducts = Product::query()
-    //         ->whereDoesntHave('orderItems', function ($query) use ($startDate, $endDate) {
-    //             $query->whereHas('order', function ($subQuery) {
-    //                 $subQuery->whereIn('status', ['process', 'shipped']);
-    //             })
-    //             ->where(function ($subQuery) use ($startDate, $endDate) {
-    //                 $subQuery->where('estimated_delivery_date', '<=', $endDate)
-    //                     ->where('estimated_return_date', '>=', $startDate);
-    //             });
-    //         })
-    //         ->select('name')
-    //         ->get();
-
-    //     return response()->json($availableProducts);
-    // }
 
     // for auto complete @search field
     public function show(Request $request)
@@ -61,6 +38,7 @@ class ProductController extends Controller
         return response()->json($availableProducts);
     }
 
+    // for availibility product @form order
     public function getAvailableProducts(Request $request)
     {
         $params = $this->constructParamsFromRequest($request);

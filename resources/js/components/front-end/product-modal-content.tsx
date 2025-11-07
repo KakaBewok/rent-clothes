@@ -30,7 +30,7 @@ const ProductModalContent = ({ product, contact, onClose, selectedImage, setSele
     };
 
     return (
-        <div className="relative z-10 mx-auto flex h-[90vh] w-full max-w-5xl flex-col bg-white p-4 shadow-sm md:flex-row">
+        <div className="relative z-10 mx-auto flex h-[89vh] w-full max-w-5xl flex-col bg-white p-4 shadow-sm md:h-[65vh] md:flex-row lg:h-[90vh]">
             {/* close button */}
             <button onClick={onClose} className="absolute -top-1 right-1 cursor-pointer text-sm text-gray-700 md:top-1 md:right-3 md:text-lg">
                 x
