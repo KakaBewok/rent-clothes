@@ -4,13 +4,12 @@ import { format, isValid, parse } from 'date-fns';
 import { id } from 'date-fns/locale';
 import React from 'react';
 import { Button } from '../ui/button';
-import CalendarToggle from './calendar-toggle';
 
 const ProductModalDetails = ({ product, contact }: { product: Product; contact: string }) => {
     const { brand, price_detail, code, name: productName, description, sizes, types, additional_ribbon, color } = product;
     const getTypeList = () => types?.map((type) => type.name).join(', ');
     const getSizeList = () => sizes?.map((size) => size.size).join(', ');
-    const allSizesUnavailable = sizes?.every((size) => size.availability !== '1' || size.quantity === 0) ?? false;
+    // const allSizesUnavailable = sizes?.every((size) => size.availability !== '1' || size.quantity === 0) ?? false;
 
     const queryParams = new URLSearchParams(window.location.search);
 
@@ -56,7 +55,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                 </div>
 
                 {/* calendar availibility */}
-                <CalendarToggle allSizesUnavailable={allSizesUnavailable} product={product} />
+                {/* <CalendarToggle allSizesUnavailable={allSizesUnavailable} product={product} /> */}
 
                 <div className="border-b border-slate-200 pt-2 pb-4">
                     {product.stock_breakdown && product.stock_breakdown.length > 0 ? (
