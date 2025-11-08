@@ -53,13 +53,13 @@ export default function AvailabilityCalendar({ bookedDates }: AvailabilityCalend
                 }}
             />
 
-            <div className="mt-4 flex items-center gap-4">
-                <span className="flex items-center gap-1">
-                    <span className="mr-1 inline-block h-3 w-3 rounded-none bg-red-500" />{' '}
+            <div className="mt-4 flex items-center gap-5">
+                <span className="flex items-center gap-2">
+                    <span className="inline-block h-3 w-3 rounded-none bg-red-500" />{' '}
                     <span className="text-xs text-slate-700 italic md:text-sm">Full Booked</span>
                 </span>
-                <span className="flex items-center gap-1">
-                    <span className="mr-1 inline-block h-3 w-3 rounded-none border border-slate-300 bg-white" />{' '}
+                <span className="flex items-center gap-2">
+                    <span className="inline-block h-3 w-3 rounded-none border border-slate-300 bg-white" />{' '}
                     <span className="text-xs text-slate-700 italic md:text-sm">Available</span>
                 </span>
             </div>

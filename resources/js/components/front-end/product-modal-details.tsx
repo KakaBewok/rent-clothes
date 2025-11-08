@@ -31,7 +31,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
             {/* Scrollable content */}
             <div className="mt-3 flex-1 overflow-y-auto pr-1">
                 {/* Header info */}
-                <div className="mb-1 md:mt-0 md:mb-2">
+                <div className="mb-1 md:mt-0 md:mb-0">
                     <h2 className="mb-1 text-lg font-semibold text-slate-700 md:mb-2 md:text-xl">{productName}</h2>
                     <p className="mb-1 text-xs text-slate-500 md:text-sm">by {brand?.name}</p>
                     <p className="mb-1 text-xs text-slate-500 md:text-sm">code {code}</p>
@@ -74,7 +74,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                             </div>
                         </>
                     ) : (
-                        <p className="mt-2 text-sm text-slate-500">Tidak ada stok pada tanggal ini.</p>
+                        <p className="mt-0 text-sm text-slate-500">Tidak ada stok pada tanggal ini.</p>
                     )}
                 </div>
 

@@ -10,6 +10,7 @@ interface ProductProps {
 const ProductCard = ({ product, onOpen }: ProductProps) => {
     const [isImageLoaded, setIsImageLoaded] = useState<boolean>(false);
     const isAvailable = product.sizes?.some((size) => size.availability === '1') || false;
+    const ribbon = product.additional_ribbon;
 
     return (
         <div key={product.id} className="group relative">
@@ -21,9 +22,9 @@ const ProductCard = ({ product, onOpen }: ProductProps) => {
                 className="cursor-pointer"
             >
                 {/* Ribbon badge */}
-                {product.additional_ribbon && !product.is_out_of_stock && (
-                    <div className="absolute top-0 left-0 z-10 rounded-br-xs bg-[#BAAE9E] px-1.5 py-0.5">
-                        <p className="text-[10px] font-normal tracking-wide text-white md:text-[12px]">{product.additional_ribbon}</p>
+                {ribbon && !product.is_out_of_stock && (
+                    <div className={`absolute top-0 left-0 z-10 rounded-br-xs px-1.5 py-0.5 ${ribbon == 'Promo' ? 'bg-[#A8493D]' : 'bg-[#BAAE9E]'}`}>
+                        <p className="text-[10px] font-normal tracking-wide text-white md:text-[12px]">{ribbon}</p>
                     </div>
                 )}
 

@@ -16,7 +16,7 @@ export default function CalendarToggle({ allSizesUnavailable, product }: Calenda
     if (allSizesUnavailable) return null;
 
     return (
-        <div className="my-2">
+        <div className="mt-2">
             <button
                 type="button"
                 onClick={() => setShowCalendar((prev) => !prev)}
