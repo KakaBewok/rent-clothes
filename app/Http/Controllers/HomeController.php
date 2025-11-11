@@ -44,7 +44,7 @@ class HomeController extends Controller
             'color',
             'type',
             'search',
-        ]); // 'stock'
+        ]);
 
         $products = $this->getProductsByFilters($baseFilters, $extraFilters, $request->boolean('available'));
         $banners = Banner::where('is_active', true)->get();
@@ -59,58 +59,6 @@ class HomeController extends Controller
             compact('branchs', 'products', 'banners', 'appSetting', 'showModal', 'baseFilters', 'brands', 'colors', 'types')
         );
     }
-
-    // private function getProductsByFilters(array $filters, array $extraFilters = [], $isAvailable)
-    // {
-    //     $params = $this->constructPrams($filters);
-
-    //     $startDate = $params['startDate'];
-    //     $endDate   = $params['endDate'];
-
-    //     $query = Product::query()
-    //         ->when($filters['city'], fn($q) => $q->where('branch_id', $filters['city']))
-    //         ->when($filters['duration'], fn($q) =>
-    //             $q->where('rent_periode', '>=', $filters['duration'])
-    //         )
-    //         ->whereRaw('
-    //             (
-    //                 COALESCE((
-    //                     SELECT SUM(sz.quantity)
-    //                     FROM sizes sz
-    //                     WHERE sz.product_id = products.id
-    //                 ), 0)
-    //                 -
-    //                 COALESCE((
-    //                     SELECT COALESCE(SUM(oi.quantity), 0)
-    //                     FROM order_items oi
-    //                     JOIN orders o ON o.id = oi.order_id
-    //                     WHERE oi.product_id = products.id
-    //                     AND o.status IN (?, ?)
-    //                     AND (
-    //                         DATE(oi.estimated_delivery_date) <= DATE(?) AND
-    //                         DATE(oi.estimated_return_date) >= DATE(?)
-    //                     )
-    //                 ), 0)
-    //             ) > 0
-    //         ', ['process', 'shipped', $endDate, $startDate])
-    //         ->with(['brand', 'types', 'priceDetail', 'sizes']);
-
-    //     $this->getExtraFilters($query, $extraFilters, $isAvailable);
-
-    //     $query->orderBy('upload_at', 'desc');
-
-    //     $products = $query->paginate(24);
-
-    //     return [
-    //         'data' => $products->items(),
-    //         'meta' => [
-    //             'current_page' => $products->currentPage(),
-    //             'last_page'    => $products->lastPage(),
-    //             'per_page'     => $products->perPage(),
-    //             'total'        => $products->total(),
-    //         ],
-    //     ];
-    // }
 
     private function getProductsByFilters(array $filters, array $extraFilters = [], $isAvailable)
     {
@@ -186,7 +134,6 @@ class HomeController extends Controller
             ],
         ];
     }
-
 
     private function getExtraFilters($query, array $extraFilters = [], $isAvailable)
     {
