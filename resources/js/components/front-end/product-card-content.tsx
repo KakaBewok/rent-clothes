@@ -45,7 +45,7 @@ const ProductCardContent = ({ product }: { product: Product }) => {
                     {rent_periode === 1 ? '/1 day' : `/1-${rent_periode} days`}
                 </p>
 
-                {price_detail?.discount && (
+                {price_detail?.discount !== undefined && price_detail.discount > 0 && (
                     <p>
                         <span className="animate-pulse text-xs text-slate-300 line-through lg:text-sm">{formatRupiah(price_detail?.rent_price)}</span>
                         <span className="ml-2 animate-pulse text-xs font-bold text-red-300 lg:text-sm">-{price_detail?.discount}%</span>
