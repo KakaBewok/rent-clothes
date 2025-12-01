@@ -19,10 +19,17 @@ const Hero = ({ banners }: { banners: Banner[] }) => {
             })),
         ) ?? [];
 
+    const toTimestamp = (str?: string) => {
+        if (!str) return 0;
+        // convert: "2025-12-01 10:09:23" → "2025-12-01T10:09:23"
+        const normalized = str.replace(' ', 'T');
+        const t = Date.parse(normalized);
+
+        return isNaN(t) ? 0 : t;
+    };
+
     const sortedSlides = slides.sort((a, b) => {
-        const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
-        const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
-        return dateB - dateA;
+        return toTimestamp(b.created_at) - toTimestamp(a.created_at);
     });
 
     const handleBannerClick = (typeId?: number) => {
