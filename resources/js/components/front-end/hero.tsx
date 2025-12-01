@@ -15,8 +15,15 @@ const Hero = ({ banners }: { banners: Banner[] }) => {
                 image: imagePath,
                 title: banner.title ?? '',
                 type_id: banner.type_id,
+                created_at: banner.created_at,
             })),
         ) ?? [];
+
+    const sortedSlides = slides.sort((a, b) => {
+        const dateA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const dateB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        return dateB - dateA;
+    });
 
     const handleBannerClick = (typeId?: number) => {
         if (!typeId) return;
@@ -58,7 +65,7 @@ const Hero = ({ banners }: { banners: Banner[] }) => {
                 plugins={[Autoplay({ delay: 3000, stopOnInteraction: false })]}
             >
                 <CarouselContent>
-                    {slides.map((slide) => {
+                    {sortedSlides.map((slide) => {
                         // const isActive = currentType === String(slide.type_id);
                         return (
                             <CarouselItem key={slide.key}>
