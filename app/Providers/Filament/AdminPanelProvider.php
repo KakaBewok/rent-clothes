@@ -74,6 +74,9 @@ class AdminPanelProvider extends PanelProvider
                 AppSetting::first()?->app_logo
                     ? asset('storage/' . AppSetting::first()->app_logo)
                     : null
-            );
+            )
+            ->assets([
+                Css::make('filament-custom', asset('css/filament/custom.css')),
+            ]);
     }
 }

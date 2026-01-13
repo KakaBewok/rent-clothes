@@ -1,0 +1,7 @@
+@media (max-width: 1024px) {
+    .fi-pagination-overview {
+        display: block !important;
+        font-size: 0.75rem;
+        text-align: center;
+    }
+}
