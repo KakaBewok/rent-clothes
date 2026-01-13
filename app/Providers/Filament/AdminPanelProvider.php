@@ -23,6 +23,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Support\Assets\Css;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -73,6 +74,9 @@ class AdminPanelProvider extends PanelProvider
                 AppSetting::first()?->app_logo
                     ? asset('storage/' . AppSetting::first()->app_logo)
                     : null
-            );
+            )
+            ->assets([
+                Css::make('custom-filament', asset('css/filament/filament/app.css')),
+            ]);
     }
 }
