@@ -74,10 +74,13 @@ export interface Color {
 export interface Order {
     id: number;
     name: string;
+    recipient: string;
     phone_number: string;
+    social_media: string;
     identity_image?: string | null;
     expedition?: string | null;
     account_number?: string | null;
+    account_holder?: string | null;
     provider_name?: string | null;
     address?: string | null;
     status: string;

@@ -52,7 +52,13 @@ body {
     animation: fadeOut 3s forwards;
 }
 
+/* font for order form */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @theme {
+    /* font for order form */
+    --font-inter: 'Inter', ui-sans-serif, system-ui, sans-serif;
+
     --color-first: oklch(83.7% 0.128 66.29);
     --color-second: oklch(90.1% 0.076 70.697);
     --color-third: oklch(95.4% 0.038 75.164);

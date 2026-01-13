@@ -19,9 +19,12 @@ class Order extends Model
         'identity_image',
         'expedition',
         'account_number',
+        'account_holder',
         'provider_name',
         'address',
         'status',
+        'social_media', 
+        'recipient',
         'desc',
         'created_by'
     ];

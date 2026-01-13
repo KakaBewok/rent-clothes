@@ -45,10 +45,13 @@ class OrderController extends Controller
 
             $order = Order::create([
                 'name' => $validated['name'],
+                'recipient' => $validated['recipient'],
+                'social_media' => $validated['social_media'],
                 'phone_number' => $validated['phone_number'],
                 'identity_image' => $identityPath,
                 'expedition' => $validated['expedition'],
                 'account_number' => $validated['account_number'],
+                'account_holder' => $validated['account_holder'],
                 'provider_name' => $validated['provider_name'],
                 'address' => $validated['address'],
                 'desc' => $validated['desc'] ?? '-',

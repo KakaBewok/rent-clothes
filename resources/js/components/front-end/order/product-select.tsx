@@ -30,7 +30,7 @@ export function ProductSelect({
 
     return (
         <div className="w-full space-y-1">
-            <FieldLabel className="text-slate-700">
+            <FieldLabel className="text-md font-semibold text-slate-700">
                 {label} <span className="text-red-500">*</span>
             </FieldLabel>
 

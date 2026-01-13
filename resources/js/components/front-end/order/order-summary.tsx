@@ -25,7 +25,13 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ fields, watch, getSelectedP
                 <p className="font-semibold">Nama</p>
                 <p>: {watch('name') || '-'}</p>
 
-                <p className="font-semibold">No. Telepon</p>
+                <p className="font-semibold">Nama Penerima</p>
+                <p>: {watch('recipient') || '-'}</p>
+
+                <p className="font-semibold">Instagram</p>
+                <p>: {watch('social_media') || '-'}</p>
+
+                <p className="font-semibold">No. HP</p>
                 <p>: {watch('phone_number') || '-'}</p>
 
                 <p className="font-semibold">Ekspedisi</p>
@@ -34,8 +40,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ fields, watch, getSelectedP
                 <p className="font-semibold">Alamat</p>
                 <p>: {watch('address') || '-'}</p>
 
-                <p className="font-semibold">Provider</p>
+                <p className="font-semibold">Bank/E-Wallet</p>
                 <p>: {watch('provider_name') || '-'}</p>
+
+                <p className="font-semibold">Pemilik Rekening</p>
+                <p>: {watch('account_holder') || '-'}</p>
 
                 <p className="font-semibold">No. Rekening</p>
                 <p>: {watch('account_number') || '-'}</p>

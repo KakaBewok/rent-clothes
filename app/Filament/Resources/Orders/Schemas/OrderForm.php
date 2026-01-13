@@ -28,13 +28,17 @@ class OrderForm
                         TextInput::make('name')
                             ->required()
                             ->maxLength(255),
-
+                        TextInput::make('recipient')
+                            ->label('Recipient Name')
+                            ->maxLength(255),
                         TextInput::make('phone_number')
                             ->numeric()
                             ->prefixIcon('heroicon-m-phone')
                             ->maxLength(20)
                             ->required(),
-
+                        TextInput::make('social_media')
+                            ->label('Instagram')
+                            ->maxLength(255),
                         FileUpload::make('identity_image')
                             ->label('Identity Document (KTP/SIM Card)')
                             ->image()
@@ -42,62 +46,51 @@ class OrderForm
                             ->directory('orders/identity')
                             ->imageEditorAspectRatios(['16:9', '4:3', '1:1'])
                             ->imageEditor()
-                            ->maxSize(config('uploads.images.max_size'))
-                            ->acceptedFileTypes(config('uploads.images.accepted_types'))
-                            ->helperText('Upload clear photo of ID card. Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
+                            ->maxSize(config('constants.images.max_size'))
+                            ->acceptedFileTypes(config('constants.images.accepted_types'))
+                            ->helperText('Upload clear photo of ID card. Max file size: ' . (config('constants.images.max_size') / 1000) . 'MB')
                             ->nullable(),
 
                         Select::make('expedition')
                             ->label('Shipping Service')
                             ->required()
-                            ->options([
-                                'Self Pickup' => 'Self Pickup',
-                                'Paxel' => 'Paxel',
-                                'JNE' => 'JNE',
-                                'J&T Express' => 'J&T Express',
-                                'TIKI' => 'TIKI',
-                                'POS Indonesia' => 'POS Indonesia',
-                                'SiCepat' => 'SiCepat',
-                                'Lion Parcel' => 'Lion Parcel',
-                                'AnterAja' => 'AnterAja',
-                                'Shopee Express' => 'Shopee Express',
-                                'Grab Express' => 'Grab Express',
-                                'Gojek (GoSend)' => 'Gojek (GoSend)',
-                            ])
+                            ->options(config('constants.expeditions'))
                             ->searchable(),
 
                         TextInput::make('account_number')
                             ->numeric()
                             ->required()
                             ->maxLength(50),
+                        TextInput::make('account_holder')
+                            ->nullable()
+                            ->maxLength(255),
 
-                        Select::make('provider_name')
-                            ->label('Bank Name/Provider')
+                        // Select::make('provider_name')
+                        //     ->label('Bank Name/Provider')
+                        //     ->required()
+                        //     ->options([
+                        //         'BCA' => 'BCA',
+                        //         'Mandiri' => 'Mandiri',
+                        //         'BNI' => 'BNI',
+                        //         'BRI' => 'BRI',
+                        //         'CIMB Niaga' => 'CIMB Niaga',
+                        //         'Permata' => 'Permata',
+                        //         'Danamon' => 'Danamon',
+                        //         'Gopay' => 'Gopay',
+                        //         'OVO' => 'OVO',
+                        //         'DANA' => 'DANA',
+                        //         'ShopeePay' => 'ShopeePay',
+                        //         'Bank Jago' => 'Bank Jago',
+                        //         'Bank BJB' => 'Bank BJB'
+                        //     ])
+                        //     ->searchable(),
+                        TextInput::make('provider_name')
+                            ->label('Bank Name / Provider')
                             ->required()
-                            ->options([
-                                'BCA' => 'BCA',
-                                'Mandiri' => 'Mandiri',
-                                'BNI' => 'BNI',
-                                'BRI' => 'BRI',
-                                'CIMB Niaga' => 'CIMB Niaga',
-                                'Permata' => 'Permata',
-                                'Danamon' => 'Danamon',
-                                'Gopay' => 'Gopay',
-                                'OVO' => 'OVO',
-                                'DANA' => 'DANA',
-                                'ShopeePay' => 'ShopeePay'
-                            ])
-                            ->searchable(),
-
+                            ->datalist(config('constants.providers')),
                         Select::make('status')
                             ->label('Order Status')
-                            ->options([
-                                'pending'  => 'Pending',
-                                'process'  => 'Process',
-                                'shipped'   => 'Shipped',
-                                'returned'  => 'Returned',
-                                'cancel' => 'Cancel',
-                            ])
+                            ->options(config('constants.order_statuses'))
                             ->default('process')
                             ->required()
                             ->native(false),
@@ -151,28 +144,6 @@ class OrderForm
                                     ->afterStateUpdated(function ($state, callable $set) {
                                         $set('quantity', Size::find($state)?->quantity);
                                     }),
-
-                                // Select::make('type')
-                                //     ->label('Tipe')
-                                //     ->options(function (callable $get) {
-                                //         $productId = $get('product_id');
-                                        
-                                //         if (!$productId) {
-                                //             return [];
-                                //         }
-
-                                //         $product = Product::with('types')->find($productId);
-
-                                //         if (!$product) {
-                                //             return [];
-                                //         }
-                                //         return $product->types->pluck('name', 'name')->toArray();
-                                //     })
-                                //     ->searchable()
-                                //     ->preload()
-                                //     ->reactive()
-                                //     ->disabled(fn (callable $get) => !$get('product_id'))
-                                //     ->nullable(),
                                 Select::make('type')
                                     ->options([
                                         "Hijab" => "Hijab",

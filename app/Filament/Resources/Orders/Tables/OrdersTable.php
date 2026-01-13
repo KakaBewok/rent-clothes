@@ -25,7 +25,13 @@ class OrdersTable
                 TextColumn::make('name')
                     ->label('Customer Name')
                     ->searchable(),
+                TextColumn::make('recipient')
+                    ->label('Recipient Name')
+                    ->searchable(),
                 TextColumn::make('phone_number'),
+                TextColumn::make('social_media')
+                    ->label('Instagram')
+                    ->searchable(),
                 TextColumn::make('first_product_name')
                     ->label('Catalogue Name')
                     ->limit(30)
@@ -56,30 +62,11 @@ class OrdersTable
             ->filters([
                 SelectFilter::make('status')
                     ->label('Order Status')
-                    ->options([
-                        'pending'   => 'Pending',
-                        'process'   => 'Process',
-                        'shipped'   => 'Shipped',
-                        'returned'  => 'Returned',
-                        'cancel' => 'Cancel',
-                    ]),
+                    ->options(config('constants.order_statuses')),
 
                 SelectFilter::make('expedition')
                     ->label('Shipping Service')
-                    ->options([
-                        'Self Pickup' => 'Self Pickup',
-                        'Paxel' => 'Paxel',
-                        'JNE' => 'JNE',
-                        'J&T Express' => 'J&T Express',
-                        'TIKI' => 'TIKI',
-                        'POS Indonesia' => 'POS Indonesia',
-                        'SiCepat' => 'SiCepat',
-                        'Lion Parcel' => 'Lion Parcel',
-                        'AnterAja' => 'AnterAja',
-                        'Shopee Express' => 'Shopee Express',
-                        'Grab Express' => 'Grab Express',
-                        'Gojek (GoSend)' => 'Gojek (GoSend)',
-                    ]),
+                    ->options(config('constants.expeditions')),
                 Filter::make('date_range')
                      ->schema([
                         DatePicker::make('start_shipping')->label('Start Shipping'),

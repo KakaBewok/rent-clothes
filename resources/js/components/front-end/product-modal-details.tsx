@@ -1,15 +1,18 @@
 import { Product } from '@/types/models';
 import { formatRupiah, formatWhatsAppNumber } from '@/utils/format';
+import { Link } from '@inertiajs/react';
 import { format, isValid, parse } from 'date-fns';
 import { id } from 'date-fns/locale';
+import { MessageCircle, ShoppingCart } from 'lucide-react';
 import React from 'react';
 import { Button } from '../ui/button';
+import CalendarToggle from './calendar-toggle';
 
 const ProductModalDetails = ({ product, contact }: { product: Product; contact: string }) => {
     const { brand, price_detail, code, name: productName, description, sizes, types, additional_ribbon, color } = product;
     const getTypeList = () => types?.map((type) => type.name).join(', ');
     const getSizeList = () => sizes?.map((size) => size.size).join(', ');
-    // const allSizesUnavailable = sizes?.every((size) => size.availability !== '1' || size.quantity === 0) ?? false;
+    const allSizesUnavailable = sizes?.every((size) => size.availability !== '1' || size.quantity === 0) ?? false;
 
     const queryParams = new URLSearchParams(window.location.search);
 
@@ -55,7 +58,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                 </div>
 
                 {/* calendar availibility */}
-                {/* <CalendarToggle allSizesUnavailable={allSizesUnavailable} product={product} /> */}
+                <CalendarToggle allSizesUnavailable={allSizesUnavailable} product={product} />
 
                 <div className="border-b border-slate-200 pt-2 pb-4">
                     {product.stock_breakdown && product.stock_breakdown.length > 0 ? (
@@ -143,7 +146,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                 </div>
             </div>
 
-            <div className="pt-3">
+            {/* <div className="pt-3">
                 <a
                     href={
                         product.stock_breakdown && product.stock_breakdown.length > 0
@@ -164,32 +167,41 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                         {product.stock_breakdown && product.stock_breakdown.length > 0 ? 'Rent Now' : 'Out of Stock'}
                     </Button>
                 </a>
-            </div>
-
-            {/* <div className="flex w-full flex-col gap-2 pt-3 md:flex-row">
-                <Link
-                    href={`https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full md:w-1/2"
-                >
-                    <Button className="w-full cursor-pointer rounded-none bg-green-500 text-white transition-all duration-300 hover:bg-green-600">
-                        <MessageCircle className="h-6 w-6" />
-                        Chat Admin
-                    </Button>
-                </Link>
-                <Link
-                    href={`https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full md:w-1/2"
-                >
-                    <Button className="w-full cursor-pointer rounded-none bg-[#A27163] text-white transition-all duration-300 hover:bg-[#976456]">
-                        <ShoppingCart className="h-6 w-6" />
-                        Order Now
-                    </Button>
-                </Link>
             </div> */}
+
+            <div className="flex w-full flex-col gap-2 pt-3 md:flex-row">
+                <Link
+                    href={
+                        product.stock_breakdown && product.stock_breakdown.length > 0
+                            ? `https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`
+                            : undefined
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`w-full ${product.stock_breakdown && product.stock_breakdown.length > 0 ? 'md:w-1/2' : ''}`}
+                >
+                    <Button
+                        className={`w-full cursor-pointer rounded-none transition-all duration-500 ${
+                            product.stock_breakdown && product.stock_breakdown.length > 0
+                                ? 'bg-green-500 text-white hover:bg-green-600'
+                                : 'cursor-not-allowed bg-slate-300 text-slate-500 hover:bg-slate-200'
+                        }`}
+                    >
+                        <MessageCircle className="h-6 w-6" />
+                        {product.stock_breakdown && product.stock_breakdown.length > 0 ? 'Rent Now' : 'Out of Stock'}
+                    </Button>
+                </Link>
+                {product.stock_breakdown && product.stock_breakdown.length > 0 && (
+                    <Link href="/form" target="_blank" rel="noopener noreferrer" className="w-full md:w-1/2">
+                        <Button
+                            className={`w-full cursor-pointer rounded-none bg-[#A27163] text-white transition-all duration-300 hover:bg-[#976456]`}
+                        >
+                            <ShoppingCart className="h-6 w-6" />
+                            Order Now
+                        </Button>
+                    </Link>
+                )}
+            </div>
         </div>
     );
 };

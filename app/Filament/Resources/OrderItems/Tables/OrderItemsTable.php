@@ -63,13 +63,7 @@ class OrderItemsTable
             ->filters([
                 SelectFilter::make('status')
                 ->label('Order Status')
-                ->options([
-                    'pending'   => 'Pending',
-                    'process'   => 'Process',
-                    'shipped'   => 'Shipped',
-                    'returned'  => 'Returned',
-                    'cancel'    => 'Cancel',
-                ])
+                ->options(config('constants.order_statuses'))
                 ->query(function ($query, array $data) {
                     if (!empty($data['value'])) {
                         $query->whereHas('order', fn($q) => $q->where('status', $data['value']));
@@ -77,20 +71,7 @@ class OrderItemsTable
                 }),
                 SelectFilter::make('expedition')
                 ->label('Shipping Service')
-                ->options([
-                        'Self Pickup' => 'Self Pickup',
-                        'Paxel' => 'Paxel',
-                        'JNE' => 'JNE',
-                        'J&T Express' => 'J&T Express',
-                        'TIKI' => 'TIKI',
-                        'POS Indonesia' => 'POS Indonesia',
-                        'SiCepat' => 'SiCepat',
-                        'Lion Parcel' => 'Lion Parcel',
-                        'AnterAja' => 'AnterAja',
-                        'Shopee Express' => 'Shopee Express',
-                        'Grab Express' => 'Grab Express',
-                        'Gojek (GoSend)' => 'Gojek (GoSend)',
-                ])
+                ->options(config('constants.expeditions'))
                 ->query(function ($query, array $data) {
                     if (!empty($data['value'])) {
                         $query->whereHas('order', fn($q) => $q->where('expedition', $data['value']));

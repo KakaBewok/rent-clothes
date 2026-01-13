@@ -18,7 +18,10 @@ class OrderFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
+            'recipient' => $this->faker->name,
+            'account_holder' => $this->faker->name,
             'phone_number' => $this->faker->phoneNumber,
+            'social_media' => '@' . $this->faker->userName,
             'identity_image' => 'identity/' . $this->faker->uuid . '.jpg',
             'expedition' => $this->faker->company,
             'account_number' => $this->faker->bankAccountNumber,

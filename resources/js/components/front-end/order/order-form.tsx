@@ -21,23 +21,9 @@ import { z } from 'zod';
 import AppLogo from '../app-logo';
 import OrderSummary from './order-summary';
 import { ProductSelect } from './product-select';
+import ProviderAutocomplete from './provider-auto-complete';
 
-const EXPEDITION_OPTIONS = [
-    'Self Pickup',
-    'Paxel',
-    'JNE',
-    'J&T Express',
-    'TIKI',
-    'POS Indonesia',
-    'SiCepat',
-    'Lion Parcel',
-    'AnterAja',
-    'Shopee Express',
-    'Grab Express',
-    'Gojek (GoSend)',
-];
-
-const PROVIDER_OPTIONS = ['Mandiri', 'BCA', 'BNI', 'BRI', 'CIMB Niaga', 'Permata', 'Danamon', 'Gopay', 'OVO', 'DANA', 'ShopeePay'];
+const EXPEDITION_OPTIONS = ['Self Pickup', 'Paxel', 'TIKI', 'Shopee Express'];
 
 const SHIPPING_OPTIONS = [
     { value: 'Same day', label: 'Same Day' },
@@ -79,9 +65,26 @@ const orderItemSchema = z.object({
 });
 
 const orderFormSchema = z.object({
+    // --- REVISI 1 ---//
+    name: z.string().optional().or(z.literal('')),
+    phone_number: z
+        .string()
+        .regex(/^(\+62|0)\d{9,13}$/, 'Format nomor HP tidak valid. Contoh: 0812...')
+        .optional()
+        .or(z.literal('')),
+    address: z.string().optional().or(z.literal('')),
+    expedition: z.string().optional().or(z.literal('')),
+    account_number: z.string().optional().or(z.literal('')),
+    account_holder: z.string().optional().or(z.literal('')),
+    provider_name: z.string().optional().or(z.literal('')),
+
+    recipient: z.string().optional().or(z.literal('')),
+    social_media: z.string().optional().or(z.literal('')),
+    // --- REVISI 1 ---//
+
     // shipping info
-    name: z.string().min(3, 'Nama minimal 3 karakter.'),
-    phone_number: z.string().regex(/^(\+62|0)\d{9,13}$/, 'Format nomor telepon tidak valid. Contoh: 0812...'),
+    // name: z.string().min(3, 'Nama minimal 3 karakter.'), --- REVISI 1
+    // phone_number: z.string().regex(/^(\+62|0)\d{9,13}$/, 'Format nomor telepon tidak valid. Contoh: 0812...'), --- REVISI 1
     identity_image: z
         .union([
             z
@@ -95,12 +98,12 @@ const orderFormSchema = z.object({
             z.string(),
         ])
         .optional(),
-    address: z.string().min(10, 'Alamat harus lengkap, minimal 10 karakter.'),
-    expedition: z.string().min(1, 'Jasa ekspedisi wajib diisi.'),
+    // address: z.string().min(10, 'Alamat harus lengkap, minimal 10 karakter.'), --- REVISI 1
+    // expedition: z.string().min(1, 'Jasa ekspedisi wajib diisi.'), --- REVISI 1
 
     // deposit return info
-    account_number: z.string().min(5, 'Nomor rekening/akun minimal 5 digit.'),
-    provider_name: z.string().min(1, 'Nama provider wajib diisi.'),
+    // account_number: z.string().min(5, 'Nomor rekening/akun minimal 5 digit.'), --- REVISI 1
+    // provider_name: z.string().min(1, 'Nama provider wajib diisi.'), --- REVISI 1
 
     // items
     items: z.array(orderItemSchema).min(1, 'Minimal 1 item.'),
@@ -134,8 +137,11 @@ export default function OrderForm({ setting }: OrderFormProps) {
             address: '',
             expedition: '',
             account_number: '',
+            account_holder: '',
             provider_name: '',
             desc: '',
+            social_media: '',
+            recipient: '',
             items: [
                 {
                     product_id: 0,
@@ -160,21 +166,22 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
     const items = watch('items');
     const isAgreed = watch('agreement');
-    const firstItem = items?.[0];
-    const isItemFilled =
-        firstItem &&
-        firstItem.product_id &&
-        firstItem.size_id &&
-        firstItem.quantity &&
-        firstItem.rent_periode &&
-        firstItem.shipping &&
-        firstItem.use_by_date &&
-        watch('name') &&
-        watch('phone_number') &&
-        watch('address') &&
-        watch('expedition') &&
-        watch('provider_name') &&
-        watch('account_number');
+    // temporary revisi 1
+    // const firstItem = items?.[0];
+    // const isItemFilled =
+    //     firstItem &&
+    //     firstItem.product_id &&
+    //     firstItem.size_id &&
+    //     firstItem.quantity &&
+    //     firstItem.rent_periode &&
+    //     firstItem.shipping &&
+    //     firstItem.use_by_date &&
+    //     watch('name') &&
+    //     watch('phone_number') &&
+    //     watch('address') &&
+    //     watch('expedition') &&
+    //     watch('provider_name') &&
+    //     watch('account_number');
 
     const clearForm = (type: string) => {
         form.reset();
@@ -193,6 +200,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
         const message = encodeURIComponent(
             `Halo! \nAku udah isi form order, berikut detail pesanannya:\n\n` +
                 `Nama: ${payload.name}\n` +
+                `Nama Penerima: ${payload.recipient}\n` +
+                `Instagram: ${payload.social_media}\n` +
                 `No. HP: ${payload.phone_number}\n` +
                 `Foto KTP: ${payload.identity_image ? `Sudah diupload` : `Belum diupload`}\n` +
                 `Expedisi: ${payload.expedition}\n` +
@@ -202,7 +211,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                 payload.items
                     .map(
                         (item: OrderItemData, i: number) =>
-                            `${i + 1}. Produk: ${item.product_name}\n Ukuran: ${item.size_label}\n Tipe: ${item.type ?? '-'}\n Jumlah: ${item.quantity}\n Jenis Pengiriman: ${item.shipping}\n Durasi Sewa: ${item.rent_periode} hari\n Tanggal digunakan: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
+                            `${i + 1}. Produk: ${item.product_name}\n Ukuran: ${item.size_label}\n Tipe: ${item.type ?? '-'}\n Jumlah: ${item.quantity}\n Jenis Pengiriman: ${item.shipping}\n Durasi Sewa: ${item.rent_periode} hari\n Tanggal digunakan: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })} \n Tanggal Kirim: ${format(item.estimated_delivery_date, 'EEEE, dd MMM yyyy', { locale: id })} \n Tanggal Kembali: ${format(item.estimated_return_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
                     )
                     .join('\n\n') +
                 `\n\nMohon konfirmasinya ya, terima kasih.`,
@@ -363,26 +372,63 @@ export default function OrderForm({ setting }: OrderFormProps) {
                     <CardTitle>
                         <AppLogo setting={setting} logoSize={150} />
                     </CardTitle>
-                    <CardDescription className="text-xs text-slate-600">Lengkapi informasi pengiriman, deposit dan detail pesanan</CardDescription>
+                    <CardDescription className="text-md text-slate-600">Lengkapi informasi pengiriman, deposit dan detail pesanan</CardDescription>
                 </CardHeader>
                 <form id="order-form-rhf" onSubmit={handleSubmit(onSubmit)}>
                     <CardContent className="space-y-4 md:my-5">
                         {/* ## shipping info                 */}
                         <h3 className="border-b border-slate-200 pb-2 text-lg font-semibold text-slate-700">Info Pengiriman</h3>
-                        <FieldGroup className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <FieldGroup className="grid grid-cols-1 gap-4">
                             {/* name */}
                             <Controller
                                 name="name"
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel className="text-slate-700" htmlFor="name">
-                                            Nama <span className="text-red-500">*</span>
+                                        <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="name">
+                                            Nama Sesuai KTP
                                         </FieldLabel>
                                         <Input
                                             {...field}
                                             id="name"
                                             placeholder="Yuri Chan"
+                                            className="rounded-none border border-slate-300 text-sm shadow-none"
+                                        />
+                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+                            {/* recipient */}
+                            <Controller
+                                name="recipient"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="recipient">
+                                            Nama Penerima
+                                        </FieldLabel>
+                                        <Input
+                                            {...field}
+                                            id="recipient"
+                                            placeholder="Yuri Chan"
+                                            className="rounded-none border border-slate-300 text-sm shadow-none"
+                                        />
+                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+                            <Controller
+                                name="social_media"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="social_media">
+                                            Instagram
+                                        </FieldLabel>
+                                        <Input
+                                            {...field}
+                                            id="social_media"
+                                            placeholder="@yuri_chan"
                                             className="rounded-none border border-slate-300 text-sm shadow-none"
                                         />
                                         {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
@@ -395,8 +441,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel className="text-slate-700" htmlFor="phone_number">
-                                            No. Telepon <span className="text-red-500">*</span>
+                                        <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="phone_number">
+                                            No. HP/Whatsapp
                                         </FieldLabel>
                                         <Input
                                             {...field}
@@ -414,15 +460,15 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel className="text-slate-700" htmlFor="expedition">
-                                            Ekspedisi <span className="text-red-500">*</span>
+                                        <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="expedition">
+                                            Ekspedisi
                                         </FieldLabel>
                                         <Select onValueChange={field.onChange} value={field.value} name={field.name}>
                                             <SelectTrigger
                                                 id="expedition"
                                                 className="cursor-pointer rounded-none border border-slate-300 shadow-none"
                                             >
-                                                <SelectValue placeholder="JNE" />
+                                                <SelectValue placeholder="PAXEL" />
                                             </SelectTrigger>
                                             <SelectContent className="cursor-pointer rounded-none text-sm shadow-none">
                                                 {EXPEDITION_OPTIONS.map((exp, i) => (
@@ -467,7 +513,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                     return (
                                         <Field data-invalid={fieldState.invalid}>
-                                            <FieldLabel className="text-slate-700" htmlFor="identity_image">
+                                            <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="identity_image">
                                                 Upload foto KTP
                                             </FieldLabel>
                                             <Input
@@ -476,9 +522,9 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                 type="file"
                                                 onChange={handleFileChange}
                                                 accept={ACCEPTED_IMAGE_TYPES.join(',')}
-                                                className="cursor-pointer rounded-none border border-slate-300 text-xs shadow-none"
+                                                className="cursor-pointer rounded-none border border-slate-300 text-sm font-semibold shadow-none"
                                             />
-                                            <FieldDescription className="text-xs text-slate-400">
+                                            <FieldDescription className="text-xs text-slate-500">
                                                 Maks. 2MB dalam format jpg/jpeg/png
                                                 <br className="my-1" />
                                                 🔒 Data kamu aman dan hanya digunakan untuk verifikasi.
@@ -514,8 +560,8 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             control={control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel className="text-slate-700" htmlFor="address">
-                                        Alamat Lengkap <span className="text-red-500">*</span>
+                                    <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="address">
+                                        Alamat Lengkap
                                     </FieldLabel>
                                     <InputGroup className="rounded-none border border-slate-300 shadow-none">
                                         <InputGroupTextarea
@@ -530,55 +576,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 </Field>
                             )}
                         />
-
-                        {/* ## return info            */}
-                        <h3 className="mt-8 border-b border-slate-200 pb-2 text-lg font-semibold text-slate-700">Pengembalian Deposit</h3>
-                        <FieldGroup className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            {/* Provider */}
-                            <Controller
-                                name="provider_name"
-                                control={control}
-                                render={({ field, fieldState }) => (
-                                    <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel className="text-slate-700" htmlFor="provider_name">
-                                            Bank/Provider <span className="text-red-500">*</span>
-                                        </FieldLabel>
-                                        <Select onValueChange={field.onChange} value={field.value} name={field.name}>
-                                            <SelectTrigger id="provider_name" className="rounded-none border border-slate-300 shadow-none">
-                                                <SelectValue placeholder="Pilih Bank/Provider" />
-                                            </SelectTrigger>
-                                            <SelectContent className="rounded-none text-sm shadow-none">
-                                                {PROVIDER_OPTIONS.map((prov, i) => (
-                                                    <SelectItem key={i} value={prov}>
-                                                        {prov.toUpperCase()}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
-                                    </Field>
-                                )}
-                            />
-                            {/* Account Number */}
-                            <Controller
-                                name="account_number"
-                                control={control}
-                                render={({ field, fieldState }) => (
-                                    <Field data-invalid={fieldState.invalid}>
-                                        <FieldLabel className="text-slate-700" htmlFor="account_number">
-                                            No. Rekening/No. E-Wallet <span className="text-red-500">*</span>
-                                        </FieldLabel>
-                                        <Input
-                                            {...field}
-                                            id="account_number"
-                                            placeholder="23942477773"
-                                            className="rounded-none border border-slate-300 text-sm shadow-none"
-                                        />
-                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
-                                    </Field>
-                                )}
-                            />
-                        </FieldGroup>
 
                         {/* ## items    */}
                         <h3 className="mt-8 border-b border-slate-200 pb-2 text-lg font-semibold text-slate-700">Item Pesanan</h3>
@@ -614,14 +611,14 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                         <CollapsibleContent className="space-y-6 border-t border-slate-200 bg-white p-4">
                                             <div key={field.id} className="space-y-4 rounded-none border border-slate-300 bg-slate-50 p-4">
-                                                <FieldGroup className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                                                <FieldGroup className="grid grid-cols-1 gap-4">
                                                     {/* Shipping */}
                                                     <Controller
                                                         name={`items.${index}.shipping`}
                                                         control={control}
                                                         render={({ field, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel className="text-slate-700" htmlFor="shipping">
+                                                                <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="shipping">
                                                                     Jenis Pengiriman <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Select
@@ -656,7 +653,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel className="text-slate-700" htmlFor="use_by_date">
+                                                                <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="use_by_date">
                                                                     Tanggal digunakan <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Input
@@ -681,7 +678,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field: itemField, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid} className="col-span-1">
-                                                                <FieldLabel className="text-slate-700" htmlFor="rent_periode">
+                                                                <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="rent_periode">
                                                                     Lama Sewa (Hari) <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Input
@@ -701,7 +698,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                                     {/* estimated delivery & return date */}
                                                     <div className="col-span-full w-full">
-                                                        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+                                                        <div className="grid w-full grid-cols-1 gap-4">
                                                             {/* estimated_delivery_date */}
                                                             <Controller
                                                                 name={`items.${index}.estimated_delivery_date`}
@@ -714,7 +711,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                                                     return (
                                                                         <Field data-invalid={fieldState.invalid}>
-                                                                            <FieldLabel className="text-slate-700" htmlFor="estimated_delivery_date">
+                                                                            <FieldLabel
+                                                                                className="text-md font-semibold text-slate-700"
+                                                                                htmlFor="estimated_delivery_date"
+                                                                            >
                                                                                 Estimasi Pengiriman
                                                                             </FieldLabel>
                                                                             <Input
@@ -725,7 +725,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                                                         ? formatDateForInput(estimatedDelivery as Date | undefined) // format yyyy-MM-dd
                                                                                         : ''
                                                                                 }
-                                                                                readOnly
                                                                                 className="cursor-not-allowed rounded-none border border-slate-300 bg-slate-100 text-sm shadow-none"
                                                                             />
                                                                             {fieldState.invalid && (
@@ -748,7 +747,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                                                     return (
                                                                         <Field data-invalid={fieldState.invalid}>
-                                                                            <FieldLabel className="text-slate-700" htmlFor="estimated_return_date">
+                                                                            <FieldLabel
+                                                                                className="text-md font-semibold text-slate-700"
+                                                                                htmlFor="estimated_return_date"
+                                                                            >
                                                                                 Estimasi Pengembalian
                                                                             </FieldLabel>
                                                                             <Input
@@ -807,7 +809,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                     )}
                                                 </FieldGroup>
 
-                                                <FieldGroup className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                                <FieldGroup className="grid grid-cols-1 gap-4">
                                                     {/* Product */}
                                                     <Controller
                                                         name={`items.${index}.product_id`}
@@ -845,7 +847,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field: itemField, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel htmlFor="ukuran" className="text-slate-700">
+                                                                <FieldLabel htmlFor="ukuran" className="text-md font-semibold text-slate-700">
                                                                     Ukuran <span className="text-red-500">*</span>
                                                                 </FieldLabel>
                                                                 <Select
@@ -898,7 +900,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                         control={control}
                                                         render={({ field, fieldState }) => (
                                                             <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel className="text-slate-700" htmlFor="type">
+                                                                <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="type">
                                                                     Tipe
                                                                 </FieldLabel>
                                                                 <Select
@@ -935,7 +937,10 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
                                                             return (
                                                                 <Field data-invalid={fieldState.invalid}>
-                                                                    <FieldLabel htmlFor={`qty-${index}`} className="text-slate-700">
+                                                                    <FieldLabel
+                                                                        htmlFor={`qty-${index}`}
+                                                                        className="text-md font-semibold text-slate-700"
+                                                                    >
                                                                         Jumlah <span className="text-red-500">*</span>
                                                                     </FieldLabel>
                                                                     <Input
@@ -990,6 +995,87 @@ export default function OrderForm({ setting }: OrderFormProps) {
                         >
                             <Plus /> Tambah Item
                         </Button>
+                        {/* ## items    */}
+
+                        {/* ## return info            */}
+                        <h3 className="mt-8 border-b border-slate-200 pb-2 text-lg font-semibold text-slate-700">Pengembalian Deposit</h3>
+                        <FieldGroup className="grid grid-cols-1 gap-4">
+                            {/* Provider */}
+                            {/* <Controller
+                                name="provider_name"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="provider_name">
+                                            Bank/Provider
+                                        </FieldLabel>
+                                        <Select onValueChange={field.onChange} value={field.value} name={field.name}>
+                                            <SelectTrigger id="provider_name" className="rounded-none border border-slate-300 shadow-none">
+                                                <SelectValue placeholder="Pilih Bank/Provider" />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-none text-sm shadow-none">
+                                                {PROVIDER_OPTIONS.map((prov, i) => (
+                                                    <SelectItem key={i} value={prov}>
+                                                        {prov.toUpperCase()}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            /> */}
+                            <Controller
+                                name="provider_name"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel className="text-md font-semibold text-slate-700">Bank/Provider</FieldLabel>
+                                        <ProviderAutocomplete value={field.value} onChange={field.onChange} error={fieldState.error?.message} />
+                                    </Field>
+                                )}
+                            />
+
+                            {/* Account Holder */}
+                            <Controller
+                                name="account_holder"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="account_holder">
+                                            Nama Pemilik Rekening/E-Wallet
+                                        </FieldLabel>
+                                        <Input
+                                            {...field}
+                                            id="account_holder"
+                                            placeholder="Coyuri"
+                                            className="rounded-none border border-slate-300 text-sm shadow-none"
+                                        />
+                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+
+                            {/* Account Number */}
+                            <Controller
+                                name="account_number"
+                                control={control}
+                                render={({ field, fieldState }) => (
+                                    <Field data-invalid={fieldState.invalid}>
+                                        <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="account_number">
+                                            No. Rekening/E-Wallet
+                                        </FieldLabel>
+                                        <Input
+                                            {...field}
+                                            id="account_number"
+                                            placeholder="23942477773"
+                                            className="rounded-none border border-slate-300 text-sm shadow-none"
+                                        />
+                                        {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
+                                    </Field>
+                                )}
+                            />
+                        </FieldGroup>
 
                         {/* notes */}
                         <Controller
@@ -997,7 +1083,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             control={control}
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="desc" className="mt-3 leading-none italic">
+                                    <FieldLabel htmlFor="desc" className="text-md mt-3 leading-none font-semibold italic">
                                         Catatan
                                     </FieldLabel>
                                     <InputGroup className="rounded-none border border-slate-300 shadow-none">
@@ -1008,13 +1094,15 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             )}
                         />
 
-                        {isItemFilled ? (
+                        {/* temporary */}
+                        {/* {isItemFilled ? (
                             <OrderSummary fields={fields} watch={watch} getSelectedProduct={getSelectedProduct} addDays={addDays} subDays={subDays} />
                         ) : (
                             <p className="mt-8 text-center text-xs text-slate-700 italic">
                                 Lengkapi data penyewaan terlebih dahulu untuk melihat ringkasan pesanan.
                             </p>
-                        )}
+                        )} */}
+                        <OrderSummary fields={fields} watch={watch} getSelectedProduct={getSelectedProduct} addDays={addDays} subDays={subDays} />
 
                         <Controller
                             name="agreement"
@@ -1045,7 +1133,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                         </span>
                                     </div>
 
-                                    <label htmlFor="agreement" className="cursor-pointer text-xs leading-snug text-slate-700 md:text-sm">
+                                    <label htmlFor="agreement" className="cursor-pointer text-sm leading-snug text-slate-700 md:text-sm">
                                         Saya setuju dengan syarat dan ketentuan serta memastikan data di atas sudah benar
                                     </label>
                                 </div>

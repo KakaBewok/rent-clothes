@@ -159,18 +159,7 @@ class ProductForm
                             ->relationship()
                             ->schema([
                                 Select::make('size')
-                                    ->options([
-                                        'Fit XS' => 'Fit XS',
-                                        'Fit S'  => 'Fit S',
-                                        'Fit M'  => 'Fit M',
-                                        'Fit L'  => 'Fit L',
-                                        'Fit XL' => 'Fit XL',
-                                        'Fit XS-S' => 'Fit XS-S',
-                                        'Fit S-M'  => 'Fit S-M',
-                                        'Fit M-L'  => 'Fit M-L',
-                                        'Fit L-XL'  => 'Fit L-XL',
-                                        'Fit XL-XXL' => 'Fit XL-XXL',
-                                    ])
+                                    ->options(config('constants.sizes'))
                                     ->required()
                                     ->searchable(),
                                 TextInput::make('quantity')
@@ -187,9 +176,9 @@ class ProductForm
                     ->schema([
                         FileUpload::make('cover_image')
                             ->image()
-                            ->maxSize(config('uploads.images.max_size'))
-                            ->acceptedFileTypes(config('uploads.images.accepted_types'))
-                            ->helperText('Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
+                            ->maxSize(config('constants.images.max_size'))
+                            ->acceptedFileTypes(config('constants.images.accepted_types'))
+                            ->helperText('Max file size: ' . (config('constants.images.max_size') / 1000) . 'MB')
                             ->disk('public')
                             ->directory('products/covers')
                             ->imageEditor()
@@ -200,9 +189,9 @@ class ProductForm
                             ->image()
                             ->multiple()
                             ->maxFiles(10)
-                            ->maxSize(config('uploads.images.max_size'))
-                            ->acceptedFileTypes(config('uploads.images.accepted_types'))
-                            ->helperText('Max file size: ' . (config('uploads.images.max_size') / 1000) . 'MB')
+                            ->maxSize(config('constants.images.max_size'))
+                            ->acceptedFileTypes(config('constants.images.accepted_types'))
+                            ->helperText('Max file size: ' . (config('constants.images.max_size') / 1000) . 'MB')
                             ->disk('public')
                             ->directory('products/galleries')
                             ->imageEditor()
