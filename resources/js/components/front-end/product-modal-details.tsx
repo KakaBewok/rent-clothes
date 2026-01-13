@@ -170,7 +170,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
             </div> */}
 
             <div className="flex w-full flex-col gap-2 pt-3 md:flex-row">
-                <Link
+                <a
                     href={
                         product.stock_breakdown && product.stock_breakdown.length > 0
                             ? `https://wa.me/${formatWhatsAppNumber(whatsappNumber ?? '628877935678')}?text=${encodeURIComponent(message)}`
@@ -190,7 +190,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                         <MessageCircle className="h-6 w-6" />
                         {product.stock_breakdown && product.stock_breakdown.length > 0 ? 'Rent Now' : 'Out of Stock'}
                     </Button>
-                </Link>
+                </a>
                 {product.stock_breakdown && product.stock_breakdown.length > 0 && (
                     <Link href="/form" target="_blank" rel="noopener noreferrer" className="w-full md:w-1/2">
                         <Button
