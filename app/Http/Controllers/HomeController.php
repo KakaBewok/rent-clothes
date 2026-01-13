@@ -175,9 +175,16 @@ class HomeController extends Controller
                 ? $extraFilters['type']
                 : explode(',', $extraFilters['type']);
 
+            // OLD
+            // $query->whereHas('types', function ($q) use ($types) {
+            //     $q->whereIn('types.id', $types);
+            // });
+
+            $typeCount = count($types);
+
             $query->whereHas('types', function ($q) use ($types) {
                 $q->whereIn('types.id', $types);
-            });
+            }, '=', $typeCount);
         }
         if (!empty($extraFilters['size'])) {
             $query->whereHas('sizes', function ($q) use ($extraFilters) {
