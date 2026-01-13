@@ -159,26 +159,26 @@ class HomeController extends Controller
             $query->whereIn('color_id', $colors);
         }
         // REVISI 1: type filter to match all selected types
-        if (!empty($extraFilters['type'])) {
-            $types = is_array($extraFilters['type']) ? $extraFilters['type'] : explode(',', $extraFilters['type']);
-            $typeCount = count($types);
-
-            $query->whereHas('types', function ($q) use ($types) {
-                $q->whereIn('types.id', $types);
-            }, '=', $typeCount);
-
-            $query->has('types', '=', $typeCount);
-        }
-        // OLD
         // if (!empty($extraFilters['type'])) {
-        //     $types = is_array($extraFilters['type'])
-        //         ? $extraFilters['type']
-        //         : explode(',', $extraFilters['type']);
+        //     $types = is_array($extraFilters['type']) ? $extraFilters['type'] : explode(',', $extraFilters['type']);
+        //     $typeCount = count($types);
 
         //     $query->whereHas('types', function ($q) use ($types) {
         //         $q->whereIn('types.id', $types);
-        //     });
+        //     }, '=', $typeCount);
+
+        //     $query->has('types', '=', $typeCount);
         // }
+        // OLD
+        if (!empty($extraFilters['type'])) {
+            $types = is_array($extraFilters['type'])
+                ? $extraFilters['type']
+                : explode(',', $extraFilters['type']);
+
+            $query->whereHas('types', function ($q) use ($types) {
+                $q->whereIn('types.id', $types);
+            });
+        }
         if (!empty($extraFilters['size'])) {
             $query->whereHas('sizes', function ($q) use ($extraFilters) {
                 $q->where('sizes.size', $extraFilters['size']);
