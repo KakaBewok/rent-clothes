@@ -90,17 +90,18 @@ class OrderController extends Controller
             // Start - Send notification email to admin
             try {
                 // with queue. php artisan queue:work --stop-when-empty. QUEUE_CONNECTION=database
-                // Mail::to(env('ADMIN_EMAIL'), env('ADMIN_EMAIL'))
+                // Mail::to(config('mail.admin_email'))
                 //     ->queue(new OrderFormSubmitted($order));
                 
                 // without queue. QUEUE_CONNECTION=sync
-                Mail::to(env('ADMIN_EMAIL'), env('ADMIN_EMAIL'))
+                Log::info("Trying to send email to: " . config('mail.admin_email'));
+                Mail::to(config('mail.admin_email'))
                     ->send(new OrderFormSubmitted($order));
 
                 Log::info('Order notification email queued', [
                     'order_id' => $order->id,
                     'customer_name' => $order->name,
-                    'admin_email' => env('ADMIN_EMAIL'),
+                    'admin_email' => config('mail.admin_email'),
                 ]);
             } catch (\Exception $emailError) {
                 // Email not sent, but order saved successfully
