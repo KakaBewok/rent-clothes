@@ -183,12 +183,12 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                     <Button
                         className={`w-full cursor-pointer rounded-none transition-all duration-500 ${
                             product.stock_breakdown && product.stock_breakdown.length > 0
-                                ? 'bg-green-500 text-white hover:bg-green-600'
+                                ? 'bg-[#565449] text-white hover:bg-[#565449]'
                                 : 'cursor-not-allowed bg-slate-300 text-slate-500 hover:bg-slate-200'
                         }`}
                     >
                         <MessageCircle className="h-6 w-6" />
-                        {product.stock_breakdown && product.stock_breakdown.length > 0 ? 'Rent Now' : 'Out of Stock'}
+                        {product.stock_breakdown && product.stock_breakdown.length > 0 ? 'Chat Admin' : 'Out of Stock'}
                     </Button>
                 </a>
                 {product.stock_breakdown && product.stock_breakdown.length > 0 && (
@@ -197,7 +197,7 @@ const ProductModalDetails = ({ product, contact }: { product: Product; contact: 
                             className={`w-full cursor-pointer rounded-none bg-[#A27163] text-white transition-all duration-300 hover:bg-[#976456]`}
                         >
                             <ShoppingCart className="h-6 w-6" />
-                            Order Now
+                            Rent Now
                         </Button>
                     </Link>
                 )}

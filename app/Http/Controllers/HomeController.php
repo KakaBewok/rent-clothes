@@ -158,17 +158,6 @@ class HomeController extends Controller
 
             $query->whereIn('color_id', $colors);
         }
-        // REVISI 1: type filter to match all selected types
-        // if (!empty($extraFilters['type'])) {
-        //     $types = is_array($extraFilters['type']) ? $extraFilters['type'] : explode(',', $extraFilters['type']);
-        //     $typeCount = count($types);
-
-        //     $query->whereHas('types', function ($q) use ($types) {
-        //         $q->whereIn('types.id', $types);
-        //     }, '=', $typeCount);
-
-        //     $query->has('types', '=', $typeCount);
-        // }
         // OLD
         if (!empty($extraFilters['type'])) {
             $types = is_array($extraFilters['type'])

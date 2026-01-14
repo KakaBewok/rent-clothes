@@ -66,25 +66,26 @@ const orderItemSchema = z.object({
 
 const orderFormSchema = z.object({
     // --- REVISI 1 ---//
-    name: z.string().optional().or(z.literal('')),
-    phone_number: z
-        .string()
-        .regex(/^(\+62|0)\d{9,13}$/, 'Format nomor HP tidak valid. Contoh: 0812...')
-        .optional()
-        .or(z.literal('')),
-    address: z.string().optional().or(z.literal('')),
+    // name: z.string().optional().or(z.literal('')),
+    // phone_number: z
+    //     .string()
+    //     .regex(/^(\+62|0)\d{9,13}$/, 'Format nomor HP tidak valid. Contoh: 0812...')
+    //     .optional()
+    //     .or(z.literal('')),
+    // address: z.string().optional().or(z.literal('')),
     expedition: z.string().optional().or(z.literal('')),
     account_number: z.string().optional().or(z.literal('')),
     account_holder: z.string().optional().or(z.literal('')),
     provider_name: z.string().optional().or(z.literal('')),
 
     recipient: z.string().optional().or(z.literal('')),
-    social_media: z.string().optional().or(z.literal('')),
+    // social_media: z.string().optional().or(z.literal('')),
     // --- REVISI 1 ---//
 
     // shipping info
-    // name: z.string().min(3, 'Nama minimal 3 karakter.'), --- REVISI 1
-    // phone_number: z.string().regex(/^(\+62|0)\d{9,13}$/, 'Format nomor telepon tidak valid. Contoh: 0812...'), --- REVISI 1
+    name: z.string().min(1, 'Nama wajib diisi.'),
+    social_media: z.string().min(1, 'Instagram wajib diisi.'),
+    phone_number: z.string().regex(/^(\+62|0)\d{9,13}$/, 'Nomor hp tidak valid.'),
     identity_image: z
         .union([
             z
@@ -98,7 +99,7 @@ const orderFormSchema = z.object({
             z.string(),
         ])
         .optional(),
-    // address: z.string().min(10, 'Alamat harus lengkap, minimal 10 karakter.'), --- REVISI 1
+    address: z.string().min(1, 'Alamat wajib diisi.'),
     // expedition: z.string().min(1, 'Jasa ekspedisi wajib diisi.'), --- REVISI 1
 
     // deposit return info

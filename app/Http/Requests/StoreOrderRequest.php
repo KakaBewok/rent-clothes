@@ -19,13 +19,17 @@ class StoreOrderRequest extends FormRequest
     {
         return [
             // --- shipping info 
-            'name' => ['nullable', 'string'],
-            'phone_number' => ['nullable', 'string'],
+            // 'name' => ['nullable', 'string'],
+            'name' => ['required', 'string', 'min:1'],
+            // 'phone_number' => ['nullable', 'string'],
+            'phone_number' => ['required', 'regex:/^(\+62|0)\d{9,13}$/'],
             'identity_image' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'], // 2mb
-            'address' => ['nullable', 'string'],
+            // 'address' => ['nullable', 'string'],
+            'address' => ['required', 'string', 'min:1'],
             'expedition' => ['nullable', 'string'],
             'recipient' => ['nullable', 'string'], 
-            'social_media' => ['nullable', 'string'],
+            // 'social_media' => ['nullable', 'string'],
+            'social_media' => ['required', 'string', 'min:1'],
 
             // --- deposit return info 
             'account_number' => ['nullable', 'string'],
