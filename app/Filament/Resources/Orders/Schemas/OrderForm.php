@@ -239,7 +239,7 @@ class OrderForm
                                     ->required()
                                     ->native(false)
                                     ->displayFormat('d/m/Y')
-                                    ->minDate(today())
+                                    // ->minDate(today())
                                     ->reactive()
                                     ->afterStateUpdated(function ($state, callable $set, callable $get) {
                                         $rentPeriod = (int) $get('rent_periode') ?: 1;
@@ -267,7 +267,7 @@ class OrderForm
                                     ->prefixIcon('heroicon-o-calendar')
                                     ->native(false)
                                     ->displayFormat('d/m/Y')
-                                    ->minDate(today())
+                                    // ->minDate(today())
                                     ->disabled(fn(callable $get) => !$get('use_by_date'))
                                     ->disabled(fn(callable $get) => !$get('shipping')),
 
