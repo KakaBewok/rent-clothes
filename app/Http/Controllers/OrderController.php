@@ -4,14 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreOrderRequest;
+use App\Mail\OrderFormSubmitted;
 use App\Models\AppSetting;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Inertia\Inertia;
 
 class OrderController extends Controller
 {
@@ -84,6 +86,31 @@ class OrderController extends Controller
                     'deposit' => $deposit
                 ]);
             }
+
+            // Start - Send notification email to admin
+            try {
+                // with queue. php artisan queue:work --stop-when-empty. QUEUE_CONNECTION=database
+                // Mail::to(env('ADMIN_EMAIL'), env('ADMIN_EMAIL'))
+                //     ->queue(new OrderFormSubmitted($order));
+                
+                // without queue. QUEUE_CONNECTION=sync
+                Mail::to(env('ADMIN_EMAIL'), env('ADMIN_EMAIL'))
+                    ->send(new OrderFormSubmitted($order));
+
+                Log::info('Order notification email queued', [
+                    'order_id' => $order->id,
+                    'customer_name' => $order->name,
+                    'admin_email' => env('ADMIN_EMAIL'),
+                ]);
+            } catch (\Exception $emailError) {
+                // Email not sent, but order saved successfully
+                Log::error('Failed to send order notification email', [
+                    'order_id' => $order->id,
+                    'customer_name' => $order->name,
+                    'error' => $emailError->getMessage(),
+                ]);
+            }
+            // End - Send notification email to admin
 
             DB::commit();
 

@@ -1,6 +1,6 @@
 import { AppSetting } from '@/types/models';
 import { formatWhatsAppNumber } from '@/utils/format';
-import { Instagram, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { Instagram, Mail, MapPin, MessageCircle, ShoppingBag } from 'lucide-react';
 import AppLogo from './app-logo';
 import InstallPwaButton from './install-pwa-button';
 
@@ -63,6 +63,16 @@ const Footer = ({ setting, setModalInfo, setShowScheduleModal }: FooterProps) =>
                             </li>
                             <li>
                                 <InstallPwaButton />
+                            </li>
+                            <li>
+                                <a
+                                    href={`/form`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="cursor-pointer text-slate-400 transition duration-300 hover:text-first"
+                                >
+                                    <ShoppingBag className="-mt-1 mr-0.5 inline-block h-4 w-4" /> Form Order
+                                </a>
                             </li>
                         </ul>
                     </div>

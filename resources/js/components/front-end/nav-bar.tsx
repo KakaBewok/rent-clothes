@@ -1,6 +1,6 @@
 import { AppSetting } from '@/types/models';
 import { formatWhatsAppNumber } from '@/utils/format';
-import { Menu, X } from 'lucide-react';
+import { Menu, ShoppingBag, X } from 'lucide-react';
 import { useState } from 'react';
 import AppLogo from '../front-end/app-logo';
 
@@ -70,6 +70,14 @@ const NavBar = ({ setting, setModalInfo, setShowScheduleModal }: navBarProps) =>
                     >
                         Kontak
                     </a>
+                    <a
+                        href={`/form`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-first"
+                    >
+                        <ShoppingBag className="-mt-1 inline-block h-6 w-6" />
+                    </a>
                 </div>
 
                 <div className="ml-auto block md:hidden">
@@ -112,6 +120,14 @@ const NavBar = ({ setting, setModalInfo, setShowScheduleModal }: navBarProps) =>
                         className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first"
                     >
                         Kontak
+                    </a>
+                    <a
+                        href={`/form`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block cursor-pointer px-3 py-2 text-sm font-medium text-slate-600 hover:text-first"
+                    >
+                        <ShoppingBag className="-mt-1 inline-block h-5 w-5" />
                     </a>
                 </div>
             </div>

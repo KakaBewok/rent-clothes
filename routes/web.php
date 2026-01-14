@@ -3,10 +3,30 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Mail\OrderFormSubmitted;
+use App\Models\Order;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Spatie\Sitemap\SitemapGenerator;
 
+
+
+
+//email test
+// Route::get('/email-test', function () {
+//     Mail::raw('Email test successfuly', function ($message) {
+//         $message->to('calarayaproject@gmail.com')
+//                 ->subject('SMTP Test');
+//     });
+// });
+
+//test tampilan email
+Route::get('/mail-preview', function () {
+    $order = Order::with(['items.product', 'items.size'])->latest()->first();
+    
+    return new OrderFormSubmitted($order);
+});
 
 Route::get('/generate-sitemap', function () {
     SitemapGenerator::create('https://qatiarent.com')
