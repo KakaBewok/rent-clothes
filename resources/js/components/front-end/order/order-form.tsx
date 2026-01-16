@@ -198,24 +198,62 @@ export default function OrderForm({ setting }: OrderFormProps) {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createWhatsAppMessage = (payload: any): string => {
+        // const message = encodeURIComponent(
+        //     `Halo! \nAku udah isi form order, berikut detail pesanannya:\n\n` +
+        //         `Nama: ${payload.name}\n` +
+        //         `Nama Penerima: ${payload.recipient}\n` +
+        //         `Instagram: ${payload.social_media}\n` +
+        //         `No. HP: ${payload.phone_number}\n` +
+        //         `Foto KTP: ${payload.identity_image ? `Sudah diupload` : `Belum diupload`}\n` +
+        //         `Expedisi: ${payload.expedition}\n` +
+        //         `Alamat: ${payload.address}\n` +
+        //         `Catatan: ${payload.desc ?? '-'}\n` +
+        //         `Daftar Item:\n\n` +
+        //         payload.items
+        //             .map(
+        //                 (item: OrderItemData, i: number) =>
+        //                     `${i + 1}. Produk: ${item.product_name}
+        //                 \n Ukuran: ${item.size_label}
+        //                 \n Tipe: ${item.type ?? '-'}
+        //                 \n Jumlah: ${item.quantity}
+        //                 \n Jenis Pengiriman: ${item.shipping}
+        //                 \n Durasi Sewa: ${item.rent_periode} hari
+        //                 \n Tanggal digunakan: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })}
+        //                 \n Tanggal Kirim: ${format(item.estimated_delivery_date, 'EEEE, dd MMM yyyy', { locale: id })}
+        //                 \n Tanggal Kembali: ${format(item.estimated_return_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
+        //             )
+        //             .join('\n\n') +
+        //         `\n\nMohon konfirmasinya ya, terima kasih.`,
+        // );
+
         const message = encodeURIComponent(
-            `Halo! \nAku udah isi form order, berikut detail pesanannya:\n\n` +
+            `Halo! Aku udah isi form order, berikut detail pesanannya:\n\n` +
+                `DATA DIRI\n` +
                 `Nama: ${payload.name}\n` +
                 `Nama Penerima: ${payload.recipient}\n` +
                 `Instagram: ${payload.social_media}\n` +
                 `No. HP: ${payload.phone_number}\n` +
-                `Foto KTP: ${payload.identity_image ? `Sudah diupload` : `Belum diupload`}\n` +
-                `Expedisi: ${payload.expedition}\n` +
-                `Alamat: ${payload.address}\n` +
-                `Catatan: ${payload.desc ?? '-'}\n` +
-                `Daftar Item:\n\n` +
+                `Foto KTP: ${payload.identity_image ? `Sudah diupload` : `Belum diupload`}\n\n` +
+                `Alamat: ${payload.address}\n\n` +
+                `Expedisi: ${payload.expedition}\n\n` +
+                `Catatan: ${payload.desc ?? '-'}\n\n` +
                 payload.items
                     .map(
                         (item: OrderItemData, i: number) =>
-                            `${i + 1}. Produk: ${item.product_name}\n Ukuran: ${item.size_label}\n Tipe: ${item.type ?? '-'}\n Jumlah: ${item.quantity}\n Jenis Pengiriman: ${item.shipping}\n Durasi Sewa: ${item.rent_periode} hari\n Tanggal digunakan: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })} \n Tanggal Kirim: ${format(item.estimated_delivery_date, 'EEEE, dd MMM yyyy', { locale: id })} \n Tanggal Kembali: ${format(item.estimated_return_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
+                            `ORDER ${i + 1}
+                        \n Produk: ${item.product_name}
+                        \n Tipe: ${item.type ?? '-'}
+                        \n Jumlah: ${item.quantity}
+                        \n Tanggal Kirim: ${format(item.estimated_delivery_date, 'EEEE, dd MMM yyyy', { locale: id })}
+                        \n Tanggal Pakai: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })}
+                        \n Tanggal Kembali: ${format(item.estimated_return_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
                     )
                     .join('\n\n') +
-                `\n\nMohon konfirmasinya ya, terima kasih.`,
+                `PENGEMBALIAN DEPOSIT\n` +
+                `Nama Bank: ${payload.provider_name}\n` +
+                `Nama Pemilik Akun: ${payload.account_holder}\n` +
+                `No. Rekening: ${payload.account_number}\n\n` +
+                `Mohon konfirmasinya ya, terima kasih.`,
         );
 
         return `https://wa.me/${formatWhatsAppNumber(setting.whatsapp_number ?? '628877935678')}?text=${message}`;
@@ -387,7 +425,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="name">
-                                            Nama Sesuai KTP
+                                            Nama Sesuai KTP <span className="text-red-500">*</span>
                                         </FieldLabel>
                                         <Input
                                             {...field}
@@ -418,13 +456,14 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                     </Field>
                                 )}
                             />
+                            {/* social media */}
                             <Controller
                                 name="social_media"
                                 control={control}
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="social_media">
-                                            Instagram
+                                            Instagram <span className="text-red-500">*</span>
                                         </FieldLabel>
                                         <Input
                                             {...field}
@@ -443,7 +482,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 render={({ field, fieldState }) => (
                                     <Field data-invalid={fieldState.invalid}>
                                         <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="phone_number">
-                                            No. HP/Whatsapp
+                                            No. HP/Whatsapp <span className="text-red-500">*</span>
                                         </FieldLabel>
                                         <Input
                                             {...field}
@@ -562,7 +601,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                     <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="address">
-                                        Alamat Lengkap
+                                        Alamat Lengkap <span className="text-red-500">*</span>
                                     </FieldLabel>
                                     <InputGroup className="rounded-none border border-slate-300 shadow-none">
                                         <InputGroupTextarea

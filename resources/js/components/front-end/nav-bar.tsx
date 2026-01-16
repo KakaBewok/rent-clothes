@@ -18,7 +18,8 @@ const NavBar = ({ setting, setModalInfo, setShowScheduleModal }: navBarProps) =>
 
     return (
         <nav className="sticky top-0 z-40 bg-white">
-            <div className="mx-auto flex h-fit w-full items-center px-4 py-2">
+            {/* <div className="mx-auto flex h-fit w-full items-center px-4 py-2"> */}
+            <div className="mx-auto flex h-fit w-full items-center justify-between px-4 py-2">
                 <div className="hidden md:flex">
                     <AppLogo setting={setting} logoSize={127} />
                 </div>
@@ -70,6 +71,9 @@ const NavBar = ({ setting, setModalInfo, setShowScheduleModal }: navBarProps) =>
                     >
                         Kontak
                     </a>
+                </div>
+
+                <div className="hidden md:flex">
                     <a
                         href={`/form`}
                         target="_blank"
