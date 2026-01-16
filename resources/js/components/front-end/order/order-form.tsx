@@ -240,13 +240,13 @@ export default function OrderForm({ setting }: OrderFormProps) {
                 payload.items
                     .map(
                         (item: OrderItemData, i: number) =>
-                            `ORDER ${i + 1}
-                        Produk: ${item.product_name}
-                        Tipe: ${item.type ?? '-'}
-                        Jumlah: ${item.quantity}
-                        Tanggal Kirim: ${format(item.estimated_delivery_date, 'EEEE, dd MMM yyyy', { locale: id })}
-                        Tanggal Pakai: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })}
-                        Tanggal Kembali: ${format(item.estimated_return_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
+                            `\nORDER ${i + 1}
+                        \nProduk: ${item.product_name}
+                        \nTipe: ${item.type ?? '-'}
+                        \nJumlah: ${item.quantity}
+                        \nTanggal Kirim: ${format(item.estimated_delivery_date, 'EEEE, dd MMM yyyy', { locale: id })}
+                        \nTanggal Pakai: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })}
+                        \nTanggal Kembali: ${format(item.estimated_return_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
                     )
                     .join('\n\n') +
                 `\n\nPENGEMBALIAN DEPOSIT\n` +
