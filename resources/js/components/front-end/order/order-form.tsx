@@ -233,20 +233,20 @@ export default function OrderForm({ setting }: OrderFormProps) {
                 `Nama Penerima: ${payload.recipient}\n` +
                 `Instagram: ${payload.social_media}\n` +
                 `No. HP: ${payload.phone_number}\n` +
-                `Foto KTP: ${payload.identity_image ? `Sudah diupload` : `Belum diupload`}\n\n` +
+                `Foto KTP: ${payload.identity_image ? 'Sudah diupload' : 'Belum diupload'}\n\n` +
                 `Alamat: ${payload.address}\n\n` +
                 `Expedisi: ${payload.expedition}\n\n` +
                 `Catatan: ${payload.desc ?? '-'}\n\n` +
                 payload.items
                     .map(
                         (item: OrderItemData, i: number) =>
-                            `\nORDER ${i + 1}
-                        \nProduk: ${item.product_name}
-                        \nTipe: ${item.type ?? '-'}
-                        \nJumlah: ${item.quantity}
-                        \nTanggal Kirim: ${format(item.estimated_delivery_date, 'EEEE, dd MMM yyyy', { locale: id })}
-                        \nTanggal Pakai: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })}
-                        \nTanggal Kembali: ${format(item.estimated_return_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
+                            `ORDER ${i + 1}\n` +
+                            `Produk: ${item.product_name}\n` +
+                            `Tipe: ${item.type ?? '-'}\n` +
+                            `Jumlah: ${item.quantity}\n` +
+                            `Tanggal Kirim: ${format(item.estimated_delivery_date, 'EEEE, dd MMM yyyy', { locale: id })}\n` +
+                            `Tanggal Pakai: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })}\n` +
+                            `Tanggal Kembali: ${format(item.estimated_return_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
                     )
                     .join('\n\n') +
                 `\n\nPENGEMBALIAN DEPOSIT\n` +
