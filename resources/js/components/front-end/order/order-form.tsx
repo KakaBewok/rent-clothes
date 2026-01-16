@@ -241,15 +241,15 @@ export default function OrderForm({ setting }: OrderFormProps) {
                     .map(
                         (item: OrderItemData, i: number) =>
                             `ORDER ${i + 1}
-                        \n Produk: ${item.product_name}
-                        \n Tipe: ${item.type ?? '-'}
-                        \n Jumlah: ${item.quantity}
-                        \n Tanggal Kirim: ${format(item.estimated_delivery_date, 'EEEE, dd MMM yyyy', { locale: id })}
-                        \n Tanggal Pakai: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })}
-                        \n Tanggal Kembali: ${format(item.estimated_return_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
+                        Produk: ${item.product_name}
+                        Tipe: ${item.type ?? '-'}
+                        Jumlah: ${item.quantity}
+                        Tanggal Kirim: ${format(item.estimated_delivery_date, 'EEEE, dd MMM yyyy', { locale: id })}
+                        Tanggal Pakai: ${format(item.use_by_date, 'EEEE, dd MMM yyyy', { locale: id })}
+                        Tanggal Kembali: ${format(item.estimated_return_date, 'EEEE, dd MMM yyyy', { locale: id })}`,
                     )
                     .join('\n\n') +
-                `PENGEMBALIAN DEPOSIT\n` +
+                `\n\nPENGEMBALIAN DEPOSIT\n` +
                 `Nama Bank: ${payload.provider_name}\n` +
                 `Nama Pemilik Akun: ${payload.account_holder}\n` +
                 `No. Rekening: ${payload.account_number}\n\n` +
