@@ -13,6 +13,7 @@
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
         "maatwebsite/excel": "^3.1",
+        "rap2hpoutre/laravel-log-viewer": "^2.5",
         "spatie/laravel-sitemap": "^7.3",
         "tightenco/ziggy": "^2.6"
     },

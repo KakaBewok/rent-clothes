@@ -10,10 +10,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Spatie\Sitemap\SitemapGenerator;
 
-
-
-
-//email test
+// email test
 // Route::get('/email-test', function () {
 //     Mail::raw('Email test successfuly', function ($message) {
 //         $message->to('calarayaproject@gmail.com')
@@ -21,10 +18,12 @@ use Spatie\Sitemap\SitemapGenerator;
 //     });
 // });
 
-//test tampilan email
+// log viewer
+Route::get('nenjologs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
+
+// mail template preview
 Route::get('/mail-preview', function () {
     $order = Order::with(['items.product', 'items.size'])->latest()->first();
-    
     return new OrderFormSubmitted($order);
 });
 
