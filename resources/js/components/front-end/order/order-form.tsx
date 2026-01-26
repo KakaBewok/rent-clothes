@@ -623,16 +623,14 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             {fields.map((field, index) => {
                                 const item = items?.[index];
                                 return (
-                                    <Collapsible key={field.id} className="rounded-none border border-slate-300 bg-slate-50">
+                                    <Collapsible defaultOpen key={field.id} className="rounded-none border border-slate-300 bg-slate-50">
                                         <CollapsibleTrigger asChild>
                                             <div className="group flex items-center justify-between p-2 md:p-4">
                                                 <div className="flex items-center gap-2">
-                                                    <CollapsibleTrigger asChild>
-                                                        <button type="button" className="group flex items-center gap-2">
-                                                            <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
-                                                            <h4 className="font-semibold text-slate-700">Item {index + 1}</h4>
-                                                        </button>
-                                                    </CollapsibleTrigger>
+                                                    <button type="button" className="group flex items-center gap-2">
+                                                        <ChevronRight className="h-4 w-4 transition-transform group-data-[state=open]:rotate-90" />
+                                                        <h4 className="font-semibold text-slate-700">Item {index + 1}</h4>
+                                                    </button>
                                                 </div>
 
                                                 {fields.length > 1 && (
