@@ -601,7 +601,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                             render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
                                     <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="address">
-                                        Alamat Lengkap <span className="text-red-500">*</span>
+                                        Alamat Kirim Lengkap <span className="text-red-500">*</span>
                                     </FieldLabel>
                                     <InputGroup className="rounded-none border border-slate-300 shadow-none">
                                         <InputGroupTextarea
