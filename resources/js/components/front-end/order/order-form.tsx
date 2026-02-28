@@ -847,164 +847,166 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                     )}
                                                 </FieldGroup>
 
-                                                <FieldGroup className="grid grid-cols-1 gap-4">
-                                                    {/* Product */}
-                                                    <Controller
-                                                        name={`items.${index}.product_id`}
-                                                        control={control}
-                                                        render={({ field, fieldState }) => (
-                                                            <Field data-invalid={fieldState.invalid}>
-                                                                <ProductSelect
-                                                                    value={field.value}
-                                                                    onChange={(val) => {
-                                                                        field.onChange(val);
-                                                                        const selected = availableProductsMap[index]?.find((p) => p.id === val);
-                                                                        if (selected) {
-                                                                            updateItem(index, {
-                                                                                product_name: selected.name,
-                                                                            });
-                                                                        }
-                                                                    }}
-                                                                    availableProducts={availableProductsMap[index] ?? []}
-                                                                    loading={loading}
-                                                                />
-                                                                {fieldState.invalid && (
-                                                                    <FieldError className="text-red-500" errors={[fieldState.error]} />
-                                                                )}
-                                                                {availableProductsMap[index]?.length > 0 && (
-                                                                    <FieldDescription className="text-xs">
-                                                                        {availableProductsMap[index]?.length} Product Tersedia
-                                                                    </FieldDescription>
-                                                                )}
-                                                            </Field>
-                                                        )}
-                                                    />
-                                                    {/* Size  */}
-                                                    <Controller
-                                                        name={`items.${index}.size_id`}
-                                                        control={control}
-                                                        render={({ field: itemField, fieldState }) => (
-                                                            <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel htmlFor="ukuran" className="text-md font-semibold text-slate-700">
-                                                                    Ukuran <span className="text-red-500">*</span>
-                                                                </FieldLabel>
-                                                                <Select
-                                                                    onValueChange={(val) => {
-                                                                        itemField.onChange(Number(val));
-
-                                                                        const selectedProduct = getSelectedProduct(item, index);
-                                                                        const selectedSize = selectedProduct?.sizes?.find(
-                                                                            (s) => s.id === Number(val),
-                                                                        );
-                                                                        if (selectedSize) {
-                                                                            updateItem(index, {
-                                                                                size_label: selectedSize.size,
-                                                                            });
-                                                                        }
-                                                                    }}
-                                                                    value={itemField.value ? itemField.value.toString() : undefined}
-                                                                    name={itemField.name}
-                                                                    disabled={!item?.product_id}
-                                                                >
-                                                                    <SelectTrigger
-                                                                        id="ukuran"
-                                                                        className="cursor-pointer rounded-none border border-slate-300 shadow-none"
-                                                                    >
-                                                                        <SelectValue placeholder="Pilih Ukuran" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent className="rounded-none text-sm shadow-none">
-                                                                        {getSelectedProduct(item, index) ? (
-                                                                            getSelectedProduct(item, index)?.sizes?.map((size) => (
-                                                                                <SelectItem key={size.id} value={size.id.toString()}>
-                                                                                    {size.size}
-                                                                                </SelectItem>
-                                                                            ))
-                                                                        ) : (
-                                                                            <SelectItem disabled value={'0'} className="text-slate-700">
-                                                                                Tidak ada ukuran tersedia
-                                                                            </SelectItem>
-                                                                        )}
-                                                                    </SelectContent>
-                                                                </Select>
-                                                                {fieldState.invalid && (
-                                                                    <FieldError className="text-red-500" errors={[fieldState.error]} />
-                                                                )}
-                                                            </Field>
-                                                        )}
-                                                    />
-                                                    {/* Type */}
-                                                    <Controller
-                                                        name={`items.${index}.type`}
-                                                        control={control}
-                                                        render={({ field, fieldState }) => (
-                                                            <Field data-invalid={fieldState.invalid}>
-                                                                <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="type">
-                                                                    Tipe
-                                                                </FieldLabel>
-                                                                <Select
-                                                                    onValueChange={field.onChange}
-                                                                    value={field.value ? field.value.toString() : undefined}
-                                                                    name={field.name}
-                                                                >
-                                                                    <SelectTrigger
-                                                                        id="type"
-                                                                        className="cursor-pointer rounded-none border border-slate-300 shadow-none"
-                                                                    >
-                                                                        <SelectValue placeholder="Pilih Tipe" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent className="rounded-none text-sm shadow-none">
-                                                                        <SelectItem value="-">Pilih Tipe</SelectItem>
-                                                                        <SelectItem value="Hijab">Hijab</SelectItem>
-                                                                        <SelectItem value="Non Hijab">Non Hijab</SelectItem>
-                                                                    </SelectContent>
-                                                                </Select>
-                                                                {fieldState.invalid && (
-                                                                    <FieldError className="text-red-500" errors={[fieldState.error]} />
-                                                                )}
-                                                            </Field>
-                                                        )}
-                                                    />
-                                                    {/* Quantity */}
-                                                    <Controller
-                                                        name={`items.${index}.quantity`}
-                                                        control={control}
-                                                        render={({ field: itemField, fieldState }) => {
-                                                            const selectedProduct = getSelectedProduct(item, index);
-                                                            const selectedSize = selectedProduct?.sizes?.find((s) => s.id === item?.size_id);
-                                                            const maxQty = selectedSize?.quantity;
-
-                                                            return (
+                                                {availableProductsMap[index]?.length > 0 && (
+                                                    <FieldGroup className="grid grid-cols-1 gap-4">
+                                                        {/* Product */}
+                                                        <Controller
+                                                            name={`items.${index}.product_id`}
+                                                            control={control}
+                                                            render={({ field, fieldState }) => (
                                                                 <Field data-invalid={fieldState.invalid}>
-                                                                    <FieldLabel
-                                                                        htmlFor={`qty-${index}`}
-                                                                        className="text-md font-semibold text-slate-700"
-                                                                    >
-                                                                        Jumlah <span className="text-red-500">*</span>
-                                                                    </FieldLabel>
-                                                                    <Input
-                                                                        className="cursor-pointer rounded-none border border-slate-300 text-sm shadow-none"
-                                                                        id={`qty-${index}`}
-                                                                        type="number"
-                                                                        min={1}
-                                                                        disabled={!item?.size_id}
-                                                                        max={maxQty ?? undefined}
-                                                                        onChange={(e) => itemField.onChange(e.target.valueAsNumber)}
-                                                                        value={itemField.value ?? 1}
+                                                                    <ProductSelect
+                                                                        value={field.value}
+                                                                        onChange={(val) => {
+                                                                            field.onChange(val);
+                                                                            const selected = availableProductsMap[index]?.find((p) => p.id === val);
+                                                                            if (selected) {
+                                                                                updateItem(index, {
+                                                                                    product_name: selected.name,
+                                                                                });
+                                                                            }
+                                                                        }}
+                                                                        availableProducts={availableProductsMap[index] ?? []}
+                                                                        loading={loading}
                                                                     />
-                                                                    {item?.product_id != 0 && item?.size_id != 0 && (
+                                                                    {fieldState.invalid && (
+                                                                        <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                    )}
+                                                                    {availableProductsMap[index]?.length > 0 && (
                                                                         <FieldDescription className="text-xs">
-                                                                            Jumlah maksimal untuk ukuran terpilih adalah{' '}
-                                                                            <span className="font-semibold">{maxQty}</span>
+                                                                            {availableProductsMap[index]?.length} Product Tersedia
                                                                         </FieldDescription>
                                                                     )}
+                                                                </Field>
+                                                            )}
+                                                        />
+                                                        {/* Size  */}
+                                                        <Controller
+                                                            name={`items.${index}.size_id`}
+                                                            control={control}
+                                                            render={({ field: itemField, fieldState }) => (
+                                                                <Field data-invalid={fieldState.invalid}>
+                                                                    <FieldLabel htmlFor="ukuran" className="text-md font-semibold text-slate-700">
+                                                                        Ukuran <span className="text-red-500">*</span>
+                                                                    </FieldLabel>
+                                                                    <Select
+                                                                        onValueChange={(val) => {
+                                                                            itemField.onChange(Number(val));
+
+                                                                            const selectedProduct = getSelectedProduct(item, index);
+                                                                            const selectedSize = selectedProduct?.sizes?.find(
+                                                                                (s) => s.id === Number(val),
+                                                                            );
+                                                                            if (selectedSize) {
+                                                                                updateItem(index, {
+                                                                                    size_label: selectedSize.size,
+                                                                                });
+                                                                            }
+                                                                        }}
+                                                                        value={itemField.value ? itemField.value.toString() : undefined}
+                                                                        name={itemField.name}
+                                                                        disabled={!item?.product_id}
+                                                                    >
+                                                                        <SelectTrigger
+                                                                            id="ukuran"
+                                                                            className="cursor-pointer rounded-none border border-slate-300 shadow-none"
+                                                                        >
+                                                                            <SelectValue placeholder="Pilih Ukuran" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent className="rounded-none text-sm shadow-none">
+                                                                            {getSelectedProduct(item, index) ? (
+                                                                                getSelectedProduct(item, index)?.sizes?.map((size) => (
+                                                                                    <SelectItem key={size.id} value={size.id.toString()}>
+                                                                                        {size.size}
+                                                                                    </SelectItem>
+                                                                                ))
+                                                                            ) : (
+                                                                                <SelectItem disabled value={'0'} className="text-slate-700">
+                                                                                    Tidak ada ukuran tersedia
+                                                                                </SelectItem>
+                                                                            )}
+                                                                        </SelectContent>
+                                                                    </Select>
                                                                     {fieldState.invalid && (
                                                                         <FieldError className="text-red-500" errors={[fieldState.error]} />
                                                                     )}
                                                                 </Field>
-                                                            );
-                                                        }}
-                                                    />
-                                                </FieldGroup>
+                                                            )}
+                                                        />
+                                                        {/* Type */}
+                                                        <Controller
+                                                            name={`items.${index}.type`}
+                                                            control={control}
+                                                            render={({ field, fieldState }) => (
+                                                                <Field data-invalid={fieldState.invalid}>
+                                                                    <FieldLabel className="text-md font-semibold text-slate-700" htmlFor="type">
+                                                                        Tipe
+                                                                    </FieldLabel>
+                                                                    <Select
+                                                                        onValueChange={field.onChange}
+                                                                        value={field.value ? field.value.toString() : undefined}
+                                                                        name={field.name}
+                                                                    >
+                                                                        <SelectTrigger
+                                                                            id="type"
+                                                                            className="cursor-pointer rounded-none border border-slate-300 shadow-none"
+                                                                        >
+                                                                            <SelectValue placeholder="Pilih Tipe" />
+                                                                        </SelectTrigger>
+                                                                        <SelectContent className="rounded-none text-sm shadow-none">
+                                                                            <SelectItem value="-">Pilih Tipe</SelectItem>
+                                                                            <SelectItem value="Hijab">Hijab</SelectItem>
+                                                                            <SelectItem value="Non Hijab">Non Hijab</SelectItem>
+                                                                        </SelectContent>
+                                                                    </Select>
+                                                                    {fieldState.invalid && (
+                                                                        <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                    )}
+                                                                </Field>
+                                                            )}
+                                                        />
+                                                        {/* Quantity */}
+                                                        <Controller
+                                                            name={`items.${index}.quantity`}
+                                                            control={control}
+                                                            render={({ field: itemField, fieldState }) => {
+                                                                const selectedProduct = getSelectedProduct(item, index);
+                                                                const selectedSize = selectedProduct?.sizes?.find((s) => s.id === item?.size_id);
+                                                                const maxQty = selectedSize?.quantity;
+
+                                                                return (
+                                                                    <Field data-invalid={fieldState.invalid}>
+                                                                        <FieldLabel
+                                                                            htmlFor={`qty-${index}`}
+                                                                            className="text-md font-semibold text-slate-700"
+                                                                        >
+                                                                            Jumlah <span className="text-red-500">*</span>
+                                                                        </FieldLabel>
+                                                                        <Input
+                                                                            className="cursor-pointer rounded-none border border-slate-300 text-sm shadow-none"
+                                                                            id={`qty-${index}`}
+                                                                            type="number"
+                                                                            min={1}
+                                                                            disabled={!item?.size_id}
+                                                                            max={maxQty ?? undefined}
+                                                                            onChange={(e) => itemField.onChange(e.target.valueAsNumber)}
+                                                                            value={itemField.value ?? 1}
+                                                                        />
+                                                                        {item?.product_id != 0 && item?.size_id != 0 && (
+                                                                            <FieldDescription className="text-xs">
+                                                                                Jumlah maksimal untuk ukuran terpilih adalah{' '}
+                                                                                <span className="font-semibold">{maxQty}</span>
+                                                                            </FieldDescription>
+                                                                        )}
+                                                                        {fieldState.invalid && (
+                                                                            <FieldError className="text-red-500" errors={[fieldState.error]} />
+                                                                        )}
+                                                                    </Field>
+                                                                );
+                                                            }}
+                                                        />
+                                                    </FieldGroup>
+                                                )} 
                                             </div>
                                         </CollapsibleContent>
                                     </Collapsible>
