@@ -44,7 +44,7 @@ return [
             'Self Pickup' => 'Self Pickup',
             'Paxel' => 'Paxel',
             'TIKI' => 'TIKI',
-            'Shopee Express' => 'Shopee Express',
+            'GoSend' => 'GoSend',
     ],
     'order_statuses' => [
             'pending'   => 'Pending',

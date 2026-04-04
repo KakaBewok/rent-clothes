@@ -23,7 +23,7 @@ import OrderSummary from './order-summary';
 import { ProductSelect } from './product-select';
 import ProviderAutocomplete from './provider-auto-complete';
 
-const EXPEDITION_OPTIONS = ['Self Pickup', 'Paxel', 'TIKI', 'Shopee Express'];
+const EXPEDITION_OPTIONS = ['Self Pickup', 'Paxel', 'TIKI', 'GoSend'];
 
 const SHIPPING_OPTIONS = [
     { value: 'Same day', label: 'Same Day' },
@@ -822,7 +822,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                                             <span>Mencari...</span>
                                                         ) : (
                                                             <div className="flex items-center justify-center gap-3">
-                                                                <Eye className="h-10 w-10" /> <span>Lihat Produk Tersedia</span>
+                                                                <Eye className="h-10 w-10" /> <span>Pilih Koleksi</span>
                                                             </div>
                                                         )}
                                                     </Button>
@@ -1015,13 +1015,15 @@ export default function OrderForm({ setting }: OrderFormProps) {
                         </div>
 
                         {/* button add item */}
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() =>
-                                append({
-                                    product_id: 0,
-                                    size_id: 0,
+                        {
+                            availableProductsMap[0]?.length > 0 && (
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() =>
+                                        append({
+                                            product_id: 0,
+                                            size_id: 0,
                                     type: '',
                                     quantity: 1,
                                     rent_periode: 1,
@@ -1030,11 +1032,15 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                     estimated_delivery_date: startOfDay(new Date()),
                                     estimated_return_date: startOfDay(addDays(startOfDay(new Date()), 3)),
                                 })
-                            }
-                            className="mt-4 w-full cursor-pointer rounded-none border-1 border-dashed border-slate-400 !bg-white text-sm text-slate-700 transition duration-500 hover:bg-slate-100 hover:text-slate-700"
-                        >
-                            <Plus /> Tambah Item
-                        </Button>
+                                    }
+                                    className="mt-4 w-full cursor-pointer rounded-none border-1 border-dashed border-slate-400 !bg-white text-sm text-slate-700 transition duration-500 hover:bg-slate-100 hover:text-slate-700"
+                                >
+                                    <Plus /> Tambah Item
+                                </Button>
+                            )
+                        }
+                        {/* button add item */}
+                        
                         {/* ## items    */}
 
                         {/* ## return info            */}
