@@ -523,7 +523,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                 )}
                             />
                             {/* KTP */}
-                            <Controller
+                            {/* <Controller
                                 name="identity_image"
                                 control={control}
                                 render={({ field: { value, onChange, ...fieldProps }, fieldState }) => {
@@ -571,7 +571,6 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                             </FieldDescription>
                                             {fieldState.invalid && <FieldError className="text-red-500" errors={[fieldState.error]} />}
 
-                                            {/* preview image */}
                                             {(previewImage || currentImageUrl) && (
                                                 <div className="relative w-full max-w-sm rounded-none border border-slate-100 p-1">
                                                     <img
@@ -592,7 +591,7 @@ export default function OrderForm({ setting }: OrderFormProps) {
                                         </Field>
                                     );
                                 }}
-                            />
+                            /> */}
                         </FieldGroup>
                         {/* address */}
                         <Controller
