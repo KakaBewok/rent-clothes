@@ -26,7 +26,10 @@ class ProductForm
                     ->icon('heroicon-m-shopping-bag')
                     ->schema([
                         TextInput::make('name')->label("Dress Name")->required(),
-                        TextInput::make('code')->placeholder('ABAYA-01')->required(),
+                        TextInput::make('code')->placeholder('ABAYA-01')->required()->unique(ignoreRecord: true)
+                            ->validationMessages([
+                                'unique' => 'Kode produk ini sudah digunakan, silakan gunakan kode lain.',
+                            ]),
                         Select::make('brand_id')
                             ->relationship('brand', 'name')
                             ->searchable()
